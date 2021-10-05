@@ -1,0 +1,16 @@
+{
+  "name": "wanna-hang-out-server",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "axios": "^0.22.0",
+    "cors": "^2.8.5",
+    "express": "^4.17.1",
+    "mysql": "^2.18.1"
+  },
+  "type": "module",
+  "engines": {
+    "node": ">=v14.17.3"
+  }
+}
