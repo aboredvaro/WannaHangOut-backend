@@ -1,1 +1,1 @@
-yarn run start
+web: nodemon index.js
