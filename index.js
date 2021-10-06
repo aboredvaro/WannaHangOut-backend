@@ -70,6 +70,10 @@ app.get('/api/hello', (req, res) => {
 	res.send('Hello world, his is working!')
 })
 
+app.get('/env', (req, res) => {
+	res.send(process.env.NODE_ENV === 'dev' ? 'dev' : 'prod')
+})
+
 app.get('/api/getAllEntities', (req, res) => {
 	db.query('SELECT * FROM entity', (err, result) => {
 		if (err) {
@@ -82,5 +86,5 @@ app.get('/api/getAllEntities', (req, res) => {
 // Examples end
 
 app.listen(PORT, () => {
-	log('\nServer is up and running at port' + PORT)
+	log('\nServer is up and running at port ' + PORT)
 })
