@@ -5,7 +5,7 @@ import express from 'express'
 const app = express()
 import cors from 'cors'
 import mysql from 'mysql'
-const PORT = 3000
+const PORT = process.env.PORT || 3000
 
 app.use(cors())
 app.use(express.json())
