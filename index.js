@@ -20,39 +20,39 @@ const log = (msg) => {
 //
 //  //  //  //  //
 
-var db
-var db_config = {
+const db_config = {
 	user: process.env.NODE_ENV === 'dev' ? process.env.REACT_APP_DB_USER_DEV : process.env.REACT_APP_DB_USER_PRODUCTION,
 	host: process.env.NODE_ENV === 'dev' ? process.env.REACT_APP_DB_HOST_DEV : process.env.REACT_APP_DB_HOST_PRODUCTION,
 	password: process.env.NODE_ENV === 'dev' ? process.env.REACT_APP_DB_PASSWORD_DEV : process.env.REACT_APP_DB_PASSWORD_PRODUCTION,
-	database: process.env.NODE_ENV === 'dev' ? process.env.REACT_APP_DB_NAME_DEV : process.env.REACT_APP_DB_NAME_PRODUCTION
+	database: process.env.NODE_ENV === 'dev' ? process.env.REACT_APP_DB_NAME_DEV : process.env.REACT_APP_DB_NAME_PRODUCTION,
+	connectionLimit : 100,
+	acquireTimeout: 300
 }
 
-function db_connect() {
+const db = mysql.createPool(db_config)
 
-	db = mysql.createConnection(db_config)
+db.getConnection((err, connection) => {
 
-	db.connect(function(err) {
-		if(err) {
-			setTimeout(db_connect(), 2000)
-			throw err
-		} else {
-			log('✅ Connected to db')
+	if (err) {
+		if (err.code == 'PROTOCOL_CONNECTION_LOST') {
+			log('👋🏻 DB Connection was closed')
 		}
-	})
 
-	db.on('error', function(err) {
-		if(err.code === 'PROTOCOL_CONNECTION_LOST') {
-			log('🚧 Reconnecting to db...')
-			db_connect()
-		} else {
-			throw err
+		if (err.code == 'ERR_CON_COUNT_ERROR') {
+			log('⚠️ DB has too many connections')
 		}
-	})
+		
+		if (err.code == 'ECONNREFUSED') {
+			log('⛔️ DB Connection was refused')
+		}
+	}   
 
-}
-
-db_connect()
+	if (connection) {
+		connection.release()
+	}
+	log('✅ Connected to DB')
+	return
+})
 
 //  //  //  //  //
 //
@@ -62,12 +62,6 @@ db_connect()
 
 app.get('/', (req, res) => {
 	res.send('✅ Wanna Hang Out server is online')
-})
-
-// Examples
-
-app.get('/api/hello', (req, res) => {
-	res.send('Hello world, his is working!')
 })
 
 app.get('/env', (req, res) => {
@@ -83,7 +77,7 @@ app.get('/api/getAllEntities', (req, res) => {
 	})
 })
 
-// Examples end
+// LISTEN PORT
 
 app.listen(PORT, () => {
 	log('\nServer is up and running at port ' + PORT)
