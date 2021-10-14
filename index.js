@@ -77,7 +77,7 @@ app.get('/api/getAllEntities', (req, res) => {
 })
 
 app.get('/api/getAllTags', (req, res) => {
-	db.query('SELECT * FROM entity', (err, result) => {
+	db.query('SELECT * FROM tags', (err, result) => {
 		if (err) {
 			console.log(err)
 		}
