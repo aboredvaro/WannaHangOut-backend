@@ -1,4 +1,4 @@
-USE PIN;
+USE heroku_314befdd836197e;
 
 INSERT INTO rol VALUES
     (1, "Shop"),
@@ -44,7 +44,7 @@ INSERT INTO entityToActivity VALUES
     (3, 2),
     (3, 3);
 
-INSERT INTO taste_ent VALUES
+INSERT INTO tags_ent VALUES
     (1, 1),
     (1, 2),
     (2, 6),
@@ -53,7 +53,7 @@ INSERT INTO taste_ent VALUES
     (3, 8),
     (3, 3);
 
-INSERT INTO taste_act VALUES
+INSERT INTO tags_act VALUES
     (1, 1),
     (1, 2),
     (1, 3),
