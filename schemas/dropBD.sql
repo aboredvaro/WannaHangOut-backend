@@ -1,7 +1,8 @@
-USE PIN;
+USE heroku_314befdd836197e;
 
-DROP TABLE taste_ent;
-DROP TABLE taste_act;
+
+DROP TABLE tags_ent;
+DROP TABLE tags_act;
 DROP TABLE entityToActivity;
 DROP TABLE review;
 DROP TABLE activity;

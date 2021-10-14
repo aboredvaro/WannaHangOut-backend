@@ -1,6 +1,6 @@
-CREATE DATABASE IF NOT EXISTS PIN;
+CREATE DATABASE IF NOT EXISTS heroku_314befdd836197e;
 
-USE PIN;
+USE heroku_314befdd836197e;
 
 
 CREATE TABLE rol (
@@ -62,7 +62,7 @@ CREATE TABLE entityToActivity(
 	FOREIGN KEY (id_activity) REFERENCES activity (id_activity)
 );
 
-CREATE TABLE taste_ent (
+CREATE TABLE tags_ent (
 	id_entity INT,
     id_tags INT,
 	PRIMARY KEY (id_tags, id_entity),
@@ -70,7 +70,7 @@ CREATE TABLE taste_ent (
 	FOREIGN KEY (id_entity) REFERENCES entity (id_entity)
 );
 
-CREATE TABLE taste_act (
+CREATE TABLE tags_act (
 	id_activity INT,
     id_tags INT,
 	PRIMARY KEY (id_tags, id_activity),
