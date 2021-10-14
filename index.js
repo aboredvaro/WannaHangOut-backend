@@ -5,14 +5,13 @@ import express from 'express'
 const app = express()
 import cors from 'cors'
 import mysql from 'mysql'
+import log from './utils/log.js'
 const PORT = process.env.PORT || 3000
+
+import getAllTags from './utils/tag.js'
 
 app.use(cors())
 app.use(express.json())
-
-const log = (msg) => {
-	process.env.NODE_ENV && console.log(msg)
-}
 
 //  //  //  //  //
 //
@@ -75,6 +74,29 @@ app.get('/api/getAllEntities', (req, res) => {
 		}
 		res.send(result)
 	})
+})
+
+app.get('/api/getAllTags', (req, res) => {
+	db.query('SELECT * FROM tags', (err, result) => {
+		if (err) {
+			console.log(err)
+		}
+		res.send(result)
+	})
+	
+	// const query = new Promise(function(resolve, reject) {
+	// 	getAllTags(db)
+	// })
+
+	// log('-> Query ha llamado a promesa')
+
+	// query.then(function(value) {
+	// 	log(JSON.stringify(value))
+	// 	res.send(query)
+	// })
+
+	// log('-> Promesa ha respondido')
+	
 })
 
 // LISTEN PORT
