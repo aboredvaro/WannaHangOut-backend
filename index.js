@@ -5,9 +5,9 @@ import express from 'express'
 const app = express()
 import cors from 'cors'
 import mysql from 'mysql'
+import log from './utils/log.js'
 const PORT = process.env.PORT || 3000
 import getAllTags from './utils/tag.js'
-import log from './utils/log.js'
 
 app.use(cors())
 app.use(express.json())
@@ -67,7 +67,7 @@ app.get('/env', (req, res) => {
 })
 
 app.get('/api/getAllEntities', (req, res) => {
-	db.query('SELECT * FROM entity', (err, result) => {
+	db.query('SELECT * FROM tags', (err, result) => {
 		if (err) {
 			console.log(err)
 		}
