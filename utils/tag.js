@@ -1,14 +1,12 @@
-import log from './log.js'
+export async function getAllTags(db) {
 
-const getAllTags = async(db) => {
-	db.query('SELECT * FROM tags', (err, result) => {
-		if (err) {
-			console.log(err)
-		}
-		log('-> Llamada ha llegado a tags.js')
-		log(JSON.stringify(result))
-		return result
+	return new Promise(resolve => {
+		db.query('SELECT * FROM tags', (err, result) => {
+			if (err) {
+				console.log(err)
+			}
+			resolve(JSON.stringify(result))
+		})
 	})
+	
 }
-
-export default getAllTags
