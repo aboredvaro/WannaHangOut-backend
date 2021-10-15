@@ -1,14 +1,13 @@
-import log from '../system/log.js'
-import db from '../system/connection.js'
+async function getAllTags(db) {
 
-const getAllTags = () => {
-	db.query('SELECT * FROM tags', (err, result) => {
-		if (err) {
-			console.log(err)
-		}
-		log(result)
-		return result
+	return new Promise(resolve => {
+		db.query('SELECT * FROM tags', (err, result) => {
+			if (err) {
+				console.log(err)
+			}
+			resolve(JSON.stringify(result))
+		})
 	})
 	
 }
-export default {getAllTags}
+export default getAllTags

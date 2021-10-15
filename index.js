@@ -5,8 +5,8 @@ import dotenv from 'dotenv'
 dotenv.config()
 import express from 'express'
 import cors from 'cors'
-import log from './system/log.js'
-import db from './system/connection.js'
+import log from './utils/log.js'
+import mysql from 'mysql'
 
 import getAllTags from './utils/tag.js'
 
@@ -18,7 +18,7 @@ app.use(express.json())
 //  DB CONNECTION
 //
 //  //  //  //  //
-/*
+
 const db_config = {
 	user: process.env.NODE_ENV === 'dev' ? process.env.REACT_APP_DB_USER_DEV : process.env.REACT_APP_DB_USER_PRODUCTION,
 	host: process.env.NODE_ENV === 'dev' ? process.env.REACT_APP_DB_HOST_DEV : process.env.REACT_APP_DB_HOST_PRODUCTION,
@@ -52,7 +52,7 @@ db.getConnection((err, connection) => {
 	log('✅ Connected to DB')
 	return
 })
-*/
+
 //  //  //  //  //
 //
 //  API REST
@@ -77,7 +77,9 @@ app.get('/api/getAllEntities', (req, res) => {
 })
 
 app.get('/api/getAllTags', (req, res) => {
-	res.send(getAllTags())
+	getAllTags(db).then(r => {
+		res.send(r)
+	})
 })
 
 // LISTEN PORT
