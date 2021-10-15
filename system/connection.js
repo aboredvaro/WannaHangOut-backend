@@ -1,24 +1,7 @@
-const PORT = process.env.PORT || 3000
-const app = express()
+import mysql from 'mysql'
+import log from './log.js'
 import process from 'process'
-import dotenv from 'dotenv'
-dotenv.config()
-import express from 'express'
-import cors from 'cors'
-import log from './system/log.js'
-import db from './system/connection.js'
 
-import getAllTags from './utils/tag.js'
-
-app.use(cors())
-app.use(express.json())
-
-//  //  //  //  //
-//
-//  DB CONNECTION
-//
-//  //  //  //  //
-/*
 const db_config = {
 	user: process.env.NODE_ENV === 'dev' ? process.env.REACT_APP_DB_USER_DEV : process.env.REACT_APP_DB_USER_PRODUCTION,
 	host: process.env.NODE_ENV === 'dev' ? process.env.REACT_APP_DB_HOST_DEV : process.env.REACT_APP_DB_HOST_PRODUCTION,
@@ -52,36 +35,5 @@ db.getConnection((err, connection) => {
 	log('✅ Connected to DB')
 	return
 })
-*/
-//  //  //  //  //
-//
-//  API REST
-//
-//  //  //  //  //
 
-app.get('/', (req, res) => {
-	res.send('✅ Wanna Hang Out server is online')
-})
-
-app.get('/env', (req, res) => {
-	res.send(process.env.NODE_ENV === 'dev' ? 'dev' : 'prod')
-})
-
-app.get('/api/getAllEntities', (req, res) => {
-	db.query('SELECT * FROM tags', (err, result) => {
-		if (err) {
-			console.log(err)
-		}
-		res.send(result)
-	})
-})
-
-app.get('/api/getAllTags', (req, res) => {
-	res.send(getAllTags())
-})
-
-// LISTEN PORT
-
-app.listen(PORT, () => {
-	log('\nServer is up and running at port ' + PORT)
-})
+export default db
