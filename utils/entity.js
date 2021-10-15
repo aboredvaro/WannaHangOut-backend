@@ -1,4 +1,4 @@
-async function getAllEntities(db) {
+export async function getAllEntities(db) {
 
 	return new Promise(resolve => {
 		db.query('SELECT * FROM entity', (err, result) => {
@@ -10,4 +10,10 @@ async function getAllEntities(db) {
 	})
 	
 }
-export default getAllEntities
+
+export async function getEntityByID(db, entityID) {
+
+	// To complete
+	// Return entity with given "entityID"
+	
+}

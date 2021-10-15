@@ -1,4 +1,4 @@
-async function getAllTags(db) {
+export async function getAllTags(db) {
 
 	return new Promise(resolve => {
 		db.query('SELECT * FROM tags', (err, result) => {
@@ -10,4 +10,3 @@ async function getAllTags(db) {
 	})
 	
 }
-export default getAllTags

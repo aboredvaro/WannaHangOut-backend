@@ -7,9 +7,11 @@ import express from 'express'
 import cors from 'cors'
 import mysql from 'mysql'
 
-import getAllEntities from './utils/entity.js'
-import getAllTags from './utils/tag.js'
+import * as activity from './utils/activity.js'
+import * as entity from './utils/entity.js'
 import log from './utils/log.js'
+import * as review from './utils/review.js'
+import * as tag from './utils/tag.js'
 
 app.use(cors())
 app.use(express.json())
@@ -60,25 +62,65 @@ db.getConnection((err, connection) => {
 //
 //  //  //  //  //
 
+// SERVER STATUS DEBUG
 app.get('/', (req, res) => {
 	res.send('✅ Wanna Hang Out server is online')
 })
 
+// ENV DEBUG API
 app.get('/env', (req, res) => {
 	res.send(process.env.NODE_ENV === 'dev' ? 'dev' : 'prod')
 })
 
+//  //  //  //  //
+//
+//  API ENTITY
+//
+//  //  //  //  //
+
 app.get('/api/getAllEntities', (req, res) => {
-	getAllEntities(db).then(r => {
-		res.send(r)
+	entity.getAllEntities(db).then(response => {
+		res.send(response)
 	})
 })
 
+//  //  //  //  //
+//
+//  API TAGS
+//
+//  //  //  //  //
+
 app.get('/api/getAllTags', (req, res) => {
-	getAllTags(db).then(r => {
-		res.send(r)
+	tag.getAllTags(db).then(response => {
+		res.send(response)
 	})
 })
+
+//  //  //  //  //
+//
+//  API ACTIVITY
+//
+//  //  //  //  //
+
+app.get('/api/getActivityByID', (req, res) => {
+	activity.getActivityByID(db,'Campos del formulario se pasan aqui (req)').then(response => {
+		res.send(response)
+	})
+})
+
+app.get('/api/filterActivitiesBy', (req, res) => {
+	activity.filterActivitiesBy(db,'Campos del formulario se pasan aqui (req)').then(response => {
+		res.send(response)
+	})
+})
+
+//  //  //  //  //
+//
+//  API REVIEW
+//
+//  //  //  //  //
+
+// To implement
 
 //  //  //  //  //
 //
