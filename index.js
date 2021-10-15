@@ -5,10 +5,11 @@ import dotenv from 'dotenv'
 dotenv.config()
 import express from 'express'
 import cors from 'cors'
-import log from './utils/log.js'
 import mysql from 'mysql'
 
+import getAllEntities from './utils/entity.js'
 import getAllTags from './utils/tag.js'
+import log from './utils/log.js'
 
 app.use(cors())
 app.use(express.json())
@@ -68,11 +69,8 @@ app.get('/env', (req, res) => {
 })
 
 app.get('/api/getAllEntities', (req, res) => {
-	db.query('SELECT * FROM tags', (err, result) => {
-		if (err) {
-			console.log(err)
-		}
-		res.send(result)
+	getAllEntities(db).then(r => {
+		res.send(r)
 	})
 })
 
@@ -82,7 +80,11 @@ app.get('/api/getAllTags', (req, res) => {
 	})
 })
 
-// LISTEN PORT
+//  //  //  //  //
+//
+//  START LISTENING
+//
+//  //  //  //  //
 
 app.listen(PORT, () => {
 	log('\nServer is up and running at port ' + PORT)
