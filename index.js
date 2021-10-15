@@ -1,14 +1,17 @@
+const PORT = process.env.PORT || 3000
+const app = express()
 import process from 'process'
 import dotenv from 'dotenv'
 dotenv.config()
 import express from 'express'
-const app = express()
 import cors from 'cors'
 import mysql from 'mysql'
-import log from './utils/log.js'
-const PORT = process.env.PORT || 3000
 
-import getAllTags from './utils/tag.js'
+import * as activity from './utils/activity.js'
+import * as entity from './utils/entity.js'
+import log from './utils/log.js'
+import * as review from './utils/review.js'
+import * as tag from './utils/tag.js'
 
 app.use(cors())
 app.use(express.json())
@@ -59,47 +62,71 @@ db.getConnection((err, connection) => {
 //
 //  //  //  //  //
 
+// SERVER STATUS DEBUG
 app.get('/', (req, res) => {
 	res.send('✅ Wanna Hang Out server is online')
 })
 
+// ENV DEBUG API
 app.get('/env', (req, res) => {
 	res.send(process.env.NODE_ENV === 'dev' ? 'dev' : 'prod')
 })
 
+//  //  //  //  //
+//
+//  API ENTITY
+//
+//  //  //  //  //
+
 app.get('/api/getAllEntities', (req, res) => {
-	db.query('SELECT * FROM entity', (err, result) => {
-		if (err) {
-			console.log(err)
-		}
-		res.send(result)
+	entity.getAllEntities(db).then(response => {
+		res.send(response)
 	})
 })
+
+//  //  //  //  //
+//
+//  API TAGS
+//
+//  //  //  //  //
 
 app.get('/api/getAllTags', (req, res) => {
-	db.query('SELECT * FROM tags', (err, result) => {
-		if (err) {
-			console.log(err)
-		}
-		res.send(result)
+	tag.getAllTags(db).then(response => {
+		res.send(response)
 	})
-	
-	// const query = new Promise(function(resolve, reject) {
-	// 	getAllTags(db)
-	// })
-
-	// log('-> Query ha llamado a promesa')
-
-	// query.then(function(value) {
-	// 	log(JSON.stringify(value))
-	// 	res.send(query)
-	// })
-
-	// log('-> Promesa ha respondido')
-	
 })
 
-// LISTEN PORT
+//  //  //  //  //
+//
+//  API ACTIVITY
+//
+//  //  //  //  //
+
+app.get('/api/getActivityByID', (req, res) => {
+	activity.getActivityByID(db,'Campos del formulario se pasan aqui (req)').then(response => {
+		res.send(response)
+	})
+})
+
+app.get('/api/filterActivitiesBy', (req, res) => {
+	activity.filterActivitiesBy(db,'Campos del formulario se pasan aqui (req)').then(response => {
+		res.send(response)
+	})
+})
+
+//  //  //  //  //
+//
+//  API REVIEW
+//
+//  //  //  //  //
+
+// To implement
+
+//  //  //  //  //
+//
+//  START LISTENING
+//
+//  //  //  //  //
 
 app.listen(PORT, () => {
 	log('\nServer is up and running at port ' + PORT)
