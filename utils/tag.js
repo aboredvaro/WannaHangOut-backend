@@ -1,3 +1,5 @@
+import log from './log.js'
+
 export async function getAllTags(db) {
 
 	return new Promise(resolve => {
