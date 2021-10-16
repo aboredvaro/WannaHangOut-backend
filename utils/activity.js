@@ -1,11 +1,24 @@
 import log from './log.js'
 import * as estandarizar from './estandarizar.js'
 
-export async function createNewActivity(db, params) {
-
-	// To complete
+export async function createNewActivity(db, req) {
 	
+	var sqlInsert = 'INSERT INTO Activity(id_entity_creador, title, description, seats, price, location, dateAct, min_duration) '
+	sqlInsert += 'VALUES(' + parseInt(req.query.id_entity_creador) + ', ' + req.query.title + ', ' + req.query.description + ', ' + parseInt(req.query.seats) + ', ' + parseFloat(req.query.price) + ', ' + req.query.location + ', ' 
+	+ Date.parse(req.query.dateAct) + ', ' + parseInt(req.query.min_duration) + ')'
+	
+	log(sqlInsert)
+
+	return new Promise(resolve => {
+		db.query(sqlInsert, (err, result) => {
+			if (err) {
+				console.log(err)
+			}
+			resolve('Done')
+		})
+	})
 }
+
 
 /**
  * @description Devuelve una actividad dado el id de dicha actividad
