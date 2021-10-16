@@ -73,7 +73,7 @@ async function getMaxIdActivity(db) {
 	})
 }
 
-function fixLowerLimit(low){
+function fixLowerLimit(low) {
 	var lowerLimit = 0
 	if(!isNaN(parseInt(low))) {
 		lowerLimit = parseInt(low)
@@ -81,7 +81,7 @@ function fixLowerLimit(low){
 	return lowerLimit
 }
 
-function fixUpperLimit(upper){
+function fixUpperLimit(upper) {
 	var upperLimit = 100
 	if(!isNaN(parseInt(upper))) {
 		upperLimit = parseInt(upper)
@@ -89,25 +89,25 @@ function fixUpperLimit(upper){
 	return upperLimit
 }
 
-function fixFilterByPrice(min, max){
+function fixFilterByPrice(min, max) {
 	return fixMinMax(min, max, 'a.price')
 }
 
-function fixFilterByDuration(min, max){
+function fixFilterByDuration(min, max) {
 	return fixMinMax(min, max, 'a.min_duration')
 }
 
-function fixFilterBySeats(min, max){
+function fixFilterBySeats(min, max) {
 	return fixMinMax(min, max, 'a.seats')
 }
 
-function fixFilterByDate(min, max){
+function fixFilterByDate(min, max) {
 	return fixMinMax(min, max, 'a.dateAct')
 }
 
 // Precondición: 	Si viene solo 'max', el rango será [0,max)
 //				Si viene 'min' y 'max', el rango será [min,max), se supone que min<max
-function fixMinMax(min, max, tabla){
+function fixMinMax(min, max, tabla) {
 	var pMin=0
 	if(!isNaN(parseInt(min)) ) {
 		pMin = parseInt(min)
@@ -122,7 +122,7 @@ function fixMinMax(min, max, tabla){
 	return ''
 }
 
-function fixFilterByLocation(location){
+function fixFilterByLocation(location) {
 	let sql = ''
 	if ((typeof location) !== 'undefined') {
 		sql = 'AND a.location LIKE "' + location + '" '
@@ -130,10 +130,10 @@ function fixFilterByLocation(location){
 	return sql
 }
 
-function fixFilterByType(id_types){
+function fixFilterByType(id_types) {
 	return 'AND id_activity IN (SELECT * FROM id_tags WHERE id_activity IN (' + id_types + ') '
 }
 
-function fixFilterByEntinty(id_entity_creator){
+function fixFilterByEntintyCreator(id_entity_creator) {
 	return 'AND id_entinty_creator = ' + id_entity_creator + ' '
 }
