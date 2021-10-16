@@ -103,13 +103,17 @@ app.get('/api/getAllTags', (req, res) => {
 //  //  //  //  //
 
 app.get('/api/getActivityByID', (req, res) => {
-	activity.getActivityByID(db,'Campos del formulario se pasan aqui (req)').then(response => {
-		res.send(response)
+	let idActivity = parseInt(req.query.id_activity)
+	if (isNaN(idActivity)){
+		return res.send('El id no tiene un formato correcto')
+	}
+	activity.getActivityByID(db,idActivity).then(response => {
+		return res.send(response)
 	})
 })
 
 app.get('/api/filterActivitiesBy', (req, res) => {
-	activity.filterActivitiesBy(db,'Campos del formulario se pasan aqui (req)').then(response => {
+	activity.filterActivitiesBy(db,req).then(response => {
 		res.send(response)
 	})
 })
