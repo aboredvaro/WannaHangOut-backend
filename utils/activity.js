@@ -1,4 +1,5 @@
 import log from './log.js'
+import * as estandarizar from './estandarizar.js'
 
 export async function createNewActivity(db, req) {
 	
@@ -18,45 +19,114 @@ export async function createNewActivity(db, req) {
 	})
 }
 
-//export async function createNewActivity(db, req) {
-//	return 'Hola'
-//}
 
+/**
+ * @description Devuelve una actividad dado el id de dicha actividad
+ * @param {*} db Base de Datos de consulta
+ * @param {*} activityID id a consultar
+ * @returns JSON con los siguientes datos {"id_activity", "title", "description", "seats", 
+ * 		  "price", "location", "dateAct", "min_duration", "id_entity_creador"}
+ */
 export async function getActivityByID(db, activityID) {
 	if ((await getMaxIdActivity(db)) < activityID || activityID < 1) {
 		return 'id fuera de rango'
 	}
+	log(sqlBodyQueryGetActivity() + 'WHERE id_activity = ' + activityID)
 	return new Promise(resolve => {
-		db.query('SELECT * FROM activity WHERE id_activity = ' + activityID, (err, result) => {
+		db.query(sqlBodyQueryGetActivity() + 'WHERE id_activity = ' + activityID, (err, result) => {
 			if (err) {
 				console.log(err)
 			}
 			resolve(JSON.stringify(result))
 		})
 	})
-	
 }
 
-export async function filterActivitiesBy(db, req) {
-	// To complete
-	// Implemented in SQL
-	// Return activity list filtered in SQL by "price"-, "duration"-, "date"-, "seats"-, "location"-, "type"
-	// SQL Limit ("lowerLimit" y "upperLimit")
+/**
+ * @description Devuelve todas las tags asociadas a una actividad, dado el id de dicha actividad
+ * @param {*} db Base de Datos de consulta
+ * @param {*} activityID id a consultar
+ * @returns JSON con los siguientes datos {"id_tags", "name"}
+ */
+export async function getTagsOfActivityByID(db, activityID) {
+	if ((await getMaxIdActivity(db)) < activityID || activityID < 1) {
+		return 'id fuera de rango'
+	}
+	var sqlSelect = 'SELECT t.id_tags, t.name '
+	var sqlFrom = 'FROM tags_act ta, tags t '
+	var sqlWhere = 'WHERE ta.id_tags = t.id_tags AND ta.id_activity = ' + activityID + ';'
 
-	var sqlSelect = 'SELECT a.id_activity, a.title, a.description, a.seats, a.price, a.location, a.dateAct, a.min_duration, a.id_entity_creador, e.nick as organizer '
-	var sqlFrom = 'FROM activity a, entity e '
+	log(sqlSelect + sqlFrom + sqlWhere)
+	return new Promise(resolve => {
+		db.query(sqlSelect + sqlFrom + sqlWhere, (err, result) => {
+			if (err) {
+				console.log(err)
+			}
+			resolve(JSON.stringify(result))
+		})
+	})
+}
+
+/**
+ * @description Devuelve el nick del creador de una actividad, dado el id de dicha actividad
+ * @param {*} db Base de Datos de consulta
+ * @param {*} activityID id a consultar
+ * @returns JSON con los siguientes datos {"nick"}
+ */
+export async function getCreatorEntityOfActivityByID(db, activityID) {
+	if ((await getMaxIdActivity(db)) < activityID || activityID < 1) {
+		return 'id fuera de rango'
+	}
+	var sqlSelect = 'SELECT nick '
+	var sqlFrom = 'FROM entity e '
+	var sqlWhere = 'WHERE id_entity = (SELECT id_entity_creador FROM activity WHERE id_activity =' + activityID + ');'
+
+	log(sqlSelect + sqlFrom + sqlWhere)
+	return new Promise(resolve => {
+		db.query(sqlSelect + sqlFrom + sqlWhere, (err, result) => {
+			if (err) {
+				console.log(err)
+			}
+			resolve(JSON.stringify(result))
+		})
+	})
+}
+
+/**
+ * @description Esta función es genérica, se encarga de aplicar varios filtros, según los criterios 
+ * 			 seleccionados de "price", "duration", "date", "seats", "location", "type".
+ * 			 La cantidad de "activities" devueltas está comprendida entre [lowerLimit, upperLimit]
+ * @param {*} db 
+ * @param {*} req 
+ * @property Si viene solo 'max', el rango será [0,max)
+ * @property Si viene solo 'min', el rango sera [min, maximo de la BD] <--Queda imlementar
+ * @property Si viene 'min' y 'max', el rango será [min,max), se supone que min<max
+ * @field req.query.location --> String para filtrar por localidad
+ * @field req.query.price_min, req.query.price_max --> number para filtrar por precios
+ * @field req.query.min_duration_min, req.query.min_duracion_max --> number para filtar por tiempo (minutos) de duración
+ * @field req.query.seats_min, req.query.seats_max --> number para filtrar por aforo máximo
+ * @field req.query.dateAct_min, req.query.dateAct_max -- date para filtrar por fechas de evento
+ * @field req.query.tags --> lista de number para filtrar por etiquetas, deben venir separados por comas y sin espacios ni paréntesis p.e: 1,2,3
+ * @field req.query.id_entity_creator --> lista de number para filtrar por creadores de eventos, deben venir separados por comas y sin espacios ni paréntesis p.e: 1,2,3
+ * @returns JSON con los siguientes datos {"id_activity", "title", "description", "seats", 
+ * 		  "price", "location", "dateAct", "min_duration", "id_entity_creador"}
+ */
+export async function filterActivitiesBy(db, req) {
+	var sqlSelectAndFrom = sqlBodyQueryGetActivity()
 	var sqlWhere = 'WHERE a.id_entity_creador = e.id_entity '
 	sqlWhere = sqlWhere + fixFilterByLocation(req.query.location)
 	sqlWhere = sqlWhere + fixFilterByPrice(req.query.price_min, req.query.price_max)
 	sqlWhere = sqlWhere + fixFilterByDuration(req.query.min_duration_min, req.query.min_duracion_max)
 	sqlWhere = sqlWhere + fixFilterBySeats(req.query.seats_min, req.query.seats_max)
 	sqlWhere = sqlWhere + fixFilterByDate(req.query.dateAct_min, req.query.dateAct_max)
+	sqlWhere = sqlWhere + fixFilterByType(req.query.id_tags)
+	sqlWhere = sqlWhere + fixFilterByEntintyCreator(req.query.id_entity_creator)
 	var sqlLimit = 'LIMIT ' + fixLowerLimit(req.query.lowerLimit) + ', ' + fixUpperLimit(req.query.upperLimit) + ';'
 
-	log(sqlSelect + sqlFrom + sqlWhere + sqlLimit)
+	log(sqlSelectAndFrom + sqlWhere + sqlLimit)
 
 	return new Promise(resolve => {
-		db.query(sqlSelect + sqlFrom + sqlWhere + sqlLimit, (err, result) => {
+		db.query(sqlSelectAndFrom + sqlWhere + sqlLimit, (err, result) => {
 			if (err) {
 				console.log(err)
 			}
@@ -89,20 +159,26 @@ async function getMaxIdActivity(db) {
 	})
 }
 
-function fixLowerLimit(low) {
-	var lowerLimit = 0
-	if(!isNaN(parseInt(low))) {
-		lowerLimit = parseInt(low)
-	}
-	return lowerLimit
+function sqlBodyQueryGetActivity(){
+	var sqlSelect = 'SELECT a.id_activity, a.title, a.description, a.seats, a.price, a.location, a.dateAct, a.min_duration, a.id_entity_creador '
+	var sqlFrom = 'FROM activity a, entity e '
+	return sqlSelect + sqlFrom
 }
 
-function fixUpperLimit(upper) {
-	var upperLimit = 100
-	if(!isNaN(parseInt(upper))) {
-		upperLimit = parseInt(upper)
+function fixLowerLimit(low) {
+	var lower = estandarizar.getNumber(low)
+	if (lower === -1) {
+		return 0
 	}
-	return upperLimit
+	return lower
+}
+
+function fixUpperLimit(upp) {
+	var upper = estandarizar.getNumber(upp)
+	if (upper === -1) {
+		return 100
+	}
+	return upper
 }
 
 function fixFilterByPrice(min, max) {
@@ -121,35 +197,38 @@ function fixFilterByDate(min, max) {
 	return fixMinMax(min, max, 'a.dateAct')
 }
 
-// Precondición: 	Si viene solo 'max', el rango será [0,max)
-//				Si viene 'min' y 'max', el rango será [min,max), se supone que min<max
-function fixMinMax(min, max, tabla) {
-	var pMin=0
-	if(!isNaN(parseInt(min)) ) {
-		pMin = parseInt(min)
+function fixFilterByLocation(location) {
+	if ((typeof location) !== 'undefined') {
+		return 'AND a.location LIKE "' + location + '" '
 	}
-	var pMax=0
-	if((typeof max) !== 'undefined') {
-		pMax = parseInt(max)
+	return ''
+}
+
+function fixFilterByType(id_tags) {
+	if (estandarizar.isEmpty(id_tags)) {
+		return ''
+	}
+	return 'AND id_activity IN (SELECT id_activity FROM tags_act WHERE id_tags IN (' + id_tags + ') group by id_activity) '
+}
+
+function fixFilterByEntintyCreator(id_entity_creator) {
+	if (estandarizar.isEmpty(id_entity_creator)) {
+		return ''
+	}
+	return 'AND id_activity IN (SELECT id_activity FROM activity WHERE id_entity_creador IN (' + id_entity_creator + ') GROUP BY id_activity) '
+}
+
+function fixMinMax(min, max, tabla) {
+	var pMin=estandarizar.getNumber(min)
+	if(pMin === -1) {
+		pMin = 0
+	}
+	var pMax=estandarizar.getNumber(max)
+	if(pMax === -1) {
+		pMax = 0
 	}
 	if (pMin <= pMax && pMax !== 0){
 		return 'AND ' + tabla + ' BETWEEN ' + pMin + ' AND ' + pMax + ' '
 	}
 	return ''
-}
-
-function fixFilterByLocation(location) {
-	let sql = ''
-	if ((typeof location) !== 'undefined') {
-		sql = 'AND a.location LIKE "' + location + '" '
-	}
-	return sql
-}
-
-function fixFilterByType(id_types) {
-	return 'AND id_activity IN (SELECT * FROM id_tags WHERE id_activity IN (' + id_types + ') '
-}
-
-function fixFilterByEntintyCreator(id_entity_creator) {
-	return 'AND id_entinty_creator = ' + id_entity_creator + ' '
 }
