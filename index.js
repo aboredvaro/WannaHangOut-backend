@@ -7,6 +7,8 @@ import express from 'express'
 import cors from 'cors'
 import mysql from 'mysql'
 
+import * as estandarizar from './utils/estandarizar.js'
+
 import * as activity from './utils/activity.js'
 import * as entity from './utils/entity.js'
 import log from './utils/log.js'
@@ -103,11 +105,19 @@ app.get('/api/getAllTags', (req, res) => {
 //  //  //  //  //
 
 app.get('/api/getActivityByID', (req, res) => {
-	let idActivity = parseInt(req.query.id_activity)
-	if (isNaN(idActivity)){
+	if (estandarizar.getNumber(req.query.id_activity) == -1) {
 		return res.send('El id no tiene un formato correcto')
 	}
-	activity.getActivityByID(db,idActivity).then(response => {
+	activity.getActivityByID(db, req.query.id_activity).then(response => {
+		return res.send(response)
+	})
+})
+
+app.get('/api/getTagsOfActivityByID', (req, res) => {
+	if (estandarizar.getNumber(req.query.id_activity) == -1) {
+		return res.send('El id no tiene un formato correcto')
+	}
+	activity.getTagsOfActivityByID(db, req.query.id_activity).then(response => {
 		return res.send(response)
 	})
 })
