@@ -24,8 +24,12 @@ INSERT INTO entity VALUES
     (7, 2, "Chloe", "Chloe", "Apellido Inventado", "Primera vez que puedo llamarme chloe y no Chloe1 o Chloe2 o Chloe1234", "chrrr5@mail.com", "999666003", "Calle la Princesa 71, bajo", "1234", "urlFoto"),
     (8, 2, "Rosael", "James", "Anthony Adams", "I'm new here, who wants to hang out?", "totallynotfake@mail.com", "999666005", "I don't evem know where i am", "1234", "urlFoto"),
     (9, 1, "P24", "Pub", null, "Pub sin g", "pub24negocios@mail.com", "999666006", "Plaza la Violeta 84", "1234", "urlFoto"),
-    (10, 2, "Mattt", "Mathews", "Moo", "No soy una vaka", "mooothwes@mail.com", "999666007", "La Granja 2", "1234", "urlFoto");
-
+    (10, 2, "Mattt", "Mathews", "Moo", "No soy una vaka", "mooothwes@mail.com", "999666007", "La Granja 2", "1234", "urlFoto"),
+    (11, 2, "CarlAs", "Solaire", "Astora", "\[T]/", "praisethesun@mail.com", "999666008", "Ruinas de Izalith", "1234", "urlFoto"),
+    (12, 2, "Clara", "Clara", "Torres", "Crecer es cambiar", "clat65@mail.com", "999666009", "Calle Abu Masaifa 8", "1234", "urlFoto"),
+    (13, 2, "Chafacharcos", "Sergio", "Astronauta", "Loving music and life", "chafacharcos97@mail.com", "999666010", "Hermanos Gandia 4-8-9", "1234", "urlFoto"),    
+    (14, 2, "VitKras_87", "Viktor", "Andre Saldaya", "Una cerveza, un cigarro, y un día más", "ironman724830@mail.com", "999666011", "C/Sebastián del Castillo 5", "1234", "urlFoto"),
+    (15, 1, "Soplo de verano", "Restaurante vegano", null, "Nuevo restaurante para aquellos que solo comen verde", "summerbreath@mail.com", "999666012", "C/Sebastián del Castillo 12", "1234", "urlFoto");
 
 INSERT INTO activity VALUES
     (1, 2, "Party de Halloween", "Nos vamos de botellona por el centro...", 152, 12.50, "Valencia", "2021-12-31", 15),
@@ -38,7 +42,11 @@ INSERT INTO activity VALUES
     (8, 8, "Quiero conocer gente nueva", "Soy nuevo en la ciudad, quiero conocer gente nueva, soy nuevo estudiante de la UPV. Cervezas?", 20, 0, "Valencia", "2021-10-31", 120),
     (9, 9, "Noche de música", "Esta noche viene unas cuantas bandas locales a tocar, pásate y escucha al pueblo cantar", 80, 15, "Asturias", "2021-10-31", 240),
     (10, 10, "Introduce título", "La verdad esq soy nuevo aquí, alguien quiere quedar mañana por la tarde? No tengo nada que hacer", 30, 0, "Asturias", "2021-10-31", 45),
-
+    (11, 11, "Tomemos el sol", "Quién se viene a la playa el viernes? Cervezas frías, bocadillos y helado", 30, 0, "Valencia", "2021-10-31", 180),
+    (12, 12, "Feria del libro", "Pronto va a haber una feria del libro, ¿algún ratón de biblioteca que vaya a ir también?", 10, 0, "Barcelona", "2021-10-31", 45),
+    (13, 13, "Recital", "El colegio de música El Mayor celebra el proximo lunes un recital de música. Venganse y escucheme a mí y mis compañeros cantar", 70, 0, "Asturias", "2021-10-31", 125),
+    (14, 14, "Cerveza!", "En diez minutos llego al Bar del Monte, hacen unos bocadillos increíbles, por si alguien está solo para almorzar.", 10, 8, "Asturias", "2021-10-31", 30),
+    (15, 15, "Inauguración!", "Mañana abrimos y vamos a tener una pequeña celebración. ¡Pásate y redescubre las verduras!", 100, 25, "Murcia", "2021-10-31", 180);
 
 INSERT INTO review VALUES
     (1, 1, "Estupendo", "Me lo pasé estupendamente", 10),
