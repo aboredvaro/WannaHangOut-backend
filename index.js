@@ -104,6 +104,12 @@ app.get('/api/getAllTags', (req, res) => {
 //
 //  //  //  //  //
 
+app.get('/api/getAllActivities', (req, res) => {
+	activity.getAllActivities(db).then(response => {
+		res.send(response)
+	})
+})
+
 app.get('/api/getActivityByID', (req, res) => {
 	if (estandarizar.getNumber(req.query.id_activity) == -1) {
 		return res.send('El id no tiene un formato correcto')
