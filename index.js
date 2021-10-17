@@ -129,7 +129,6 @@ app.get('/api/filterActivitiesBy', (req, res) => {
 })
 
 app.get('/api/createNewActivity', (req, res) => {
-	log('hola')
 	activity.createNewActivity(db,req).then(response => {
 		res.send(response)
 	})
