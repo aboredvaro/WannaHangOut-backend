@@ -10,7 +10,6 @@ export async function getAllEntities(db) {
 			resolve(JSON.stringify(result))
 		})
 	})
-	
 }
 
 export async function getEntityByID(db, entityID) {
