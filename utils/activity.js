@@ -2,6 +2,23 @@ import log from './log.js'
 import * as estandarizar from './estandarizar.js'
 
 /**
+ * @description Devuelve todas las actividades
+ * @param {*} db
+ * @returns JSON con todas las actividades (con el orden de la db)
+ */
+export async function getAllActivities(db) {
+
+	return new Promise(resolve => {
+		db.query('SELECT * FROM activity', (err, result) => {
+			if (err) {
+				console.log(err)
+			}
+			resolve(JSON.stringify(result))
+		})
+	})
+}
+
+/**
  * @description Registra una nueva Actividad en la BD
  * @param {*} db 
  * @param {*} req 
