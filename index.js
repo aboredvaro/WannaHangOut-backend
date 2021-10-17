@@ -102,6 +102,12 @@ app.get('/api/getAllTags', (req, res) => {
 //
 //  //  //  //  //
 
+app.get('/api/getAllActivities', (req, res) => {
+	activity.getAllActivities(db).then(response => {
+		res.send(response)
+	})
+})
+
 app.get('/api/getActivityByID', (req, res) => {
 	activity.getActivityByID(db,'Campos del formulario se pasan aqui (req)').then(response => {
 		res.send(response)
