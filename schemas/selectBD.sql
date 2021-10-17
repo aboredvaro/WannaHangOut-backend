@@ -1,3 +1,7 @@
+-- BD Producción
+-- USE heroku_8710917fecf1cf0;
+
+-- BD Beta
 USE heroku_314befdd836197e;
 
 SELECT * FROM tags_ent;

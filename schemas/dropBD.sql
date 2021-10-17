@@ -1,5 +1,8 @@
-USE heroku_314befdd836197e;
+-- BD Producción
+-- USE heroku_8710917fecf1cf0;
 
+-- BD Beta
+USE heroku_314befdd836197e;
 
 DROP TABLE tags_ent;
 DROP TABLE tags_act;
