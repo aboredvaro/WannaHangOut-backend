@@ -1,20 +1,73 @@
 import log from './log.js'
+import * as entity from './entity.js'
 import * as estandarizar from './estandarizar.js'
 
+/**
+ * @description Registra una nueva Actividad en la BD
+ * @param {*} db 
+ * @param {*} req 
+ * @returns Devuelve -1 en caso de error o el id_Activity de la Actividad creada
+ */
 export async function createNewActivity(db, req) {
+	var id_entity_creador = estandarizar.getNumber(req.query.id_entity_creador)
+	if (id_entity_creador === -1){
+		return 'La Id_Entity Creadora tiene un formato incorrecto'
+	}
+	var title
+	if (estandarizar.isEmpty(req.query.title)){
+		return 'El Título tiene un formato incorrecto'
+	} else {
+		title = req.query.title
+	}
+	var description
+	if (estandarizar.isEmpty(req.query.description)){
+		return 'La Descripción tiene un formato incorrecto'
+	} else {
+		description = req.query.description
+	}
+	var seats = estandarizar.getNumber(req.query.seats)
+	if (seats === -1){
+		return 'La Cantidad Máxima de Plazas tiene un formato incorrecto'
+	}
+	var price = estandarizar.getNumber(req.query.price)
+	if (price === -1){
+		return 'El Precio tiene un formato incorrecto'
+	}
+	var location
+	if (estandarizar.isEmpty(req.query.location)){
+		return 'La Localidad del Evento tiene un formato incorrecto'
+	} else {
+		location = req.query.location
+	}
+	var dateAct
+	if (estandarizar.isEmpty(req.query.dateAct)){
+		return 'La Fecha del Evento tiene un formato incorrecto'
+	} else {
+		dateAct = req.query.dateAct
+	}
+	var min_duration = estandarizar.getNumber(req.query.min_duration)
+	if (min_duration === -1){
+		return 'La duración del Evento tiene un formato incorrecto'
+	}
 	
-	var sqlInsert = 'INSERT INTO Activity(id_entity_creador, title, description, seats, price, location, dateAct, min_duration) '
-	sqlInsert += 'VALUES(' + parseInt(req.query.id_entity_creador) + ', ' + req.query.title + ', ' + req.query.description + ', ' + parseInt(req.query.seats) + ', ' + parseFloat(req.query.price) + ', ' + req.query.location + ', ' 
-	+ Date.parse(req.query.dateAct) + ', ' + parseInt(req.query.min_duration) + ')'
-	
-	log(sqlInsert)
+	var sqlInsert = 'INSERT INTO Activity ( '
+	sqlInsert += 'id_entity_creador, title, description, seats, price, location, dateAct, min_duration) VALUES ('
+	sqlInsert += id_entity_creador + ', '
+	sqlInsert += '"' + title + '", '
+	sqlInsert += '"' + description + '", '
+	sqlInsert += seats + ', '
+	sqlInsert += price + ', '
+	sqlInsert += '"' + location + '", '
+	sqlInsert += '"' + dateAct + '", '
+	sqlInsert += min_duration + '); '
 
+	log(sqlInsert)
 	return new Promise(resolve => {
 		db.query(sqlInsert, (err, result) => {
 			if (err) {
 				console.log(err)
 			}
-			resolve('Done')
+			resolve(JSON.parse(JSON.stringify(result)))
 		})
 	})
 }
@@ -30,7 +83,6 @@ export async function getActivityByID(db, activityID) {
 	if ((await getMaxIdActivity(db)) < activityID || activityID < 1) {
 		return 'id fuera de rango'
 	}
-	log(sqlBodyQueryGetActivity() + 'WHERE id_activity = ' + activityID)
 	return new Promise(resolve => {
 		db.query(sqlBodyQueryGetActivity() + 'WHERE id_activity = ' + activityID, (err, result) => {
 			if (err) {
@@ -54,8 +106,6 @@ export async function getTagsOfActivityByID(db, activityID) {
 	var sqlSelect = 'SELECT t.id_tags, t.name '
 	var sqlFrom = 'FROM tags_act ta, tags t '
 	var sqlWhere = 'WHERE ta.id_tags = t.id_tags AND ta.id_activity = ' + activityID + ';'
-
-	log(sqlSelect + sqlFrom + sqlWhere)
 	return new Promise(resolve => {
 		db.query(sqlSelect + sqlFrom + sqlWhere, (err, result) => {
 			if (err) {
@@ -79,8 +129,6 @@ export async function getCreatorEntityOfActivityByID(db, activityID) {
 	var sqlSelect = 'SELECT nick '
 	var sqlFrom = 'FROM entity e '
 	var sqlWhere = 'WHERE id_entity = (SELECT id_entity_creador FROM activity WHERE id_activity =' + activityID + ');'
-
-	log(sqlSelect + sqlFrom + sqlWhere)
 	return new Promise(resolve => {
 		db.query(sqlSelect + sqlFrom + sqlWhere, (err, result) => {
 			if (err) {
@@ -113,13 +161,13 @@ export async function getCreatorEntityOfActivityByID(db, activityID) {
 export async function filterActivitiesBy(db, req) {
 	var sqlSelectAndFrom = sqlBodyQueryGetActivity()
 	var sqlWhere = 'WHERE a.id_entity_creador = e.id_entity '
-	sqlWhere = sqlWhere + fixFilterByLocation(req.query.location)
-	sqlWhere = sqlWhere + fixFilterByPrice(req.query.price_min, req.query.price_max)
-	sqlWhere = sqlWhere + fixFilterByDuration(req.query.min_duration_min, req.query.min_duracion_max)
-	sqlWhere = sqlWhere + fixFilterBySeats(req.query.seats_min, req.query.seats_max)
-	sqlWhere = sqlWhere + fixFilterByDate(req.query.dateAct_min, req.query.dateAct_max)
-	sqlWhere = sqlWhere + fixFilterByType(req.query.id_tags)
-	sqlWhere = sqlWhere + fixFilterByEntintyCreator(req.query.id_entity_creator)
+	sqlWhere += fixFilterByLocation(req.query.location)
+	sqlWhere += fixFilterByPrice(req.query.price_min, req.query.price_max)
+	sqlWhere += fixFilterByDuration(req.query.min_duration_min, req.query.min_duracion_max)
+	sqlWhere += fixFilterBySeats(req.query.seats_min, req.query.seats_max)
+	sqlWhere += fixFilterByDate(req.query.dateAct_min, req.query.dateAct_max)
+	sqlWhere += fixFilterByType(req.query.id_tags)
+	sqlWhere += fixFilterByEntintyCreator(req.query.id_entity_creator)
 	var sqlLimit = 'LIMIT ' + fixLowerLimit(req.query.lowerLimit) + ', ' + fixUpperLimit(req.query.upperLimit) + ';'
 
 	log(sqlSelectAndFrom + sqlWhere + sqlLimit)

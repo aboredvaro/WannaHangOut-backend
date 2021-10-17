@@ -3,7 +3,7 @@ import log from './log.js'
 /**
  * @description Comprueba si el valor introducido es un número
  * @param {*} valor 
- * @returns Devuelve el número ó -1 en caso de no ser un número
+ * @returns Devuelve -1 en caso de error o el número en caso contrario
  */
 export function getNumber(valor){
 	var numero = parseInt(valor)
