@@ -19,7 +19,6 @@ export async function createNewActivity(db, req) {
 	})
 }
 
-
 /**
  * @description Devuelve una actividad dado el id de dicha actividad
  * @param {*} db Base de Datos de consulta
