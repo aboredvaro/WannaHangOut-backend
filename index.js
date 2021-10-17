@@ -7,6 +7,8 @@ import express from 'express'
 import cors from 'cors'
 import mysql from 'mysql'
 
+import * as estandarizar from './utils/estandarizar.js'
+
 import * as activity from './utils/activity.js'
 import * as entity from './utils/entity.js'
 import log from './utils/log.js'
@@ -109,13 +111,31 @@ app.get('/api/getAllActivities', (req, res) => {
 })
 
 app.get('/api/getActivityByID', (req, res) => {
-	activity.getActivityByID(db,'Campos del formulario se pasan aqui (req)').then(response => {
-		res.send(response)
+	if (estandarizar.getNumber(req.query.id_activity) == -1) {
+		return res.send('El id no tiene un formato correcto')
+	}
+	activity.getActivityByID(db, req.query.id_activity).then(response => {
+		return res.send(response)
+	})
+})
+
+app.get('/api/getTagsOfActivityByID', (req, res) => {
+	if (estandarizar.getNumber(req.query.id_activity) == -1) {
+		return res.send('El id no tiene un formato correcto')
+	}
+	activity.getTagsOfActivityByID(db, req.query.id_activity).then(response => {
+		return res.send(response)
 	})
 })
 
 app.get('/api/filterActivitiesBy', (req, res) => {
-	activity.filterActivitiesBy(db,'Campos del formulario se pasan aqui (req)').then(response => {
+	activity.filterActivitiesBy(db,req).then(response => {
+		res.send(response)
+	})
+})
+
+app.post('/api/createNewActivity', (req, res) => {
+	activity.createNewActivity(db,req).then(response => {
 		res.send(response)
 	})
 })
