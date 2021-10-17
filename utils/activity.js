@@ -1,5 +1,4 @@
 import log from './log.js'
-import * as entity from './entity.js'
 import * as estandarizar from './estandarizar.js'
 
 /**
@@ -49,6 +48,12 @@ export async function createNewActivity(db, req) {
 	if (min_duration === -1){
 		return 'La duración del Evento tiene un formato incorrecto'
 	}
+	var tags_act
+	if (estandarizar.isEmpty(req.query.tags_act)){
+		return 'Las Tags tienen un formato incorrecto'
+	} else {
+		tags_act = req.query.tags_act
+	}
 	
 	var sqlInsert = 'INSERT INTO Activity ( '
 	sqlInsert += 'id_entity_creador, title, description, seats, price, location, dateAct, min_duration) VALUES ('
@@ -61,16 +66,36 @@ export async function createNewActivity(db, req) {
 	sqlInsert += '"' + dateAct + '", '
 	sqlInsert += min_duration + '); '
 
-	log(sqlInsert)
-	return new Promise(resolve => {
+	var idActivityCreada = new Promise(resolve => {
 		db.query(sqlInsert, (err, result) => {
 			if (err) {
 				console.log(err)
 			}
-			log(result.insertId)
-			resolve(result.insertId)
+			resolve(JSON.stringify(result.insertId))
 		})
 	})
+
+	tags_act = tags_act.split(',')
+	sqlInsert = 'INSERT INTO tags_act ('
+	sqlInsert += 'id_activity, id_tags) VALUES ' 
+	for (const i in tags_act) {
+		sqlInsert += '(' + await idActivityCreada + ', ' + tags_act[i]
+		if ( i < (tags_act.length - 1)){
+			sqlInsert += '), '
+		} else {
+			sqlInsert += '); '
+		}
+	}
+
+	new Promise(resolve => {
+		db.query(sqlInsert, (err, result) => {
+			if (err) {
+				console.log(err)
+			}
+			resolve(JSON.stringify(result))
+		})
+	})
+	return idActivityCreada
 }
 
 /**
@@ -170,8 +195,6 @@ export async function filterActivitiesBy(db, req) {
 	sqlWhere += fixFilterByType(req.query.id_tags)
 	sqlWhere += fixFilterByEntintyCreator(req.query.id_entity_creator)
 	var sqlLimit = 'LIMIT ' + fixLowerLimit(req.query.lowerLimit) + ', ' + fixUpperLimit(req.query.upperLimit) + ';'
-
-	log(sqlSelectAndFrom + sqlWhere + sqlLimit)
 
 	return new Promise(resolve => {
 		db.query(sqlSelectAndFrom + sqlWhere + sqlLimit, (err, result) => {
