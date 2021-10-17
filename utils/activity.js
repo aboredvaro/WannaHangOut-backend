@@ -67,7 +67,8 @@ export async function createNewActivity(db, req) {
 			if (err) {
 				console.log(err)
 			}
-			resolve(JSON.parse(JSON.stringify(result)))
+			log(result.insertId)
+			resolve(result.insertId)
 		})
 	})
 }
