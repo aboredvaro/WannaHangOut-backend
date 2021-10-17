@@ -54,7 +54,6 @@ export async function createNewActivity(db, req) {
 	} else {
 		tags_act = req.query.tags_act
 	}
-	
 	var sqlInsert = 'INSERT INTO Activity ( '
 	sqlInsert += 'id_entity_creador, title, description, seats, price, location, dateAct, min_duration) VALUES ('
 	sqlInsert += id_entity_creador + ', '
@@ -65,7 +64,6 @@ export async function createNewActivity(db, req) {
 	sqlInsert += '"' + location + '", '
 	sqlInsert += '"' + dateAct + '", '
 	sqlInsert += min_duration + '); '
-
 	var idActivityCreada = new Promise(resolve => {
 		db.query(sqlInsert, (err, result) => {
 			if (err) {
@@ -74,7 +72,6 @@ export async function createNewActivity(db, req) {
 			resolve(JSON.stringify(result.insertId))
 		})
 	})
-
 	tags_act = tags_act.split(',')
 	sqlInsert = 'INSERT INTO tags_act ('
 	sqlInsert += 'id_activity, id_tags) VALUES ' 
@@ -86,7 +83,6 @@ export async function createNewActivity(db, req) {
 			sqlInsert += '); '
 		}
 	}
-
 	new Promise(resolve => {
 		db.query(sqlInsert, (err, result) => {
 			if (err) {
@@ -114,6 +110,7 @@ export async function getActivityByID(db, activityID) {
 			if (err) {
 				console.log(err)
 			}
+			log(sqlBodyQueryGetActivity() + 'WHERE id_activity = ' + activityID)
 			resolve(JSON.stringify(result))
 		})
 	})
@@ -185,8 +182,7 @@ export async function getCreatorEntityOfActivityByID(db, activityID) {
  * 		  "price", "location", "dateAct", "min_duration", "id_entity_creador"}
  */
 export async function filterActivitiesBy(db, req) {
-	var sqlSelectAndFrom = sqlBodyQueryGetActivity()
-	var sqlWhere = 'WHERE a.id_entity_creador = e.id_entity '
+	var sqlWhere = 'WHERE a.id_activity '
 	sqlWhere += fixFilterByLocation(req.query.location)
 	sqlWhere += fixFilterByPrice(req.query.price_min, req.query.price_max)
 	sqlWhere += fixFilterByDuration(req.query.min_duration_min, req.query.min_duracion_max)
@@ -195,9 +191,9 @@ export async function filterActivitiesBy(db, req) {
 	sqlWhere += fixFilterByType(req.query.id_tags)
 	sqlWhere += fixFilterByEntintyCreator(req.query.id_entity_creator)
 	var sqlLimit = 'LIMIT ' + fixLowerLimit(req.query.lowerLimit) + ', ' + fixUpperLimit(req.query.upperLimit) + ';'
-
+	log(sqlBodyQueryGetActivity() + sqlWhere + sqlLimit)
 	return new Promise(resolve => {
-		db.query(sqlSelectAndFrom + sqlWhere + sqlLimit, (err, result) => {
+		db.query(sqlBodyQueryGetActivity() + sqlWhere + sqlLimit, (err, result) => {
 			if (err) {
 				console.log(err)
 			}
@@ -232,7 +228,7 @@ async function getMaxIdActivity(db) {
 
 function sqlBodyQueryGetActivity(){
 	var sqlSelect = 'SELECT a.id_activity, a.title, a.description, a.seats, a.price, a.location, a.dateAct, a.min_duration, a.id_entity_creador '
-	var sqlFrom = 'FROM activity a, entity e '
+	var sqlFrom = 'FROM activity a '
 	return sqlSelect + sqlFrom
 }
 
