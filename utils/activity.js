@@ -1,5 +1,6 @@
 import log from './log.js'
 import * as estandarizar from './estandarizar.js'
+import * as query from './query.js'
 
 /**
  * @description Devuelve todas las actividades
@@ -119,7 +120,7 @@ export async function createNewActivity(db, req) {
  * 		  "price", "location", "dateAct", "min_duration", "id_entity_creador"}
  */
 export async function getActivityByID(db, activityID) {
-	if ((await getMaxIdActivity(db)) < activityID || activityID < 1) {
+	if ((await query.getMaxIdFromTable(db, 'activity')) < activityID || activityID < 1) {
 		return 'id fuera de rango'
 	}
 	return new Promise(resolve => {
@@ -140,7 +141,7 @@ export async function getActivityByID(db, activityID) {
  * @returns JSON con los siguientes datos {"id_tags", "name"}
  */
 export async function getTagsOfActivityByID(db, activityID) {
-	if ((await getMaxIdActivity(db)) < activityID || activityID < 1) {
+	if ((await query.getMaxIdFromTable(db, 'activity')) < activityID || activityID < 1) {
 		return 'id fuera de rango'
 	}
 	var sqlSelect = 'SELECT t.id_tags, t.name '
@@ -163,7 +164,7 @@ export async function getTagsOfActivityByID(db, activityID) {
  * @returns JSON con los siguientes datos {"nick"}
  */
 export async function getCreatorEntityOfActivityByID(db, activityID) {
-	if ((await getMaxIdActivity(db)) < activityID || activityID < 1) {
+	if ((await query.getMaxIdFromTable(db, 'activity')) < activityID || activityID < 1) {
 		return 'id fuera de rango'
 	}
 	var sqlSelect = 'SELECT nick '
@@ -231,17 +232,6 @@ export async function sortActivitiesBy(db, params) {
 //  FUNCIONES SECUNDARIAS, PERO NECESARIAS  //
 //                                          //
 //  //  //  //  //  //  //  //  //  //  //  //
-
-async function getMaxIdActivity(db) {
-	return new Promise(resolve => {
-		db.query('SELECT MAX(id_activity) AS max FROM activity', (err, result) => {
-			if (err) {
-				console.log(err)
-			}
-			resolve(JSON.parse(JSON.stringify(result))[0].max)
-		})
-	})
-}
 
 function sqlBodyQueryGetActivity(){
 	var sqlSelect = 'SELECT a.id_activity, a.title, a.description, a.seats, a.price, a.location, a.dateAct, a.min_duration, a.id_entity_creador '
