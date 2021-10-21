@@ -157,29 +157,6 @@ export async function getTagsOfActivityByID(db, activityID) {
 }
 
 /**
- * @description Devuelve el nick del creador de una actividad, dado el id de dicha actividad
- * @param {*} db Base de Datos de consulta
- * @param {*} activityID id a consultar
- * @returns JSON con los siguientes datos {"nick"}
- */
-export async function getCreatorEntityOfActivityByID(db, activityID) {
-	if ((await getMaxIdActivity(db)) < activityID || activityID < 1) {
-		return 'id fuera de rango'
-	}
-	var sqlSelect = 'SELECT nick '
-	var sqlFrom = 'FROM entity e '
-	var sqlWhere = 'WHERE id_entity = (SELECT id_entity_creador FROM activity WHERE id_activity =' + activityID + ');'
-	return new Promise(resolve => {
-		db.query(sqlSelect + sqlFrom + sqlWhere, (err, result) => {
-			if (err) {
-				console.log(err)
-			}
-			resolve(JSON.stringify(result))
-		})
-	})
-}
-
-/**
  * @description Esta función es genérica, se encarga de aplicar varios filtros, según los criterios 
  * 			 seleccionados de "price", "duration", "date", "seats", "location", "type".
  * 			 La cantidad de "activities" devueltas está comprendida entre [lowerLimit, upperLimit]

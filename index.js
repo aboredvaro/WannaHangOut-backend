@@ -86,6 +86,16 @@ app.get('/api/getAllEntities', (req, res) => {
 	})
 })
 
+app.get('/api/getEntityByID', (req, res) => {
+	log(req.query.id_entity)
+	if (estandarizar.getNumber(req.query.id_entity) == -1) {
+		return res.send('El id no tiene un formato correcto')
+	}
+	entity.getEntityByID(db, req.query.id_entity).then(response => {
+		return res.send(response)
+	})
+})
+
 //  //  //  //  //
 //
 //  API TAGS
