@@ -3,23 +3,6 @@ import * as estandarizar from './estandarizar.js'
 import * as query from './query.js'
 
 /**
- * @description Devuelve todas las actividades
- * @param {*} db
- * @returns JSON con todas las actividades (con el orden de la db)
- */
-export async function getAllActivities(db) {
-
-	return new Promise(resolve => {
-		db.query('SELECT * FROM activity', (err, result) => {
-			if (err) {
-				console.log(err)
-			}
-			resolve(JSON.stringify(result))
-		})
-	})
-}
-
-/**
  * @description Registra una nueva Actividad en la BD
  * @param {*} db 
  * @param {*} req 
@@ -113,6 +96,23 @@ export async function createNewActivity(db, req) {
 }
 
 /**
+ * @description Devuelve un JSON sin filtrar, con todas las Actividades NO BORRADAS
+ * @param {*} db
+ * @returns JSON
+ */
+export async function getAllActivities(db) {
+
+	return new Promise(resolve => {
+		db.query(sqlBodyQueryGetActivity() + 'WHERE deleted = ' + 0 , (err, result) => {
+			if (err) {
+				console.log(err)
+			}
+			resolve(JSON.stringify(result))
+		})
+	})
+}
+
+/**
  * @description Devuelve una actividad dado el id de dicha actividad
  * @param {*} db Base de Datos de consulta
  * @param {*} activityID id a consultar
@@ -147,29 +147,6 @@ export async function getTagsOfActivityByID(db, activityID) {
 	var sqlSelect = 'SELECT t.id_tags, t.name '
 	var sqlFrom = 'FROM tags_act ta, tags t '
 	var sqlWhere = 'WHERE ta.id_tags = t.id_tags AND ta.id_activity = ' + activityID + ';'
-	return new Promise(resolve => {
-		db.query(sqlSelect + sqlFrom + sqlWhere, (err, result) => {
-			if (err) {
-				console.log(err)
-			}
-			resolve(JSON.stringify(result))
-		})
-	})
-}
-
-/**
- * @description Devuelve el nick del creador de una actividad, dado el id de dicha actividad
- * @param {*} db Base de Datos de consulta
- * @param {*} activityID id a consultar
- * @returns JSON con los siguientes datos {"nick"}
- */
-export async function getCreatorEntityOfActivityByID(db, activityID) {
-	if ((await query.getMaxIdFromTable(db, 'activity')) < activityID || activityID < 1) {
-		return 'id fuera de rango'
-	}
-	var sqlSelect = 'SELECT nick '
-	var sqlFrom = 'FROM entity e '
-	var sqlWhere = 'WHERE id_entity = (SELECT id_entity_creador FROM activity WHERE id_activity =' + activityID + ');'
 	return new Promise(resolve => {
 		db.query(sqlSelect + sqlFrom + sqlWhere, (err, result) => {
 			if (err) {
@@ -234,8 +211,8 @@ export async function sortActivitiesBy(db, params) {
 //  //  //  //  //  //  //  //  //  //  //  //
 
 function sqlBodyQueryGetActivity(){
-	var sqlSelect = 'SELECT a.id_activity, a.title, a.description, a.seats, a.price, a.location, a.dateAct, a.min_duration, a.id_entity_creador '
-	var sqlFrom = 'FROM activity a '
+	var sqlSelect = 'SELECT * '
+	var sqlFrom = 'FROM activity '
 	return sqlSelect + sqlFrom
 }
 

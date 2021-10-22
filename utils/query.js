@@ -1,6 +1,7 @@
 import log from './log.js'
 
 export async function getMaxIdFromTable(db, table) {
+
 	var sql = 'SELECT COLUMN_NAME, COLUMN_KEY, DATA_TYPE ' 
 	sql += 'FROM INFORMATION_SCHEMA.COLUMNS ' 
 	sql += 'WHERE TABLE_NAME = "' + table + '" AND COLUMN_KEY IN ("PRI", "UNI");'

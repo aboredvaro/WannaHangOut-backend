@@ -3,8 +3,8 @@
 -- USE heroku_8710917fecf1cf0;
 
 -- BD Beta
-CREATE DATABASE IF NOT EXISTS heroku_314befdd836197e;
-USE heroku_314befdd836197e;
+-- CREATE DATABASE IF NOT EXISTS heroku_314befdd836197e;
+-- USE heroku_314befdd836197e;
 
 -- Roles que pueden tener cada Entity
 CREATE TABLE rol (
@@ -53,7 +53,7 @@ CREATE TABLE entity (
     id_entity INT AUTO_INCREMENT,
     id_role TINYINT NOT NULL,
     id_address INT NOT NULL,
-    nick VARCHAR(20) NOT NULL,
+    nick VARCHAR(20) UNIQUE NOT NULL,
     name VARCHAR(30) NOT NULL,
     surname VARCHAR(120),
     description VARCHAR(500) NOT NULL,
@@ -67,7 +67,8 @@ CREATE TABLE entity (
     FOREIGN KEY (id_address) REFERENCES address (id_address)
 );
 
--- Actividades ofertadas
+-- Actividades ofertadas, hace alusión a las actividades que se ofertan, que son las
+-- mismas a las que entities se apuntan para participar
 CREATE TABLE activity (
     id_activity INT AUTO_INCREMENT,
     id_entity_creator INT NOT NULL,

@@ -11,6 +11,7 @@ import * as estandarizar from './utils/estandarizar.js'
 
 import * as activity from './utils/activity.js'
 import * as entity from './utils/entity.js'
+import * as address from './utils/address.js'
 import log from './utils/log.js'
 import * as review from './utils/review.js'
 import * as tag from './utils/tag.js'
@@ -145,6 +146,18 @@ app.get('/api/filterActivitiesBy', (req, res) => {
 
 app.post('/api/createNewActivity', (req, res) => {
 	activity.createNewActivity(db,req).then(response => {
+		res.send(response)
+	})
+})
+
+//  //  //  //  //
+//
+//  API ADDRESS
+//
+//  //  //  //  //
+
+app.get('/api/getAddressByID', (req, res) => {
+	address.getAddressByID(db,req).then(response => {
 		res.send(response)
 	})
 })
