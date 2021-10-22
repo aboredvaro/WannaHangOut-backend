@@ -8,7 +8,7 @@ import cors from 'cors'
 import mysql from 'mysql'
 
 import * as estandarizar from './utils/estandarizar.js'
-
+import * as address from './utils/address.js'
 import * as activity from './utils/activity.js'
 import * as entity from './utils/entity.js'
 import log from './utils/log.js'
@@ -149,6 +149,11 @@ app.post('/api/createNewActivity', (req, res) => {
 	})
 })
 
+app.post('/api/createNewAddress', (req, res) => {
+	address.createNewAddress(db, req).then(response => {
+		res.send(response)
+	})
+})
 //  //  //  //  //
 //
 //  API REVIEW

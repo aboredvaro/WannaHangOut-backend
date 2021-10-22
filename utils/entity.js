@@ -28,6 +28,23 @@ export async function getEntityByID(db, entityID) {
 	})
 }
 
+export async function createNewActivity(db, req) {
+	var sqlInsert = 'INSERT INTO entity ( id_role, id_adress, nick, name, surname, description, mail, phone, pass, avatar) VALUES ( '
+	sqlInsert += req.query.id_role + ', '
+	sqlInsert += req.query.id_adress + ', '
+	sqlInsert += req.query.nick + ', '
+	sqlInsert += req.query.name + ', '
+	sqlInsert += req.query.surname + ', '
+	sqlInsert += req.query.description + ', '
+	sqlInsert += req.query.mail + ', '
+	sqlInsert += req.query.phone + ', '
+	sqlInsert += req.query.pass + ', '
+	sqlInsert += req.query.avatar + ')'
+
+	log(sqlInsert)
+	
+}
+
 //  //  //  //  //  //  //  //  //  //  //  //
 //								    //
 //  FUNCIONES SECUNDARIAS, PERO NECESARIAS  //
