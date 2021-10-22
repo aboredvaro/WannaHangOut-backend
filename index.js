@@ -7,7 +7,7 @@ import express from 'express'
 import cors from 'cors'
 import mysql from 'mysql'
 
-import * as estandarizar from './utils/estandarizar.js'
+import * as utilities from './utils/utilities.js'
 
 import * as activity from './utils/activity.js'
 import * as entity from './utils/entity.js'
@@ -88,7 +88,7 @@ app.get('/api/getAllEntities', (req, res) => {
 })
 
 app.get('/api/getEntityByID', (req, res) => {
-	if (estandarizar.getNumber(req.query.id_entity) == -1) {
+	if (utilities.getNumber(req.query.id_entity) == -1) {
 		return res.send('El id no tiene un formato correcto')
 	}
 	entity.getEntityByID(db, req.query.id_entity).then(response => {
@@ -115,13 +115,19 @@ app.get('/api/getAllTags', (req, res) => {
 //  //  //  //  //
 
 app.get('/api/getAllActivities', (req, res) => {
-	activity.getAllActivities(db).then(response => {
+	var listAll = utilities.getNumber(req.query.id_all)
+	if (listAll === -1) {
+		listAll = 0
+	}
+
+	log(listAll)
+	activity.getAllActivities(db, listAll).then(response => {
 		res.send(response)
 	})
 })
 
 app.get('/api/getActivityByID', (req, res) => {
-	if (estandarizar.getNumber(req.query.id_activity) == -1) {
+	if (utilities.getNumber(req.query.id_activity) == -1) {
 		return res.send('El id no tiene un formato correcto')
 	}
 	activity.getActivityByID(db, req.query.id_activity).then(response => {
@@ -130,7 +136,7 @@ app.get('/api/getActivityByID', (req, res) => {
 })
 
 app.get('/api/getTagsOfActivityByID', (req, res) => {
-	if (estandarizar.getNumber(req.query.id_activity) == -1) {
+	if (utilities.getNumber(req.query.id_activity) == -1) {
 		return res.send('El id no tiene un formato correcto')
 	}
 	activity.getTagsOfActivityByID(db, req.query.id_activity).then(response => {
@@ -157,7 +163,10 @@ app.post('/api/createNewActivity', (req, res) => {
 //  //  //  //  //
 
 app.get('/api/getAddressByID', (req, res) => {
-	address.getAddressByID(db,req).then(response => {
+	if (utilities.getNumber(req.query.id_address) == -1) {
+		return res.send('El id no tiene un formato correcto')
+	}
+	address.getAddressByID(db,req.query.id_address).then(response => {
 		res.send(response)
 	})
 })

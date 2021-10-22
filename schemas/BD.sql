@@ -3,8 +3,8 @@
 -- USE heroku_8710917fecf1cf0;
 
 -- BD Beta
--- CREATE DATABASE IF NOT EXISTS heroku_314befdd836197e;
--- USE heroku_314befdd836197e;
+ CREATE DATABASE IF NOT EXISTS heroku_314befdd836197e;
+ USE heroku_314befdd836197e;
 
 -- Roles que pueden tener cada Entity
 CREATE TABLE rol (
@@ -58,6 +58,7 @@ CREATE TABLE entity (
     surname VARCHAR(120),
     description VARCHAR(500) NOT NULL,
     mail VARCHAR(120) NOT NULL,
+    sha256 VARCHAR(64) NOT NULL,
     phone INT NOT NULL, 
     pass VARCHAR(30) NOT NULL,
     avatar LONGTEXT NOT NULL,

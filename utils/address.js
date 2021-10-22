@@ -1,6 +1,6 @@
 
 import log from './log.js'
-import * as estandarizar from './estandarizar.js'
+import * as utilities from './utilities.js'
 import * as query from './query.js'
 
 /**
@@ -16,7 +16,7 @@ export async function getAddressByID(db, addressID) {
 	}
 	var sqlSelect = 'SELECT a.id_address, p.province, a.codPos, a.location, a.direction, a.latitude, a.longitude '
 	var sqlFrom = 'FROM address a, provinces p '
-	var sqlWhere = 'WHERE a.id_province = p.province AND a.id_address = ' + addressID
+	var sqlWhere = 'WHERE a.id_province = p.id_province AND a.id_address = ' + addressID + '; '
 
 	log(sqlSelect + sqlFrom + sqlWhere)
 	return new Promise(resolve => {
@@ -24,7 +24,7 @@ export async function getAddressByID(db, addressID) {
 			if (err) {
 				console.log(err)
 			}
-			resolve(JSON.stringify(result))
+			resolve(result[0])
 		})
 	})
 }
