@@ -15,6 +15,7 @@ import * as address from './utils/address.js'
 import log from './utils/log.js'
 import * as review from './utils/review.js'
 import * as tag from './utils/tag.js'
+import * as address from './utils/address.js'
 
 app.use(cors())
 app.use(express.json())
@@ -96,6 +97,12 @@ app.get('/api/getEntityByID', (req, res) => {
 	})
 })
 
+app.post('/api/createNewEntity', (req, res) => {
+	entity.createNewEntity(db,req).then(response => {
+		res.send(response)
+	})
+})
+
 //  //  //  //  //
 //
 //  API TAGS
@@ -167,6 +174,12 @@ app.get('/api/getAddressByID', (req, res) => {
 		return res.send('El id no tiene un formato correcto')
 	}
 	address.getAddressByID(db,req.query.id_address).then(response => {
+		res.send(response)
+	})
+})
+
+app.post('/api/createNewAddress', (req, res) => {
+	address.createNewAddress(db,req).then(response => {
 		res.send(response)
 	})
 })
