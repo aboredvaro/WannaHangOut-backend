@@ -56,3 +56,11 @@ $ yarn run lint
 $ yarn run lint --fix
 
 ```
+
+### Stanford Javascript Crypto Library (hash256)
+
+``` bash
+$ npm install --save sjcl
+
+```
+Si después de la instalación da problemas, hay que reinstalar yarn (según los pasos anteriores)

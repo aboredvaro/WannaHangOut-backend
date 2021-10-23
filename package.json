@@ -5,9 +5,10 @@
   "scripts": {
     "dev": "cross-env NODE_ENV=dev nodemon index.js",
     "start": "nodemon index.js",
-    "lint": "eslint './**/*.{js,ts,tsx}'"
+    "lint": "eslint ."
   },
   "dependencies": {
+    "@types/sjcl": "^1.0.30",
     "axios": "^0.22.0",
     "cors": "^2.8.5",
     "cross-env": "^7.0.3",
@@ -15,6 +16,7 @@
     "express": "^4.17.1",
     "mysql": "^2.18.1",
     "nodemon": "^2.0.13",
+    "sjcl": "^1.0.8",
     "typescript": "^4.4.3"
   },
   "type": "module",

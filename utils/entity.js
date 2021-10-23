@@ -1,4 +1,5 @@
 import log from './log.js'
+import * as query from './query.js'
 
 export async function getAllEntities(db) {
 
@@ -7,13 +8,13 @@ export async function getAllEntities(db) {
 			if (err) {
 				console.log(err)
 			}
-			resolve(JSON.stringify(result))
+			resolve(result)
 		})
 	})
 }
 
 export async function getEntityByID(db, entityID) {
-	if ((await getMaxIdEntity(db)) < entityID || entityID < 1) {
+	if ((await query.getMaxIdFromTable(db, 'entity')) < entityID || entityID < 1) {
 		return 'id fuera de rango'
 	}
 	log(sqlBodyQueryGetEntity() + 'WHERE id_entity = ' + entityID)
@@ -22,7 +23,7 @@ export async function getEntityByID(db, entityID) {
 			if (err) {
 				console.log(err)
 			}
-			resolve(JSON.stringify(result))
+			resolve(result[0])
 		})
 	})
 }
@@ -33,19 +34,8 @@ export async function getEntityByID(db, entityID) {
 //                                          //
 //  //  //  //  //  //  //  //  //  //  //  //
 
-async function getMaxIdEntity(db) {
-	return new Promise(resolve => {
-		db.query('SELECT MAX(id_entity) AS max FROM entity', (err, result) => {
-			if (err) {
-				console.log(err)
-			}
-			resolve(JSON.parse(JSON.stringify(result))[0].max)
-		})
-	})
-}
-
 function sqlBodyQueryGetEntity(){
-	var sqlSelect = 'SELECT e.id_role, e.nick, e.name, e.surname, e.description, e.mail, e.phone, e.location, e.avatar '
-	var sqlFrom = 'FROM activity a, entity e '
+	var sqlSelect = 'SELECT e.id_entity, e.id_role, e.id_address, e.nick, e.name, e.surname, e.description, e.mail, e.phone, e.avatar, e.deleted '
+	var sqlFrom = 'FROM entity e '
 	return sqlSelect + sqlFrom
 }

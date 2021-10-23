@@ -1,4 +1,5 @@
 import log from './log.js'
+import sjcl from 'sjcl'
 
 /**
  * @description Comprueba si el valor introducido es un número
@@ -23,4 +24,15 @@ export function isEmpty(valor){
 		return false
 	}
 	return true
+}
+
+/**
+ * @description Calcula la cadena sha256 de un string
+ * @param {*} message 
+ * @returns string
+ */
+export async function sha256(message) {
+	const myBitArray = sjcl.hash.sha256.hash(message)
+	const myHash = sjcl.codec.hex.fromBits(myBitArray)
+	return myHash.toUpperCase()
 }
