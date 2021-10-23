@@ -16,7 +16,7 @@ export async function createNewAddress(db, req) {
 			if (err) {
 				console.log(err)
 			}
-			resolve((result.insertId))
+			resolve(JSON.stringify(result.insertId))
 		})
 	})	
     return idAddressCreated

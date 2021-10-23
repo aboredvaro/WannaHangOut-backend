@@ -29,6 +29,10 @@ export async function getEntityByID(db, entityID) {
 }
 
 export async function createNewEntity(db, req) {
+	//comprobar que el usuario no exista ya
+	//comprobar que el correo no exista ya
+	//comprobar que el telf no exista ya
+
 	var sqlInsert = 'INSERT INTO entity ( id_role, id_address, nick, name, surname, description, mail, phone, pass, avatar) VALUES ( '
 	sqlInsert += parseInt(req.query.id_role) + ', '
 	sqlInsert += parseInt(req.query.id_address) + ', '
@@ -47,12 +51,11 @@ export async function createNewEntity(db, req) {
 			if (err) {
 				console.log(err)
 			}
-			resolve(JSON.stringify(result))
+			resolve(JSON.stringify(result.insertId))
 		})
 	})
 
-	var tags_ent = req.query.tags_ent
-	tags_ent = tags_ent.split(',')
+	var tags_ent = req.query.tags_ent.split(',')
 	sqlInsert = 'INSERT INTO tags_ent ('
 	sqlInsert += 'id_entity, id_tags) VALUES ' 
 	for (const i in tags_ent) {
@@ -63,6 +66,7 @@ export async function createNewEntity(db, req) {
 			sqlInsert += '); '
 		}
 	}
+	log(sqlInsert)
 	new Promise(resolve => {
 		db.query(sqlInsert, (err, result) => {
 			if (err) {
