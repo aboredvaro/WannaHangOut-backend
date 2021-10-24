@@ -107,6 +107,21 @@ app.post('/api/createNewEntity', (req, res) => {
 	})
 })
 
+app.put('/api/updateEntity', (req, res) => {
+	entity.createNewEntity(db,req).then(response => {
+		res.send(response)
+	})
+})
+
+app.delete('/api/deleteEntityById', (req, res) => {
+	if (utilities.getNumber(req.query.id_entity) == -1) {
+		return res.send('El id no tiene un formato correcto')
+	}
+	entity.createNewEntity(db, req.query.id_entity).then(response => {
+		res.send(response)
+	})
+})
+
 //  //  //  //  //
 //
 //  API TAGS

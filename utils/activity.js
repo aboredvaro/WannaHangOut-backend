@@ -66,7 +66,7 @@ export async function createNewActivity(db, req) {
 		return -1
 	} 
 
-	if (!tag.insertTagsByIdOfEntitYOrActivity(db, req.query.tags_act.split(','), await idActivityCreate, 'tags_act', 'id_activity')) {
+	if (!tag.insertTagsByIdOfEntityOrActivity(db, req.query.tags_act.split(','), await idActivityCreate, 'tags_act', 'id_activity')) {
 		return 'Error: NO se ha podido insertar Etiquetas'
 	}
 	

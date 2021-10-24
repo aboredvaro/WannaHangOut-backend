@@ -69,15 +69,101 @@ export async function createNewEntity(db, req) {
 		return -1
 	} 
 
-	if (!tag.insertTagsByIdOfEntitYOrActivity(db, req.query.tags_ent.split(','), await idEntityCreate, 'tags_ent', 'id_entity')) {
+	if (!tag.insertTagsByIdOfEntityOrActivity(db, req.query.tags_ent.split(','), await idEntityCreate, 'tags_ent', 'id_entity')) {
 		return 'Error: NO se ha podido insertar Etiquetas'
 	}
 	
 	return idEntityCreate
 }
 
-export async function getAllEntities(db) {
+/**
+ * @description Actualiza los datos de una Entidad
+ * @param {*} db 
+ * @param {*} req 
+ * @returns Devuelve false en caso de error true en caso contrario
+ */
+export async function updateEntity(db, req) {
+	var id_entity = utilities.getNumber(req.query.id_entity)
+	var id_role = utilities.getNumber(req.query.id_role)
+	var phone = utilities.getNumber(req.query.phone)
+	var deleted = utilities.getNumber(req.query.deleted)
 
+	if (id_entity === -1){
+		return 'Formato incorrecto de: "id_entity".'
+	} else if (id_role === -1){
+		return 'Formato incorrecto de: "Rol de usuario".'
+	} else if (phone === -1){
+		return 'Formato incorrecto de: "Teléfono de contacto".'
+	} else if (deleted === -1){
+		return 'Formato incorrecto de: "Marcado para borrar".'
+	}  else if (utilities.isEmpty(req.query.nick)) {
+		return 'Formato incorrecto de: "Nick".'
+	} else if (utilities.isEmpty(req.query.name)) {
+		return 'Formato incorrecto de: "Nombre".'
+	} else if (utilities.isEmpty(req.query.description)) {
+		return 'Formato incorrecto de: "Aficciones del Usuario".'
+	} else if (utilities.isEmpty(req.query.mail)) {
+		return 'Formato incorrecto de: "Correo Electrónico".'
+	} else if (utilities.isEmpty(req.query.pass)) {
+		return 'Formato incorrecto de: "password".'
+	} else if (utilities.isEmpty(req.query.tags_ent)) {
+		return 'Formato incorrecto de: "password".'
+	}
+
+	if (!address.updateAddress(db, req)){
+		return 'Error: NO se ha podido actualizar la Dirección'
+	}
+
+	if (!tag.deleteTagsByIdOfEntityOrActivity(db, id_entity, 'tags_ent', 'id_entity')) {
+		return 'Error: NO se ha podido insertar Etiquetas'
+	}
+
+	if (!tag.insertTagsByIdOfEntityOrActivity(db, req.query.tags_ent.split(','), id_entity, 'tags_ent', 'id_entity')) {
+		return 'Error: NO se ha podido insertar Etiquetas'
+	}
+
+	var sql = 'UPDATE entity SET '
+	sql += 'id_role = ' + id_role + ', '
+	sql += 'nick = "' + req.query.nick + '", '
+	sql += 'name = "' + req.query.name + '", '
+	sql += 'surname = "' + req.query.name + '", '
+	sql += 'description = "' + req.query.description + '", '
+	sql += 'mail = "' + req.query.mail + '", '
+	sql += 'sha256 = "' + utilities.sha256(req.query.mail) + '", '
+	sql += 'phone = ' + phone + ', '
+	sql += 'avatar = "' + req.query.avatar + '", '
+	sql += 'deleted = ' + deleted + ', '
+	sql += 'WHERE id_entity = ' + id_entity + '; '
+
+	return new Promise(resolve => {
+		db.query(sql, (err) => {
+			if (err) {
+				console.log(err)
+				resolve(false)
+			}
+			resolve(true)
+		})
+	})
+}
+
+export async function deleteEntityById(db, id_entity) {
+
+	var sql = 'UPDATE entity SET '
+	sql += 'deleted = ' + 0 + ', '
+	sql += 'WHERE id_entity = ' + id_entity + '; '
+
+	return new Promise(resolve => {
+		db.query(sql, (err) => {
+			if (err) {
+				console.log(err)
+				resolve(false)
+			}
+			resolve(true)
+		})
+	})
+}
+
+export async function getAllEntities(db) {
 	return new Promise(resolve => {
 		db.query('SELECT * FROM entity', (err, result) => {
 			if (err) {

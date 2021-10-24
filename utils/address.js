@@ -48,6 +48,53 @@ export async function createNewAddress(db, req) {
 }
 
 /**
+ * @description  Actualiza los datos de una 
+ * @param {*} db 
+ * @param {*} req 
+ * @returns Devuelve false en caso de error true en caso contrario
+ */
+export async function updateAddress(db, req) {
+	var id_address = utilities.getNumber(req.query.id_address)
+	var codPos = utilities.getNumber(req.query.codPos)
+	var latitude = utilities.getNumberFloat(req.query.latitude)
+	var longitude = utilities.getNumberFloat(req.query.longitude)
+
+	if (id_address === -1){
+		return 'Formato incorrecto de: "id_address".'
+	} else if (codPos === -1){
+		return 'Formato incorrecto de: "Código Postal".'
+	} else if (latitude === -1) {
+		return 'Formato incorrecto de: "Latitud".'
+	} else if (longitude === -1) {
+		return 'Formato incorrecto de: "Longitud".'
+	}else if (utilities.isEmpty(req.query.location)) {
+		return 'Formato incorrecto de: "Localidad".'
+	} else if (utilities.isEmpty(req.query.direction)) {
+		return 'Formato incorrecto de: "Dirección".'
+	}
+
+	var id_province = Math.trunc(codPos/1000)
+
+	var sql = 'UPDATE address SET '
+	sql += 'id_province = ' + id_province + ', '
+	sql += 'codpos = ' + codPos + ', '
+	sql += 'location = "' + req.query.location + '", '
+	sql += 'direction = "' + req.query.direction + '", '
+	sql += 'latitude = ' + latitude + ', '
+	sql += 'longitude = ' + longitude + ', '
+	sql += 'WHERE id_address = ' + id_address + '; '
+	return new Promise(resolve => {
+		db.query(sql, (err) => {
+			if (err) {
+				console.log(err)
+				resolve(false)
+			}
+			resolve(true)
+		})
+	})
+}
+
+/**
  * @description Devuelve una dirección dado el id de dicha dirección
  * @param {*} db Base de Datos de consulta
  * @param {*} addressID id a consultar
