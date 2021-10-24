@@ -11,7 +11,7 @@ import * as tag from './tag.js'
  * @returns Devuelve -1 en caso de error o el id_Activity de la Actividad creada
  */
 export async function createNewActivity(db, req) {
-	var id_entity_creador = utilities.getNumber(req.query.id_entity_creador)
+	var id_entity_creator = utilities.getNumber(req.query.id_entity_creator)
 	var seats = utilities.getNumber(req.query.seats)
 	var price = utilities.getNumber(req.query.price)
 	var min_duration = utilities.getNumber(req.query.min_duration)
@@ -22,7 +22,7 @@ export async function createNewActivity(db, req) {
 		return 'Formato incorrecto de: "Precio".'
 	} else if (seats === -1) {
 		return 'Formato incorrecto de: "Número de plazas".'
-	} else if (id_entity_creador === -1) {
+	} else if (id_entity_creator === -1) {
 		return 'Formato incorrecto de: "Id del Organizador".'
 	} else if (utilities.isEmpty(req.query.title)) {
 		return 'Formato incorrecto de: "Título del Evento".'
@@ -41,8 +41,8 @@ export async function createNewActivity(db, req) {
 
 	// insertar la actividad
 	var sql = 'INSERT INTO activity ('
-	sql += 'id_entity_creador, id_address, title, description, seats, price, dateAct, min_duration, deleted) VALUES ('
-	sql += id_entity_creador + ', '
+	sql += 'id_entity_creator, id_address, title, description, seats, price, dateAct, min_duration, deleted) VALUES ('
+	sql += id_entity_creator + ', '
 	sql += id_address + ', '
 	sql += '"' + req.query.title + '", '
 	sql += '"' + req.query.description + '", '
@@ -74,6 +74,99 @@ export async function createNewActivity(db, req) {
 }
 
 /**
+ * @description Actualiza los datos de una Actividad
+ * @param {*} db 
+ * @param {*} req 
+ * @returns Devuelve false en caso de error true en caso contrario
+ */
+export async function updateActivity(db, req) {
+	var id_activity = utilities.getNumber(req.query.id_activity)
+	var id_entity_creator = utilities.getNumber(req.query.id_entity_creator)
+	var seats = utilities.getNumber(req.query.seats)
+	var price = utilities.getNumber(req.query.price)
+	var min_duration = utilities.getNumber(req.query.min_duration)
+	var deleted = utilities.getNumber(req.query.deleted)
+
+	if (id_activity === -1){
+		return 'Formato incorrecto de: "Duración del Evento".'
+	} else if (min_duration === -1){
+		return 'Formato incorrecto de: "Duración del Evento".'
+	} else if (price === -1) {
+		return 'Formato incorrecto de: "Precio".'
+	} else if (seats === -1) {
+		return 'Formato incorrecto de: "Número de plazas".'
+	} else if (deleted === -1){
+		return 'Formato incorrecto de: "Marcado para borrar".'
+	} else if (id_entity_creator === -1) {
+		return 'Formato incorrecto de: "Id del Organizador".'
+	} else if (utilities.isEmpty(req.query.title)) {
+		return 'Formato incorrecto de: "Título del Evento".'
+	} else if (utilities.isEmpty(req.query.description)) {
+		return 'Formato incorrecto de: "Descripción del Evento".'
+	} else if (utilities.isEmpty(req.query.dateAct)) {
+		return 'Formato incorrecto de: "Fecha del Evento".'
+	} else if (utilities.isEmpty(req.query.tags_act)) {
+		return 'Formato incorrecto de: "Etiquetas identificadoras".'
+	}
+
+	if (!address.updateAddress(db, req)){
+		return 'Error: NO se ha podido actualizar la Dirección'
+	}
+
+	if (!tag.deleteTagsByIdOfEntityOrActivity(db, id_activity, 'tags_act', 'id_activity')) {
+		return 'Error: NO se ha podido insertar Etiquetas'
+	}
+
+	if (!tag.insertTagsByIdOfEntityOrActivity(db, req.query.tags_ent.split(','), id_activity, 'tags_act', 'id_activity')) {
+		return 'Error: NO se ha podido insertar Etiquetas'
+	}
+
+	var sql = 'UPDATE entity SET '
+	sql += 'id_entity_creator = ' + id_entity_creator + ', '
+	sql += 'title = "' + req.query.title + '", '
+	sql += 'description = "' + req.query.description + '", '
+	sql += 'seat = ' + seats + ', '
+	sql += 'price = ' + price + ', '
+	sql += 'dateAct = "' + req.query.dateAct + '", '
+	sql += 'min_duracion = ' + min_duration + ', '
+	sql += 'deleted = ' + deleted + ', '
+	sql += 'WHERE id_activity = ' + id_activity + '; '
+
+	return new Promise(resolve => {
+		db.query(sql, (err) => {
+			if (err) {
+				console.log(err)
+				resolve(false)
+			}
+			resolve(true)
+		})
+	})
+}
+
+/**
+ * @description Marca como borrada una entity
+ * @param {*} db 
+ * @param {*} id_entity 
+ * @returns Devuelve false en caso de error true en caso contrario
+ */
+export async function deleteActivityById(db, id_activity) {
+
+	var sql = 'UPDATE activity SET '
+	sql += 'deleted = ' + 1 + ', '
+	sql += 'WHERE id_activity = ' + id_activity + '; '
+
+	return new Promise(resolve => {
+		db.query(sql, (err) => {
+			if (err) {
+				console.log(err)
+				resolve(false)
+			}
+			resolve(true)
+		})
+	})
+}
+
+/**
  * @description Devuelve un JSON sin filtrar, con todas las Actividades NO BORRADAS
  * @param {*} db
  * @returns JSON
@@ -98,7 +191,7 @@ export async function getAllActivities(db, listAll) {
  * @param {*} db Base de Datos de consulta
  * @param {*} activityID id a consultar
  * @returns JSON con los siguientes datos {"id_activity", "title", "description", "seats", 
- * 		  "price", "location", "dateAct", "min_duration", "id_entity_creador"}
+ * 		  "price", "location", "dateAct", "min_duration", "id_entity_creator"}
  */
 export async function getActivityByID(db, activityID) {
 	if ((await query.getMaxIdFromTable(db, 'activity')) < activityID || activityID < 1) {
@@ -154,7 +247,7 @@ export async function getTagsOfActivityByID(db, activityID) {
  * @field req.query.tags --> lista de number para filtrar por etiquetas, deben venir separados por comas y sin espacios ni paréntesis p.e: 1,2,3
  * @field req.query.id_entity_creator --> lista de number para filtrar por creadores de eventos, deben venir separados por comas y sin espacios ni paréntesis p.e: 1,2,3
  * @returns JSON con los siguientes datos {"id_activity", "title", "description", "seats", 
- * 		  "price", "location", "dateAct", "min_duration", "id_entity_creador"}
+ * 		  "price", "location", "dateAct", "min_duration", "id_entity_creator"}
  */
 export async function filterActivitiesBy(db, req) {
 	var sqlWhere = 'WHERE a.id_activity '
@@ -246,7 +339,7 @@ function fixFilterByEntintyCreator(id_entity_creator) {
 	if (utilities.isEmpty(id_entity_creator)) {
 		return ''
 	}
-	return 'AND id_activity IN (SELECT id_activity FROM activity WHERE id_entity_creador IN (' + id_entity_creator + ') GROUP BY id_activity) '
+	return 'AND id_activity IN (SELECT id_activity FROM activity WHERE id_entity_creator IN (' + id_entity_creator + ') GROUP BY id_activity) '
 }
 
 function fixMinMax(min, max, tabla) {

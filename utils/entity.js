@@ -146,10 +146,16 @@ export async function updateEntity(db, req) {
 	})
 }
 
+/**
+ * @description Marca como borrada una entity
+ * @param {*} db 
+ * @param {*} id_entity 
+ * @returns Devuelve false en caso de error true en caso contrario
+ */
 export async function deleteEntityById(db, id_entity) {
 
 	var sql = 'UPDATE entity SET '
-	sql += 'deleted = ' + 0 + ', '
+	sql += 'deleted = ' + 1 + ', '
 	sql += 'WHERE id_entity = ' + id_entity + '; '
 
 	return new Promise(resolve => {

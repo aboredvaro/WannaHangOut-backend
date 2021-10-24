@@ -124,18 +124,6 @@ app.delete('/api/deleteEntityById', (req, res) => {
 
 //  //  //  //  //
 //
-//  API TAGS
-//
-//  //  //  //  //
-
-app.get('/api/getAllTags', (req, res) => {
-	tag.getAllTags(db).then(response => {
-		res.send(response)
-	})
-})
-
-//  //  //  //  //
-//
 //  API ACTIVITY
 //
 //  //  //  //  //
@@ -180,6 +168,21 @@ app.post('/api/createNewActivity', (req, res) => {
 	})
 })
 
+app.put('/api/updateActivity', (req, res) => {
+	entity.createNewEntity(db,req).then(response => {
+		res.send(response)
+	})
+})
+
+app.delete('/api/deleteActivityById', (req, res) => {
+	if (utilities.getNumber(req.query.id_activity) == -1) {
+		return res.send('El id no tiene un formato correcto')
+	}
+	entity.createNewEntity(db, req.query.id_activity).then(response => {
+		res.send(response)
+	})
+})
+
 //  //  //  //  //
 //
 //  API ADDRESS
@@ -208,6 +211,18 @@ app.post('/api/createNewAddress', (req, res) => {
 //  //  //  //  //
 
 // To implement
+
+//  //  //  //  //
+//
+//  API TAGS
+//
+//  //  //  //  //
+
+app.get('/api/getAllTags', (req, res) => {
+	tag.getAllTags(db).then(response => {
+		res.send(response)
+	})
+})
 
 //  //  //  //  //
 //
