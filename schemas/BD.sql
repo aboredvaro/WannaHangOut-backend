@@ -41,8 +41,8 @@ CREATE TABLE address (
     codPos INT(5) NOT NULL,
     location VARCHAR (120) NOT NULL,
     direction VARCHAR (300) NOT NULL,
-    latitude INT NOT NULL,
-    longitude INT NOT NULL,
+    latitude DOUBLE NOT NULL,
+    longitude DOUBLE NOT NULL,
     PRIMARY KEY (id_address),
     FOREIGN KEY (id_province) REFERENCES provinces (id_province)
 );
@@ -62,7 +62,7 @@ CREATE TABLE entity (
     phone INT NOT NULL, 
     pass VARCHAR(30) NOT NULL,
     avatar LONGTEXT NOT NULL,
-    deleted BOOLEAN,
+    deleted BOOLEAN NOT NULL,
     PRIMARY KEY (id_entity),
     FOREIGN KEY (id_role) REFERENCES rol (id_role),
     FOREIGN KEY (id_address) REFERENCES address (id_address)

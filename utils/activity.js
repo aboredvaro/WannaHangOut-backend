@@ -1,6 +1,8 @@
 import log from './log.js'
 import * as utilities from './utilities.js'
 import * as query from './query.js'
+import * as address from './address.js'
+import * as tag from './tag.js'
 
 /**
  * @description Registra una nueva Actividad en la BD
@@ -10,90 +12,65 @@ import * as query from './query.js'
  */
 export async function createNewActivity(db, req) {
 	var id_entity_creador = utilities.getNumber(req.query.id_entity_creador)
-	if (id_entity_creador === -1){
-		return 'La Id_Entity Creadora tiene un formato incorrecto'
-	}
-	var title
-	if (utilities.isEmpty(req.query.title)){
-		return 'El Título tiene un formato incorrecto'
-	} else {
-		title = req.query.title
-	}
-	var description
-	if (utilities.isEmpty(req.query.description)){
-		return 'La Descripción tiene un formato incorrecto'
-	} else {
-		description = req.query.description
-	}
 	var seats = utilities.getNumber(req.query.seats)
-	if (seats === -1){
-		return 'La Cantidad Máxima de Plazas tiene un formato incorrecto'
-	}
 	var price = utilities.getNumber(req.query.price)
-	if (price === -1){
-		return 'El Precio tiene un formato incorrecto'
-	}
-	var location
-	if (utilities.isEmpty(req.query.location)){
-		return 'La Localidad del Evento tiene un formato incorrecto'
-	} else {
-		location = req.query.location
-	}
-	var dateAct
-	if (utilities.isEmpty(req.query.dateAct)){
-		return 'La Fecha del Evento tiene un formato incorrecto'
-	} else {
-		dateAct = req.query.dateAct
-	}
 	var min_duration = utilities.getNumber(req.query.min_duration)
+
 	if (min_duration === -1){
-		return 'La duración del Evento tiene un formato incorrecto'
+		return 'Formato incorrecto de: "Duración del Evento".'
+	} else if (price === -1) {
+		return 'Formato incorrecto de: "Precio".'
+	} else if (seats === -1) {
+		return 'Formato incorrecto de: "Número de plazas".'
+	} else if (id_entity_creador === -1) {
+		return 'Formato incorrecto de: "Id del Organizador".'
+	} else if (utilities.isEmpty(req.query.title)) {
+		return 'Formato incorrecto de: "Título del Evento".'
+	} else if (utilities.isEmpty(req.query.description)) {
+		return 'Formato incorrecto de: "Descripción del Evento".'
+	} else if (utilities.isEmpty(req.query.dateAct)) {
+		return 'Formato incorrecto de: "Fecha del Evento".'
+	} else if (utilities.isEmpty(req.query.tags_act)) {
+		return 'Formato incorrecto de: "Etiquetas identificadoras".'
 	}
-	var tags_act
-	if (utilities.isEmpty(req.query.tags_act)){
-		return 'Las Tags tienen un formato incorrecto'
-	} else {
-		tags_act = req.query.tags_act
+	
+	var id_address = await address.createNewAddress(db, req)
+	if (id_address === -1){
+		return 'Error: NO se ha podido insertar Dirección'
 	}
-	var sqlInsert = 'INSERT INTO Activity ( '
-	sqlInsert += 'id_entity_creador, title, description, seats, price, location, dateAct, min_duration) VALUES ('
-	sqlInsert += id_entity_creador + ', '
-	sqlInsert += '"' + title + '", '
-	sqlInsert += '"' + description + '", '
-	sqlInsert += seats + ', '
-	sqlInsert += price + ', '
-	sqlInsert += '"' + location + '", '
-	sqlInsert += '"' + dateAct + '", '
-	sqlInsert += min_duration + '); '
-	var idActivityCreada = new Promise(resolve => {
-		db.query(sqlInsert, (err, result) => {
+
+	// insertar la actividad
+	var sql = 'INSERT INTO activity ('
+	sql += 'id_entity_creador, id_address, title, description, seats, price, dateAct, min_duration, deleted) VALUES ('
+	sql += id_entity_creador + ', '
+	sql += id_address + ', '
+	sql += '"' + req.query.title + '", '
+	sql += '"' + req.query.description + '", '
+	sql += seats + ', '
+	sql += price + ', '
+	sql += '"' + req.query.dateAct + '", '
+	sql += min_duration + ', '
+	sql += 0
+	sql += '); '
+
+	var idActivityCreate = new Promise(resolve => {
+		db.query(sql, (err, result) => {
 			if (err) {
 				console.log(err)
 			}
 			resolve(JSON.stringify(result.insertId))
 		})
 	})
-	
-	tags_act = tags_act.split(',')
-	sqlInsert = 'INSERT INTO tags_act ('
-	sqlInsert += 'id_activity, id_tags) VALUES ' 
-	for (const i in tags_act) {
-		sqlInsert += '(' + await idActivityCreada + ', ' + tags_act[i]
-		if ( i < (tags_act.length - 1)){
-			sqlInsert += '), '
-		} else {
-			sqlInsert += '); '
-		}
+
+	if (idActivityCreate ===-1){
+		return -1
+	} 
+
+	if (!tag.insertTagsByIdOfEntitYOrActivity(db, req.query.tags_act.split(','), await idActivityCreate, 'tags_act', 'id_activity')) {
+		return 'Error: NO se ha podido insertar Etiquetas'
 	}
-	new Promise(resolve => {
-		db.query(sqlInsert, (err, result) => {
-			if (err) {
-				console.log(err)
-			}
-			resolve(JSON.stringify(result))
-		})
-	})
-	return idActivityCreada
+	
+	return idActivityCreate
 }
 
 /**
@@ -106,8 +83,6 @@ export async function getAllActivities(db, listAll) {
 	if (listAll > 0 ) {
 		sql = sqlBodyQueryGetActivity()
 	}
-	
-	log(sql)
 	return new Promise(resolve => {
 		db.query(sql , (err, result) => {
 			if (err) {
@@ -134,7 +109,6 @@ export async function getActivityByID(db, activityID) {
 			if (err) {
 				console.log(err)
 			}
-			log(sqlBodyQueryGetActivity() + 'WHERE id_activity = ' + activityID)
 			resolve(result[0])
 		})
 	})
@@ -192,7 +166,7 @@ export async function filterActivitiesBy(db, req) {
 	sqlWhere += fixFilterByType(req.query.id_tags)
 	sqlWhere += fixFilterByEntintyCreator(req.query.id_entity_creator)
 	var sqlLimit = 'LIMIT ' + fixLowerLimit(req.query.lowerLimit) + ', ' + fixUpperLimit(req.query.upperLimit) + ';'
-	log(sqlBodyQueryGetActivity() + sqlWhere + sqlLimit)
+	
 	return new Promise(resolve => {
 		db.query(sqlBodyQueryGetActivity() + sqlWhere + sqlLimit, (err, result) => {
 			if (err) {

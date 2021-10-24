@@ -7,15 +7,13 @@ import express from 'express'
 import cors from 'cors'
 import mysql from 'mysql'
 
+import log from './utils/log.js'
 import * as utilities from './utils/utilities.js'
-
 import * as activity from './utils/activity.js'
 import * as entity from './utils/entity.js'
 import * as address from './utils/address.js'
-import log from './utils/log.js'
 import * as review from './utils/review.js'
 import * as tag from './utils/tag.js'
-import * as address from './utils/address.js'
 
 app.use(cors())
 app.use(express.json())
@@ -97,6 +95,12 @@ app.get('/api/getEntityByID', (req, res) => {
 	})
 })
 
+app.get('/api/getEntityByHash', (req, res) => {
+	entity.getEntityByID(db, req.query.id_entity).then(response => {
+		return res.send(response)
+	})
+})
+
 app.post('/api/createNewEntity', (req, res) => {
 	entity.createNewEntity(db,req).then(response => {
 		res.send(response)
@@ -126,8 +130,6 @@ app.get('/api/getAllActivities', (req, res) => {
 	if (listAll === -1) {
 		listAll = 0
 	}
-
-	log(listAll)
 	activity.getAllActivities(db, listAll).then(response => {
 		res.send(response)
 	})
