@@ -204,6 +204,12 @@ app.post('/api/createNewAddress', (req, res) => {
 	})
 })
 
+app.put('/api/updateAddress', (req, res) => {
+	entity.updateAddress(db,req).then(response => {
+		res.send(response)
+	})
+})
+
 //  //  //  //  //
 //
 //  API REVIEW

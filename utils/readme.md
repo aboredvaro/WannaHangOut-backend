@@ -1,6 +1,6 @@
 PARÁMETROS NECESARIOS PARA INSERTAR UNA:
 
-* ACTIVITY     --> createNewActivity
+* ACTIVITY     --> /api/createNewActivity
      NECESARIOS
           - id_entity_creator
           - title
@@ -22,7 +22,7 @@ PARÁMETROS NECESARIOS PARA INSERTAR UNA:
      RETORNO
           - id_activity       <-- Se genera sola al insertar, es lo que devuelve
 
-* ADDRESS      --> createNewAddress
+* ADDRESS      --> /api/createNewAddress
      NECESARIOS
           - codPos
           - location
@@ -34,7 +34,7 @@ PARÁMETROS NECESARIOS PARA INSERTAR UNA:
      RETORNO
           - id_address        <-- Se genera sola al insertar, es lo que devuelve
 
-* ENTITY       --> createNewEntity
+* ENTITY       --> /api/createNewEntity
      NECESARIOS
           - id_role
           - id_address
@@ -63,7 +63,7 @@ PARÁMETROS NECESARIOS PARA INSERTAR UNA:
 
 PARÁMETROS NECESARIOS PARA ACTUALIZAR (marcados con '>' los que cambian con respecto a la inserción):
 
-* ACTIVITY     --> createNewActivity
+* ACTIVITY     --> /api/updateActivity
      NECESARIOS
           > id_activity
           - id_entity_creator
@@ -86,7 +86,7 @@ PARÁMETROS NECESARIOS PARA ACTUALIZAR (marcados con '>' los que cambian con res
      RETORNO
           - Boolean
 
-* ADDRESS      --> createNewAddress
+* ADDRESS      --> /api/updateAddress
      NECESARIOS
           - codPos
           - location
@@ -99,7 +99,7 @@ PARÁMETROS NECESARIOS PARA ACTUALIZAR (marcados con '>' los que cambian con res
      RETORNO
           - Boolean
 
-* ENTITY       --> createNewEntity
+* ENTITY       --> /api/updateEntity
      NECESARIOS
           > id_entity
           - id_role
