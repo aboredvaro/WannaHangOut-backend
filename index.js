@@ -7,11 +7,11 @@ import express from 'express'
 import cors from 'cors'
 import mysql from 'mysql'
 
-import * as estandarizar from './utils/estandarizar.js'
-
+import log from './utils/log.js'
+import * as utilities from './utils/utilities.js'
 import * as activity from './utils/activity.js'
 import * as entity from './utils/entity.js'
-import log from './utils/log.js'
+import * as address from './utils/address.js'
 import * as review from './utils/review.js'
 import * as tag from './utils/tag.js'
 
@@ -87,7 +87,7 @@ app.get('/api/getAllEntities', (req, res) => {
 })
 
 app.get('/api/getEntityByID', (req, res) => {
-	if (estandarizar.getNumber(req.query.id_entity) == -1) {
+	if (utilities.getNumber(req.query.id_entity) == -1) {
 		return res.send('El id no tiene un formato correcto')
 	}
 	entity.getEntityByID(db, req.query.id_entity).then(response => {
@@ -95,14 +95,29 @@ app.get('/api/getEntityByID', (req, res) => {
 	})
 })
 
-//  //  //  //  //
-//
-//  API TAGS
-//
-//  //  //  //  //
+app.get('/api/getEntityByHash', (req, res) => {
+	entity.getEntityByID(db, req.query.id_entity).then(response => {
+		return res.send(response)
+	})
+})
 
-app.get('/api/getAllTags', (req, res) => {
-	tag.getAllTags(db).then(response => {
+app.post('/api/createNewEntity', (req, res) => {
+	entity.createNewEntity(db,req).then(response => {
+		res.send(response)
+	})
+})
+
+app.put('/api/updateEntity', (req, res) => {
+	entity.createNewEntity(db,req).then(response => {
+		res.send(response)
+	})
+})
+
+app.delete('/api/deleteEntityById', (req, res) => {
+	if (utilities.getNumber(req.query.id_entity) == -1) {
+		return res.send('El id no tiene un formato correcto')
+	}
+	entity.createNewEntity(db, req.query.id_entity).then(response => {
 		res.send(response)
 	})
 })
@@ -114,13 +129,17 @@ app.get('/api/getAllTags', (req, res) => {
 //  //  //  //  //
 
 app.get('/api/getAllActivities', (req, res) => {
-	activity.getAllActivities(db).then(response => {
+	var listAll = utilities.getNumber(req.query.id_all)
+	if (listAll === -1) {
+		listAll = 0
+	}
+	activity.getAllActivities(db, listAll).then(response => {
 		res.send(response)
 	})
 })
 
 app.get('/api/getActivityByID', (req, res) => {
-	if (estandarizar.getNumber(req.query.id_activity) == -1) {
+	if (utilities.getNumber(req.query.id_activity) == -1) {
 		return res.send('El id no tiene un formato correcto')
 	}
 	activity.getActivityByID(db, req.query.id_activity).then(response => {
@@ -129,7 +148,7 @@ app.get('/api/getActivityByID', (req, res) => {
 })
 
 app.get('/api/getTagsOfActivityByID', (req, res) => {
-	if (estandarizar.getNumber(req.query.id_activity) == -1) {
+	if (utilities.getNumber(req.query.id_activity) == -1) {
 		return res.send('El id no tiene un formato correcto')
 	}
 	activity.getTagsOfActivityByID(db, req.query.id_activity).then(response => {
@@ -149,6 +168,42 @@ app.post('/api/createNewActivity', (req, res) => {
 	})
 })
 
+app.put('/api/updateActivity', (req, res) => {
+	entity.createNewEntity(db,req).then(response => {
+		res.send(response)
+	})
+})
+
+app.delete('/api/deleteActivityById', (req, res) => {
+	if (utilities.getNumber(req.query.id_activity) == -1) {
+		return res.send('El id no tiene un formato correcto')
+	}
+	entity.createNewEntity(db, req.query.id_activity).then(response => {
+		res.send(response)
+	})
+})
+
+//  //  //  //  //
+//
+//  API ADDRESS
+//
+//  //  //  //  //
+
+app.get('/api/getAddressByID', (req, res) => {
+	if (utilities.getNumber(req.query.id_address) == -1) {
+		return res.send('El id no tiene un formato correcto')
+	}
+	address.getAddressByID(db,req.query.id_address).then(response => {
+		res.send(response)
+	})
+})
+
+app.post('/api/createNewAddress', (req, res) => {
+	address.createNewAddress(db,req).then(response => {
+		res.send(response)
+	})
+})
+
 //  //  //  //  //
 //
 //  API REVIEW
@@ -156,6 +211,18 @@ app.post('/api/createNewActivity', (req, res) => {
 //  //  //  //  //
 
 // To implement
+
+//  //  //  //  //
+//
+//  API TAGS
+//
+//  //  //  //  //
+
+app.get('/api/getAllTags', (req, res) => {
+	tag.getAllTags(db).then(response => {
+		res.send(response)
+	})
+})
 
 //  //  //  //  //
 //
