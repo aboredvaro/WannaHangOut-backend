@@ -62,7 +62,7 @@ CREATE TABLE entity (
     phone INT NOT NULL, 
     pass VARCHAR(30) NOT NULL,
     avatar LONGTEXT NOT NULL,
-    deleted BOOLEAN NOT NULL,
+    deleted BOOLEAN NOT NULL DEFAULT 0,
     PRIMARY KEY (id_entity),
     FOREIGN KEY (id_role) REFERENCES rol (id_role),
     FOREIGN KEY (id_address) REFERENCES address (id_address)
@@ -80,7 +80,7 @@ CREATE TABLE activity (
     price DOUBLE NOT NULL,
     dateAct DATE NOT NULL,
     min_duration INT NOT NULL,
-    deleted BOOLEAN NOT NULL,
+    deleted BOOLEAN NOT NULL DEFAULT 0,
     PRIMARY KEY(id_activity),
     FOREIGN KEY (id_entity_creator) REFERENCES entity (id_entity),
     FOREIGN KEY (id_address) REFERENCES address (id_address)
@@ -90,7 +90,7 @@ CREATE TABLE activity (
 CREATE TABLE img_act (
     id_image INT,
     id_activity INT,
-    deleted BOOLEAN NOT NULL,
+    deleted BOOLEAN NOT NULL DEFAULT 0,
 	PRIMARY KEY (id_image, id_activity),
 	FOREIGN KEY (id_image) REFERENCES images (id_image),
 	FOREIGN KEY (id_activity) REFERENCES activity (id_activity)
@@ -111,7 +111,7 @@ CREATE TABLE review (
 CREATE TABLE img_review (
     id_image INT,
     id_review INT,
-    deleted BOOLEAN NOT NULL,
+    deleted BOOLEAN NOT NULL DEFAULT 0,
 	PRIMARY KEY (id_image, id_review),
 	FOREIGN KEY (id_image) REFERENCES images (id_image),
 	FOREIGN KEY (id_review) REFERENCES review (id_review)

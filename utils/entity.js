@@ -67,12 +67,11 @@ export async function createNewEntity(db, req) {
 
 	if (idEntityCreate ===-1){
 		return -1
-	} 
-
-	if (!tag.insertTagsByIdOfEntityOrActivity(db, req.query.tags_ent.split(','), await idEntityCreate, 'tags_ent', 'id_entity')) {
-		return 'Error: NO se ha podido insertar Etiquetas'
 	}
-	
+
+	if (!query.queryOneToMuch(db, await idEntityCreate, req.query.tags_act.split(','), 'tags_ent', 'id_entity', 'id_tags')) {
+		return 'Error: NO se ha podido insertar Etiquetas'
+	}	
 	return idEntityCreate
 }
 
