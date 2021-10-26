@@ -113,11 +113,11 @@ export async function updateEntity(db, req) {
 		return 'Error: NO se ha podido actualizar la Dirección'
 	}
 
-	if (!tag.deleteTagsByIdOfEntityOrActivity(db, id_entity, 'tags_ent', 'id_entity')) {
+	if (!query.deleteSimpleFromTable(db, id_entity, 'tags_ent', 'id_entity')) {
 		return 'Error: NO se ha podido insertar Etiquetas'
 	}
 
-	if (!tag.insertTagsByIdOfEntityOrActivity(db, req.query.tags_ent.split(','), id_entity, 'tags_ent', 'id_entity')) {
+	if(query.queryInsertOneToMuch(db, id_entity, req.query.tags_ent.split(','), 'tags_ent', 'id_entity', 'id_tags')){
 		return 'Error: NO se ha podido insertar Etiquetas'
 	}
 

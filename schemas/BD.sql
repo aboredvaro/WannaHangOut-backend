@@ -103,6 +103,7 @@ CREATE TABLE review (
     title VARCHAR(100) NOT NULL,
     description VARCHAR(500),
     points TINYINT(1) NOT NULL,         -- Puntuación del 0 al 9
+    deleted BOOLEAN NOT NULL DEFAULT 0,
     PRIMARY KEY(id_review),
     FOREIGN KEY (id_activity) REFERENCES activity (id_activity)
 );
