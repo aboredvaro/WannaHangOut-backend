@@ -11,10 +11,10 @@ import * as tag from './tag.js'
  * @returns Devuelve -1 en caso de error o el id_Activity de la Actividad creada
  */
 export async function createNewActivity(db, req) {
-	var id_entity_creator = utilities.getNumber(req.query.id_entity_creator)
-	var seats = utilities.getNumber(req.query.seats)
-	var price = utilities.getNumber(req.query.price)
-	var min_duration = utilities.getNumber(req.query.min_duration)
+	var id_entity_creator = utilities.getNumber(req.body.id_entity_creator)
+	var seats = utilities.getNumber(req.body.seats)
+	var price = utilities.getNumber(req.body.price)
+	var min_duration = utilities.getNumber(req.body.min_duration)
 
 	if (min_duration === -1){
 		return 'Formato incorrecto de: "Duración del Evento".'
@@ -24,13 +24,13 @@ export async function createNewActivity(db, req) {
 		return 'Formato incorrecto de: "Número de plazas".'
 	} else if (id_entity_creator === -1) {
 		return 'Formato incorrecto de: "Id del Organizador".'
-	} else if (utilities.isEmpty(req.query.title)) {
+	} else if (utilities.isEmpty(req.body.title)) {
 		return 'Formato incorrecto de: "Título del Evento".'
-	} else if (utilities.isEmpty(req.query.description)) {
+	} else if (utilities.isEmpty(req.body.description)) {
 		return 'Formato incorrecto de: "Descripción del Evento".'
-	} else if (utilities.isEmpty(req.query.dateAct)) {
+	} else if (utilities.isEmpty(req.body.dateAct)) {
 		return 'Formato incorrecto de: "Fecha del Evento".'
-	} else if (utilities.isEmpty(req.query.tags_act)) {
+	} else if (utilities.isEmpty(req.body.tags_act)) {
 		return 'Formato incorrecto de: "Etiquetas identificadoras".'
 	}
 	
@@ -41,16 +41,15 @@ export async function createNewActivity(db, req) {
 
 	// insertar la actividad
 	var sql = 'INSERT INTO activity ('
-	sql += 'id_entity_creator, id_address, title, description, seats, price, dateAct, min_duration, deleted) VALUES ('
+	sql += 'id_entity_creator, id_address, title, description, seats, price, dateAct, min_duration) VALUES ('
 	sql += id_entity_creator + ', '
 	sql += id_address + ', '
-	sql += '"' + req.query.title + '", '
-	sql += '"' + req.query.description + '", '
+	sql += '"' + req.body.title + '", '
+	sql += '"' + req.body.description + '", '
 	sql += seats + ', '
 	sql += price + ', '
-	sql += '"' + req.query.dateAct + '", '
-	sql += min_duration + ', '
-	sql += 0
+	sql += '"' + req.body.dateAct + '", '
+	sql += min_duration
 	sql += '); '
 
 	var idActivityCreate = new Promise(resolve => {
@@ -58,15 +57,19 @@ export async function createNewActivity(db, req) {
 			if (err) {
 				console.log(err)
 			}
-			resolve(JSON.stringify(result.insertId))
+			resolve(result.insertId)
 		})
 	})
 
 	if (idActivityCreate ===-1){
 		return -1
 	} 
-
-	if (!query.queryOneToMuch(db, await idActivityCreate, req.query.tags_act.split(','), 'tags_act', 'id_activity', 'id_tags')) {
+	
+	let arr = []
+	for(let i of req.body.tags_act) {
+		arr.push(parseInt(i))
+	}
+	if (!query.queryInsertOneToMuch(db, await idActivityCreate, arr, 'tags_act', 'id_activity', 'id_tags')) {
 		return 'Error: NO se ha podido insertar Etiquetas'
 	}
 	
@@ -80,12 +83,12 @@ export async function createNewActivity(db, req) {
  * @returns Devuelve false en caso de error true en caso contrario
  */
 export async function updateActivity(db, req) {
-	var id_activity = utilities.getNumber(req.query.id_activity)
-	var id_entity_creator = utilities.getNumber(req.query.id_entity_creator)
-	var seats = utilities.getNumber(req.query.seats)
-	var price = utilities.getNumber(req.query.price)
-	var min_duration = utilities.getNumber(req.query.min_duration)
-	var deleted = utilities.getNumber(req.query.deleted)
+	var id_activity = utilities.getNumber(req.body.id_activity)
+	var id_entity_creator = utilities.getNumber(req.body.id_entity_creator)
+	var seats = utilities.getNumber(req.body.seats)
+	var price = utilities.getNumber(req.body.price)
+	var min_duration = utilities.getNumber(req.body.min_duration)
+	var deleted = utilities.getNumber(req.body.deleted)
 
 	if (id_activity === -1){
 		return 'Formato incorrecto de: "Duración del Evento".'
@@ -99,13 +102,13 @@ export async function updateActivity(db, req) {
 		return 'Formato incorrecto de: "Marcado para borrar".'
 	} else if (id_entity_creator === -1) {
 		return 'Formato incorrecto de: "Id del Organizador".'
-	} else if (utilities.isEmpty(req.query.title)) {
+	} else if (utilities.isEmpty(req.body.title)) {
 		return 'Formato incorrecto de: "Título del Evento".'
-	} else if (utilities.isEmpty(req.query.description)) {
+	} else if (utilities.isEmpty(req.body.description)) {
 		return 'Formato incorrecto de: "Descripción del Evento".'
-	} else if (utilities.isEmpty(req.query.dateAct)) {
+	} else if (utilities.isEmpty(req.body.dateAct)) {
 		return 'Formato incorrecto de: "Fecha del Evento".'
-	} else if (utilities.isEmpty(req.query.tags_act)) {
+	} else if (utilities.isEmpty(req.body.tags_act)) {
 		return 'Formato incorrecto de: "Etiquetas identificadoras".'
 	}
 
@@ -117,17 +120,17 @@ export async function updateActivity(db, req) {
 		return 'Error: NO se ha podido insertar Etiquetas'
 	}
 
-	if(!query.queryInsertOneToMuch(db, id_activity, req.query.tags_act.split(','), 'tags_act', 'id_activity', 'id_tags')){
+	if(!query.queryInsertOneToMuch(db, id_activity, req.body.tags_act.split(','), 'tags_act', 'id_activity', 'id_tags')){
 		return 'Error: NO se ha podido insertar Etiquetas'
 	}
 
 	var sql = 'UPDATE entity SET '
 	sql += 'id_entity_creator = ' + id_entity_creator + ', '
-	sql += 'title = "' + req.query.title + '", '
-	sql += 'description = "' + req.query.description + '", '
+	sql += 'title = "' + req.body.title + '", '
+	sql += 'description = "' + req.body.description + '", '
 	sql += 'seat = ' + seats + ', '
 	sql += 'price = ' + price + ', '
-	sql += 'dateAct = "' + req.query.dateAct + '", '
+	sql += 'dateAct = "' + req.body.dateAct + '", '
 	sql += 'min_duracion = ' + min_duration + ', '
 	sql += 'deleted = ' + deleted + ', '
 	sql += 'WHERE id_activity = ' + id_activity + '; '
@@ -239,26 +242,26 @@ export async function getTagsOfActivityByID(db, activityID) {
  * @property Si viene solo 'max', el rango será [0,max)
  * @property Si viene solo 'min', el rango sera [min, maximo de la BD] <--Queda imlementar
  * @property Si viene 'min' y 'max', el rango será [min,max), se supone que min<max
- * @field req.query.location --> String para filtrar por localidad
- * @field req.query.price_min, req.query.price_max --> number para filtrar por precios
- * @field req.query.min_duration_min, req.query.min_duracion_max --> number para filtar por tiempo (minutos) de duración
- * @field req.query.seats_min, req.query.seats_max --> number para filtrar por aforo máximo
- * @field req.query.dateAct_min, req.query.dateAct_max -- date para filtrar por fechas de evento
- * @field req.query.tags --> lista de number para filtrar por etiquetas, deben venir separados por comas y sin espacios ni paréntesis p.e: 1,2,3
- * @field req.query.id_entity_creator --> lista de number para filtrar por creadores de eventos, deben venir separados por comas y sin espacios ni paréntesis p.e: 1,2,3
+ * @field req.body.location --> String para filtrar por localidad
+ * @field req.body.price_min, req.body.price_max --> number para filtrar por precios
+ * @field req.body.min_duration_min, req.body.min_duracion_max --> number para filtar por tiempo (minutos) de duración
+ * @field req.body.seats_min, req.body.seats_max --> number para filtrar por aforo máximo
+ * @field req.body.dateAct_min, req.body.dateAct_max -- date para filtrar por fechas de evento
+ * @field req.body.tags --> lista de number para filtrar por etiquetas, deben venir separados por comas y sin espacios ni paréntesis p.e: 1,2,3
+ * @field req.body.id_entity_creator --> lista de number para filtrar por creadores de eventos, deben venir separados por comas y sin espacios ni paréntesis p.e: 1,2,3
  * @returns JSON con los siguientes datos {"id_activity", "title", "description", "seats", 
  * 		  "price", "location", "dateAct", "min_duration", "id_entity_creator"}
  */
 export async function filterActivitiesBy(db, req) {
 	var sqlWhere = 'WHERE a.id_activity '
-	sqlWhere += fixFilterByLocation(req.query.location)
-	sqlWhere += fixFilterByPrice(req.query.price_min, req.query.price_max)
-	sqlWhere += fixFilterByDuration(req.query.min_duration_min, req.query.min_duracion_max)
-	sqlWhere += fixFilterBySeats(req.query.seats_min, req.query.seats_max)
-	sqlWhere += fixFilterByDate(req.query.dateAct_min, req.query.dateAct_max)
-	sqlWhere += fixFilterByType(req.query.id_tags)
-	sqlWhere += fixFilterByEntintyCreator(req.query.id_entity_creator)
-	var sqlLimit = 'LIMIT ' + fixLowerLimit(req.query.lowerLimit) + ', ' + fixUpperLimit(req.query.upperLimit) + ';'
+	sqlWhere += fixFilterByLocation(req.body.location)
+	sqlWhere += fixFilterByPrice(req.body.price_min, req.body.price_max)
+	sqlWhere += fixFilterByDuration(req.body.min_duration_min, req.body.min_duracion_max)
+	sqlWhere += fixFilterBySeats(req.body.seats_min, req.body.seats_max)
+	sqlWhere += fixFilterByDate(req.body.dateAct_min, req.body.dateAct_max)
+	sqlWhere += fixFilterByType(req.body.id_tags)
+	sqlWhere += fixFilterByEntintyCreator(req.body.id_entity_creator)
+	var sqlLimit = 'LIMIT ' + fixLowerLimit(req.body.lowerLimit) + ', ' + fixUpperLimit(req.body.upperLimit) + ';'
 	
 	return new Promise(resolve => {
 		db.query(sqlBodyQueryGetActivity() + sqlWhere + sqlLimit, (err, result) => {

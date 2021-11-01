@@ -9,9 +9,9 @@ import * as query from './query.js'
  * @returns Devuelve -1 en caso de error o el id_Address de la Actividad creada
  */
 export async function createNewAddress(db, req) {
-	var codPos = utilities.getNumber(req.query.codPos)
-	var latitude = utilities.getNumberFloat(req.query.latitude)
-	var longitude = utilities.getNumberFloat(req.query.longitude)
+	var codPos = utilities.getNumber(req.body.codPos)
+	var latitude = utilities.getNumberFloat(req.body.latitude)
+	var longitude = utilities.getNumberFloat(req.body.longitude)
 
 	if (codPos === -1){
 		return 'Formato incorrecto de: "Código Postal".'
@@ -19,9 +19,9 @@ export async function createNewAddress(db, req) {
 		return 'Formato incorrecto de: "Latitud".'
 	} else if (longitude === -1) {
 		return 'Formato incorrecto de: "Longitud".'
-	}else if (utilities.isEmpty(req.query.location)) {
+	}else if (utilities.isEmpty(req.body.location)) {
 		return 'Formato incorrecto de: "Localidad".'
-	} else if (utilities.isEmpty(req.query.direction)) {
+	} else if (utilities.isEmpty(req.body.direction)) {
 		return 'Formato incorrecto de: "Dirección".'
 	}
 
@@ -31,8 +31,8 @@ export async function createNewAddress(db, req) {
 	var sql = 'INSERT INTO address (id_province, codPos, location, direction, latitude, longitude) VALUES ( '
 	sql += id_province + ', '
 	sql += codPos + ', '
-	sql += '"' + req.query.location + '", '
-	sql += '"' + req.query.direction + '", '
+	sql += '"' + req.body.location + '", '
+	sql += '"' + req.body.direction + '", '
 	sql += latitude + ', '
 	sql += longitude
 	sql += '); '
@@ -54,10 +54,10 @@ export async function createNewAddress(db, req) {
  * @returns Devuelve false en caso de error true en caso contrario
  */
 export async function updateAddress(db, req) {
-	var id_address = utilities.getNumber(req.query.id_address)
-	var codPos = utilities.getNumber(req.query.codPos)
-	var latitude = utilities.getNumberFloat(req.query.latitude)
-	var longitude = utilities.getNumberFloat(req.query.longitude)
+	var id_address = utilities.getNumber(req.body.id_address)
+	var codPos = utilities.getNumber(req.body.codPos)
+	var latitude = utilities.getNumberFloat(req.body.latitude)
+	var longitude = utilities.getNumberFloat(req.body.longitude)
 
 	if (id_address === -1){
 		return 'Formato incorrecto de: "id_address".'
@@ -67,9 +67,9 @@ export async function updateAddress(db, req) {
 		return 'Formato incorrecto de: "Latitud".'
 	} else if (longitude === -1) {
 		return 'Formato incorrecto de: "Longitud".'
-	}else if (utilities.isEmpty(req.query.location)) {
+	}else if (utilities.isEmpty(req.body.location)) {
 		return 'Formato incorrecto de: "Localidad".'
-	} else if (utilities.isEmpty(req.query.direction)) {
+	} else if (utilities.isEmpty(req.body.direction)) {
 		return 'Formato incorrecto de: "Dirección".'
 	}
 
@@ -78,8 +78,8 @@ export async function updateAddress(db, req) {
 	var sql = 'UPDATE address SET '
 	sql += 'id_province = ' + id_province + ', '
 	sql += 'codpos = ' + codPos + ', '
-	sql += 'location = "' + req.query.location + '", '
-	sql += 'direction = "' + req.query.direction + '", '
+	sql += 'location = "' + req.body.location + '", '
+	sql += 'direction = "' + req.body.direction + '", '
 	sql += 'latitude = ' + latitude + ', '
 	sql += 'longitude = ' + longitude + ', '
 	sql += 'WHERE id_address = ' + id_address + '; '

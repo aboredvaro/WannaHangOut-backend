@@ -36,7 +36,7 @@ export async function getMaxIdFromTable(db, table) {
  * @param {*} nameColumnMuch nombre de la columna del elemento que cambia
  * @returns devuelve un string con la consulta INSERT creada, lista para usar en la query
  */
-async function stringInsertQueryOneToMuch(oneId, muchId, table, nameColunmOne, nameColumnMuch) {
+function stringInsertQueryOneToMuch(oneId, muchId, table, nameColunmOne, nameColumnMuch) {
 
 	var sql = 'INSERT INTO ' + table + ' ('+ nameColunmOne + ' , ' + nameColumnMuch + ') VALUES ' 
 	for (let i = 0; i < muchId.length; i++) {
