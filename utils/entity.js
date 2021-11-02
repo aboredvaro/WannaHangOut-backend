@@ -2,7 +2,6 @@ import log from './log.js'
 import * as utilities from './utilities.js'
 import * as query from './query.js'
 import * as address from './address.js'
-import * as tag from './tag.js'
 
 /**
  * @description Registra una nueva Entidad en la BD
@@ -11,24 +10,24 @@ import * as tag from './tag.js'
  * @returns Devuelve -1 en caso de error o el id_Entity de la Entidad creada
  */
 export async function createNewEntity(db, req) {
-	var id_role = utilities.getNumber(req.query.id_role)
-	var phone = utilities.getNumber(req.query.phone)
+	var id_role = utilities.getNumber(req.body.id_role)
+	var phone = utilities.getNumber(req.body.phone)
 
 	if (id_role === -1){
 		return 'Formato incorrecto de: "Rol de usuario".'
 	} else if (phone === -1){
 		return 'Formato incorrecto de: "Teléfono de contacto".'
-	}  else if (utilities.isEmpty(req.query.nick)) {
+	}  else if (utilities.isEmpty(req.body.nick)) {
 		return 'Formato incorrecto de: "Nick".'
-	} else if (utilities.isEmpty(req.query.name)) {
+	} else if (utilities.isEmpty(req.body.name)) {
 		return 'Formato incorrecto de: "Nombre".'
-	} else if (utilities.isEmpty(req.query.description)) {
+	} else if (utilities.isEmpty(req.body.description)) {
 		return 'Formato incorrecto de: "Aficciones del Usuario".'
-	} else if (utilities.isEmpty(req.query.mail)) {
+	} else if (utilities.isEmpty(req.body.mail)) {
 		return 'Formato incorrecto de: "Correo Electrónico".'
-	} else if (utilities.isEmpty(req.query.pass)) {
+	} else if (utilities.isEmpty(req.body.pass)) {
 		return 'Formato incorrecto de: "password".'
-	} else if (utilities.isEmpty(req.query.tags_ent)) {
+	} else if (utilities.isEmpty(req.body.tags_ent)) {
 		return 'Formato incorrecto de: "password".'
 	}
 	
@@ -38,20 +37,19 @@ export async function createNewEntity(db, req) {
 		return 'Error: NO se ha podido insertar Dirección'
 	}
 
-	// insertar la actividad
 	var sql = 'INSERT INTO entity ('
 	sql += 'id_role, id_address, nick, name, surname, description, mail, sha256, phone, pass, avatar, deleted) VALUES ('
 	sql += id_role + ', '
 	sql += id_address + ', '
-	sql += '"' + req.query.nick + '", '
-	sql += '"' + req.query.name + '", '
-	sql += '"' + req.query.surname + '", '
-	sql += '"' + req.query.description + '", '
-	sql += '"' + req.query.mail + '", '
-	sql += '"' + utilities.sha256(req.query.mail) + '", '
+	sql += '"' + req.body.nick + '", '
+	sql += '"' + req.body.name + '", '
+	sql += '"' + req.body.surname + '", '
+	sql += '"' + req.body.description + '", '
+	sql += '"' + req.body.mail + '", '
+	sql += '"' + utilities.sha256(req.body.mail) + '", '
 	sql += phone + ', '
-	sql += '"' + req.query.pass + '", '
-	sql += '"' + req.query.avatar + '", '
+	sql += '"' + req.body.pass + '", '
+	sql += '"' + req.body.avatar + '", '
 	sql += 0
 	sql += '); '
 
@@ -61,15 +59,19 @@ export async function createNewEntity(db, req) {
 				console.log(err)
 				resolve(JSON.stringify(-1))
 			}
-			resolve(JSON.stringify(result.insertId))
+			resolve(result.insertId)
 		})
 	})
 
-	if (idEntityCreate ===-1){
+	if (idEntityCreate === -1){
 		return -1
 	}
 
-	if (!query.queryOneToMuch(db, await idEntityCreate, req.query.tags_act.split(','), 'tags_ent', 'id_entity', 'id_tags')) {
+	let arr = []
+	for(let i of req.body.tags_act) {
+		arr.push(parseInt(i))
+	}
+	if (!query.queryInsertOneToMuch(db, await idEntityCreate, arr, 'tags_ent', 'id_entity', 'id_tags')) {
 		return 'Error: NO se ha podido insertar Etiquetas'
 	}	
 	return idEntityCreate
@@ -82,10 +84,10 @@ export async function createNewEntity(db, req) {
  * @returns Devuelve false en caso de error true en caso contrario
  */
 export async function updateEntity(db, req) {
-	var id_entity = utilities.getNumber(req.query.id_entity)
-	var id_role = utilities.getNumber(req.query.id_role)
-	var phone = utilities.getNumber(req.query.phone)
-	var deleted = utilities.getNumber(req.query.deleted)
+	var id_entity = utilities.getNumber(req.body.id_entity)
+	var id_role = utilities.getNumber(req.body.id_role)
+	var phone = utilities.getNumber(req.body.phone)
+	var deleted = utilities.getNumber(req.body.deleted)
 
 	if (id_entity === -1){
 		return 'Formato incorrecto de: "id_entity".'
@@ -95,17 +97,17 @@ export async function updateEntity(db, req) {
 		return 'Formato incorrecto de: "Teléfono de contacto".'
 	} else if (deleted === -1){
 		return 'Formato incorrecto de: "Marcado para borrar".'
-	}  else if (utilities.isEmpty(req.query.nick)) {
+	}  else if (utilities.isEmpty(req.body.nick)) {
 		return 'Formato incorrecto de: "Nick".'
-	} else if (utilities.isEmpty(req.query.name)) {
+	} else if (utilities.isEmpty(req.body.name)) {
 		return 'Formato incorrecto de: "Nombre".'
-	} else if (utilities.isEmpty(req.query.description)) {
+	} else if (utilities.isEmpty(req.body.description)) {
 		return 'Formato incorrecto de: "Aficciones del Usuario".'
-	} else if (utilities.isEmpty(req.query.mail)) {
+	} else if (utilities.isEmpty(req.body.mail)) {
 		return 'Formato incorrecto de: "Correo Electrónico".'
-	} else if (utilities.isEmpty(req.query.pass)) {
+	} else if (utilities.isEmpty(req.body.pass)) {
 		return 'Formato incorrecto de: "password".'
-	} else if (utilities.isEmpty(req.query.tags_ent)) {
+	} else if (utilities.isEmpty(req.body.tags_ent)) {
 		return 'Formato incorrecto de: "password".'
 	}
 
@@ -117,20 +119,24 @@ export async function updateEntity(db, req) {
 		return 'Error: NO se ha podido insertar Etiquetas'
 	}
 
-	if(query.queryInsertOneToMuch(db, id_entity, req.query.tags_ent.split(','), 'tags_ent', 'id_entity', 'id_tags')){
+	let arr = []
+	for(let i of req.body.tags_act) {
+		arr.push(parseInt(i))
+	}
+	if (!query.queryInsertOneToMuch(db, id_entity, arr, 'tags_ent', 'id_entity', 'id_tags')) {
 		return 'Error: NO se ha podido insertar Etiquetas'
 	}
 
 	var sql = 'UPDATE entity SET '
 	sql += 'id_role = ' + id_role + ', '
-	sql += 'nick = "' + req.query.nick + '", '
-	sql += 'name = "' + req.query.name + '", '
-	sql += 'surname = "' + req.query.name + '", '
-	sql += 'description = "' + req.query.description + '", '
-	sql += 'mail = "' + req.query.mail + '", '
-	sql += 'sha256 = "' + utilities.sha256(req.query.mail) + '", '
+	sql += 'nick = "' + req.body.nick + '", '
+	sql += 'name = "' + req.body.name + '", '
+	sql += 'surname = "' + req.body.name + '", '
+	sql += 'description = "' + req.body.description + '", '
+	sql += 'mail = "' + req.body.mail + '", '
+	sql += 'sha256 = "' + utilities.sha256(req.body.mail) + '", '
 	sql += 'phone = ' + phone + ', '
-	sql += 'avatar = "' + req.query.avatar + '", '
+	sql += 'avatar = "' + req.body.avatar + '", '
 	sql += 'deleted = ' + deleted + ', '
 	sql += 'WHERE id_entity = ' + id_entity + '; '
 
@@ -168,9 +174,18 @@ export async function deleteEntityById(db, id_entity) {
 	})
 }
 
-export async function getAllEntities(db) {
+/**
+ * @description Devuelve un JSON sin filtrar, con todas las Entities NO BORRADAS
+ * @param {*} db
+ * @returns JSON
+ */
+export async function getAllEntities(db, listAll) {
+	var sql = sqlBodyQueryGetEntity() + 'WHERE deleted = ' + 0
+	if (listAll > 0 ) {
+		sql = sqlBodyQueryGetEntity()
+	}
 	return new Promise(resolve => {
-		db.query('SELECT * FROM entity', (err, result) => {
+		db.query(sql, (err, result) => {
 			if (err) {
 				console.log(err)
 			}
@@ -179,9 +194,18 @@ export async function getAllEntities(db) {
 	})
 }
 
+/**
+ * @description Devuelve una entidad dado el id de dicha entidad
+ * @param {*} db Base de Datos de consulta
+ * @param {*} activityID id a consultar
+ * @returns JSON con los siguientes datos {
+ */
 export async function getEntityByID(db, entityID) {
 	if ((await query.getMaxIdFromTable(db, 'entity')) < entityID || entityID < 1) {
-		return 'id fuera de rango'
+		return 'Este id no pertenece a ninguna entidad'
+	}
+	if(await query.isDeleted(db, 'entity', 'id_entity', entityID)) {
+		return ('Este id fue borrado de la BD')
 	}
 	return new Promise(resolve => {
 		db.query(sqlBodyQueryGetEntity() + 'WHERE id_entity = ' + entityID, (err, result) => {

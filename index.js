@@ -81,7 +81,11 @@ app.get('/env', (req, res) => {
 //  //  //  //  //
 
 app.get('/api/getAllEntities', (req, res) => {
-	entity.getAllEntities(db).then(response => {
+	var listAll = utilities.getNumber(req.query.id_all)
+	if (listAll === -1) {
+		listAll = 0
+	}
+	entity.getAllEntities(db, listAll).then(response => {
 		res.send(response)
 	})
 })
@@ -163,24 +167,25 @@ app.get('/api/filterActivitiesBy', (req, res) => {
 })
 
 app.post('/api/createNewActivity', (req, res) => {
-	log(req.body)
 	activity.createNewActivity(db,req).then(response => {
-		log(response)
 		res.send(JSON.stringify(response))
 	})
 })
 
-app.put('/api/updateActivity', (req, res) => {
-	entity.createNewEntity(db,req).then(response => {
+app.post('/api/updateActivity', (req, res) => {
+	log(req.body)
+	activity.updateActivity(db,req).then(response => {
+		log(response)
 		res.send(response)
 	})
 })
 
-app.delete('/api/deleteActivityById', (req, res) => {
-	if (utilities.getNumber(req.query.id_activity) == -1) {
+app.post('/api/deleteActivityById', (req, res) => {
+	if (utilities.getNumber(req.body.id_activity) == -1) {
 		return res.send('El id no tiene un formato correcto')
 	}
-	entity.createNewEntity(db, req.query.id_activity).then(response => {
+	activity.deleteActivityById(db, req.body.id_activity).then(response => {
+		log(response)
 		res.send(response)
 	})
 })

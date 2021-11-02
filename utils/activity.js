@@ -2,7 +2,6 @@ import log from './log.js'
 import * as utilities from './utilities.js'
 import * as query from './query.js'
 import * as address from './address.js'
-import * as tag from './tag.js'
 
 /**
  * @description Registra una nueva Actividad en la BD
@@ -39,7 +38,6 @@ export async function createNewActivity(db, req) {
 		return 'Error: NO se ha podido insertar Dirección'
 	}
 
-	// insertar la actividad
 	var sql = 'INSERT INTO activity ('
 	sql += 'id_entity_creator, id_address, title, description, seats, price, dateAct, min_duration) VALUES ('
 	sql += id_entity_creator + ', '
@@ -56,12 +54,13 @@ export async function createNewActivity(db, req) {
 		db.query(sql, (err, result) => {
 			if (err) {
 				console.log(err)
+				resolve(JSON.stringify(-1))
 			}
 			resolve(result.insertId)
 		})
 	})
 
-	if (idActivityCreate ===-1){
+	if (idActivityCreate === -1){
 		return -1
 	} 
 	
@@ -91,7 +90,7 @@ export async function updateActivity(db, req) {
 	var deleted = utilities.getNumber(req.body.deleted)
 
 	if (id_activity === -1){
-		return 'Formato incorrecto de: "Duración del Evento".'
+		return 'Formato incorrecto de: "id_activity.'
 	} else if (min_duration === -1){
 		return 'Formato incorrecto de: "Duración del Evento".'
 	} else if (price === -1) {
@@ -120,7 +119,11 @@ export async function updateActivity(db, req) {
 		return 'Error: NO se ha podido insertar Etiquetas'
 	}
 
-	if(!query.queryInsertOneToMuch(db, id_activity, req.body.tags_act.split(','), 'tags_act', 'id_activity', 'id_tags')){
+	let arr = []
+	for(let i of req.body.tags_act) {
+		arr.push(parseInt(i))
+	}
+	if (!query.queryInsertOneToMuch(db, id_activity, arr, 'tags_act', 'id_activity', 'id_tags')) {
 		return 'Error: NO se ha podido insertar Etiquetas'
 	}
 
@@ -147,7 +150,7 @@ export async function updateActivity(db, req) {
 }
 
 /**
- * @description Marca como borrada una entity
+ * @description Marca como borrada una activity
  * @param {*} db 
  * @param {*} id_entity 
  * @returns Devuelve false en caso de error true en caso contrario
@@ -155,7 +158,7 @@ export async function updateActivity(db, req) {
 export async function deleteActivityById(db, id_activity) {
 
 	var sql = 'UPDATE activity SET '
-	sql += 'deleted = ' + 1 + ', '
+	sql += 'deleted = ' + 1 + ' '
 	sql += 'WHERE id_activity = ' + id_activity + '; '
 
 	return new Promise(resolve => {
@@ -198,7 +201,10 @@ export async function getAllActivities(db, listAll) {
  */
 export async function getActivityByID(db, activityID) {
 	if ((await query.getMaxIdFromTable(db, 'activity')) < activityID || activityID < 1) {
-		return 'id fuera de rango'
+		return 'Este id no pertenece a ninguna actividad'
+	}
+	if(await query.isDeleted(db, 'activity', 'id_activity', activityID)) {
+		return ('Este id fue borrado de la BD')
 	}
 	return new Promise(resolve => {
 		db.query(sqlBodyQueryGetActivity() + 'WHERE id_activity = ' + activityID, (err, result) => {
