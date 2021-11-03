@@ -241,7 +241,7 @@ export async function getTagsOfActivityByID(db, activityID) {
 
 /**
  * @description Esta función es genérica, se encarga de aplicar varios filtros, según los criterios 
- * 			 seleccionados de "price", "duration", "date", "seats", "location", "type".
+ * 			 seleccionados de "price", "duration", "date", "seats", "id_address", "type".
  * 			 La cantidad de "activities" devueltas está comprendida entre [lowerLimit, upperLimit]
  * @param {*} db 
  * @param {*} req 
@@ -279,6 +279,33 @@ export async function filterActivitiesBy(db, req) {
 	})
 }
 
+export async function getLocationWithActivities(db){
+	var sql = 'SELECT DISTINCT ad.location '
+	sql += 'FROM activity ac, address ad '
+	sql += 'WHERE ac.deleted = 0 AND ac.id_address = ad.id_address;'
+	return new Promise(resolve => {
+		db.query(sql, (err, result) => {
+			if (err) {
+				console.log(err)
+			}
+			resolve(result)
+		})
+	})
+}
+
+export async function getEntitiesWithActivities(db){
+	var sql = 'SELECT DISTINCT e.id_entity, e.nick '
+	sql += 'FROM activity a, entity e '
+	sql += 'WHERE e.deleted = 0 AND a.deleted = 0 AND a.id_entity_creator = e.id_entity;'
+	return new Promise(resolve => {
+		db.query(sql, (err, result) => {
+			if (err) {
+				console.log(err)
+			}
+			resolve(result)
+		})
+	})
+}
 export async function sortActivitiesBy(db, params) {
 
 	// To complete

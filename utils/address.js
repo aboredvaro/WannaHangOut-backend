@@ -48,7 +48,7 @@ export async function createNewAddress(db, req) {
 }
 
 /**
- * @description  Actualiza los datos de una 
+ * @description  Actualiza los datos de una Dirección
  * @param {*} db 
  * @param {*} req 
  * @returns Devuelve false en caso de error true en caso contrario

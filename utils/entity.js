@@ -28,7 +28,7 @@ export async function createNewEntity(db, req) {
 	} else if (utilities.isEmpty(req.body.pass)) {
 		return 'Formato incorrecto de: "password".'
 	} else if (utilities.isEmpty(req.body.tags_ent)) {
-		return 'Formato incorrecto de: "password".'
+		return 'Formato incorrecto de: "etiquetas".'
 	}
 	
 	var id_address = await address.createNewAddress(db, req)
@@ -38,7 +38,7 @@ export async function createNewEntity(db, req) {
 	}
 
 	var sql = 'INSERT INTO entity ('
-	sql += 'id_role, id_address, nick, name, surname, description, mail, sha256, phone, pass, avatar, deleted) VALUES ('
+	sql += 'id_role, id_address, nick, name, surname, description, mail, sha256, phone, pass, avatar) VALUES ('
 	sql += id_role + ', '
 	sql += id_address + ', '
 	sql += '"' + req.body.nick + '", '
@@ -49,8 +49,7 @@ export async function createNewEntity(db, req) {
 	sql += '"' + utilities.sha256(req.body.mail) + '", '
 	sql += phone + ', '
 	sql += '"' + req.body.pass + '", '
-	sql += '"' + req.body.avatar + '", '
-	sql += 0
+	sql += '"' + req.body.avatar 
 	sql += '); '
 
 	var idEntityCreate = new Promise(resolve => {
@@ -109,6 +108,8 @@ export async function updateEntity(db, req) {
 		return 'Formato incorrecto de: "password".'
 	} else if (utilities.isEmpty(req.body.tags_ent)) {
 		return 'Formato incorrecto de: "password".'
+	} else if (utilities.isEmpty(req.body.avatar)) {
+		return 'Formato incorrecto de: "avatar".'
 	}
 
 	if (!address.updateAddress(db, req)){

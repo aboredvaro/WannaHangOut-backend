@@ -166,6 +166,18 @@ app.get('/api/filterActivitiesBy', (req, res) => {
 	})
 })
 
+app.get('/api/getLocationWithActivities', (req, res) => {
+	activity.getLocationWithActivities(db).then(response => {
+		res.send(response)
+	})
+})
+
+app.get('/api/getEntitiesWithActivities', (req, res) => {
+	activity.getEntitiesWithActivities(db).then(response => {
+		res.send(response)
+	})
+})
+
 app.post('/api/createNewActivity', (req, res) => {
 	activity.createNewActivity(db,req).then(response => {
 		res.send(JSON.stringify(response))
@@ -185,7 +197,6 @@ app.post('/api/deleteActivityById', (req, res) => {
 		return res.send('El id no tiene un formato correcto')
 	}
 	activity.deleteActivityById(db, req.body.id_activity).then(response => {
-		log(response)
 		res.send(response)
 	})
 })
