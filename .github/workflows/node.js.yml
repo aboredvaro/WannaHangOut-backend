@@ -16,21 +16,17 @@ jobs:
         node-version: [14.17.3]
 
     steps:
-      - name: Test on node ${{ matrix.node_version }} and ${{ matrix.os }}
-        uses: actions/checkout@v2
+      - uses: actions/checkout@v2
       
-      - name: Setup Node ${{ matrix.node_version }}
+      - name: Setting up Node ${{ matrix.node_version }}
         uses: actions/setup-node@v2.1.5
         with:
           version: 14.17.3
       
-      - name: Github actions for yarn
+      - name: Setting up yarn enviroment
         uses: borales/actions-yarn@v2.3.0
         with:
           cmd: install # will run `yarn install` command
         
-      - name: Creating build
-        run: yarn build
-        
-      - name: Run test
+      - name: Run CI Tests
         run: yarn run test
