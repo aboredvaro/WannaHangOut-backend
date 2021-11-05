@@ -10,21 +10,21 @@ on:
     branches: [ main ]
 
 jobs:
-  test:
-
+  build:
     runs-on: ubuntu-latest
-
     strategy:
       matrix:
         node-version: [14.17.3]
 
     steps:
-    - uses: actions/checkout@v2
-    - name: Test on node ${{ matrix.node_version }} and ${{ matrix.os }}
-      uses: actions/setup-node@v2
-      with:
-        node-version: ${{ matrix.node-version }}
-        cache: 'npm'
-    - run: npm ci
-    - run: npm run build --if-present
-    - run: npm test
+      - name: Test on node ${{ matrix.node_version }} and ${{ matrix.os }}
+      - uses: actions/checkout@v2
+      - uses: borales/actions-yarn@v2.3.0
+        with:
+          cmd: install # will run `yarn install` command
+      - uses: borales/actions-yarn@v2.3.0
+        with:
+          cmd: build # will run `yarn build` command
+      - uses: borales/actions-yarn@v2.3.0
+        with:
+          cmd: test # will run `yarn test` command
