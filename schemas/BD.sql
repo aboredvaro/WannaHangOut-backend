@@ -100,12 +100,14 @@ CREATE TABLE img_act (
 CREATE TABLE review (
     id_review INT AUTO_INCREMENT,
     id_activity INT NOT NULL,
+    id_entity INT NOT NULL,
     title VARCHAR(100) NOT NULL,
     description VARCHAR(500),
     points TINYINT(1) NOT NULL,         -- Puntuación del 0 al 9
     deleted BOOLEAN NOT NULL DEFAULT 0,
     PRIMARY KEY(id_review),
-    FOREIGN KEY (id_activity) REFERENCES activity (id_activity)
+    FOREIGN KEY (id_activity) REFERENCES activity (id_activity),
+    FOREIGN KEY (id_entity) REFERENCES entity (id_entity)
 );
 
 -- Imágenes relacionadas con actividad
