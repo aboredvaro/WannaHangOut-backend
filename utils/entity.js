@@ -151,6 +151,59 @@ export async function updateEntity(db, req) {
 	})
 }
 
+export async function isEntityRegistred(db, req){
+	if (utilities.isEmpty(req.body.mail)) {
+		return 'Formato incorrecto de: "mail".'
+	} else if (utilities.isEmpty(req.body.pass)) {
+		return 'Formato incorrecto de: "pass".'
+	}
+
+	var sql = 'SELECT COUNT(nick) as login '
+	sql += 'FROM entity '
+	sql += 'WHERE sha256 = "' + req.body.mail + '" '
+	sql += 'AND AND pass = "' + req.body.pass + '"; '
+
+	var cuenta = new Promise(resolve => {
+		db.query(sql, (err, result) => {
+			if (err) {
+				console.log(err)
+				resolve(-1)
+			}
+			resolve(result.login)
+		})
+	})
+	
+	if (cuenta === 1) {
+		return true
+	}
+	return false
+}
+
+export async function existNick(db, req){
+	if (utilities.isEmpty(req.body.nick)) {
+		return 'Formato incorrecto de: "nick".'
+	}
+
+	var sql = 'SELECT COUNT(nick) as login '
+	sql += 'FROM entity '
+	sql += 'WHERE nick = "' + req.body.nick + '; '
+
+	var cuenta = new Promise(resolve => {
+		db.query(sql, (err, result) => {
+			if (err) {
+				console.log(err)
+				resolve(-1)
+			}
+			resolve(result.login)
+		})
+	})
+
+	if (cuenta === 1) {
+		return true
+	}
+	return false
+}
+
 /**
  * @description Marca como borrada una entity
  * @param {*} db 

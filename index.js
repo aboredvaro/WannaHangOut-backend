@@ -105,6 +105,20 @@ app.get('/api/getEntityByHash', (req, res) => {
 	})
 })
 
+app.post('/api/isEntityRegistred', (req, res) => {
+	//log(req.body)
+	entity.isEntityRegistred(db,req).then(response => {
+		res.send(response)
+	})
+})
+
+app.post('/api/existNick', (req, res) => {
+	//log(req.body)
+	entity.existNick(db,req).then(response => {
+		res.send(response)
+	})
+})
+
 app.post('/api/createNewEntity', (req, res) => {
 	//log(req.body)
 	entity.createNewEntity(db,req).then(response => {
@@ -161,13 +175,6 @@ app.get('/api/getTagsOfActivityByID', (req, res) => {
 	})
 })
 
-app.post('/api/filterActivitiesBy', (req, res) => {
-	//log(req.body)
-	activity.filterActivitiesBy(db,req).then(response => {
-		res.send(response)
-	})
-})
-
 app.get('/api/getLocationWithActivities', (req, res) => {
 	activity.getLocationWithActivities(db).then(response => {
 		res.send(response)
@@ -176,6 +183,13 @@ app.get('/api/getLocationWithActivities', (req, res) => {
 
 app.get('/api/getEntitiesWithActivities', (req, res) => {
 	activity.getEntitiesWithActivities(db).then(response => {
+		res.send(response)
+	})
+})
+
+app.post('/api/filterActivitiesBy', (req, res) => {
+	//log(req.body)
+	activity.filterActivitiesBy(db,req).then(response => {
 		res.send(response)
 	})
 })
