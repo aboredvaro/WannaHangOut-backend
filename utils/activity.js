@@ -268,8 +268,7 @@ export async function filterActivitiesBy(db, req) {
 	sql += fixFilterByType(req.body.id_tags)
 	sql += fixFilterByEntintyCreator(req.body.id_entity_creator)
 	var sqlLimit = 'LIMIT ' + fixLowerLimit(req.body.lowerLimit) + ', ' + fixUpperLimit(req.body.upperLimit) + ';'
-	
-	log(sql + sqlLimit)
+
 	return new Promise(resolve => {
 		db.query(sql + sqlLimit, (err, result) => {
 			if (err) {
@@ -355,7 +354,20 @@ function fixFilterBySeats(min, max) {
 }
 
 function fixFilterByDate(min, max) {
-	return fixMinMax(min, max, 'dateAct')
+	var dtMin = new Date(min)
+	var dtMax = new Date(max)
+
+	if (dtMax.valueOf() < dtMin.valueOf()) {
+		var dtAux = new Date(min)
+		dtMin = dtMax
+		dtMax = dtAux
+	}
+
+	var stMin = dtMin.getFullYear() + '-' + (dtMin.getMonth()+1) + '-' + dtMin.getDate()
+	var stMax = dtMax.getFullYear() + '-' + (dtMax.getMonth()+1) + '-' + dtMax.getDate()
+
+	return 'AND dateAct BETWEEN "' + stMin + '" AND "' + stMax + '" '
+	//return ''
 }
 
 function fixFilterByLocation(location) {
