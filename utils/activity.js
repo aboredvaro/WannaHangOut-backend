@@ -259,18 +259,19 @@ export async function getTagsOfActivityByID(db, activityID) {
  * 		  "price", "location", "dateAct", "min_duration", "id_entity_creator"}
  */
 export async function filterActivitiesBy(db, req) {
-	var sqlWhere = 'WHERE a.id_activity '
-	sqlWhere += fixFilterByLocation(req.body.location)
-	sqlWhere += fixFilterByPrice(req.body.price_min, req.body.price_max)
-	sqlWhere += fixFilterByDuration(req.body.min_duration_min, req.body.min_duracion_max)
-	sqlWhere += fixFilterBySeats(req.body.seats_min, req.body.seats_max)
-	sqlWhere += fixFilterByDate(req.body.dateAct_min, req.body.dateAct_max)
-	sqlWhere += fixFilterByType(req.body.id_tags)
-	sqlWhere += fixFilterByEntintyCreator(req.body.id_entity_creator)
+	var sql = 'SELECT * FROM activity, address WHERE activity.id_address = address.id_address '
+	sql += fixFilterByLocation(req.body.location)
+	sql += fixFilterByPrice(req.body.price_min, req.body.price_max)
+	sql += fixFilterByDuration(req.body.min_duration_min, req.body.min_duracion_max)
+	sql += fixFilterBySeats(req.body.seats_min, req.body.seats_max)
+	sql += fixFilterByDate(req.body.dateAct_min, req.body.dateAct_max)
+	sql += fixFilterByType(req.body.id_tags)
+	sql += fixFilterByEntintyCreator(req.body.id_entity_creator)
 	var sqlLimit = 'LIMIT ' + fixLowerLimit(req.body.lowerLimit) + ', ' + fixUpperLimit(req.body.upperLimit) + ';'
 	
+	log(sql + sqlLimit)
 	return new Promise(resolve => {
-		db.query(sqlBodyQueryGetActivity() + sqlWhere + sqlLimit, (err, result) => {
+		db.query(sql + sqlLimit, (err, result) => {
 			if (err) {
 				console.log(err)
 			}
@@ -359,7 +360,7 @@ function fixFilterByDate(min, max) {
 
 function fixFilterByLocation(location) {
 	if ((typeof location) !== 'undefined') {
-		return 'AND a.location LIKE "' + location + '" '
+		return 'AND location = "' + location + '" '
 	}
 	return ''
 }
@@ -368,7 +369,7 @@ function fixFilterByType(id_tags) {
 	if (utilities.isEmpty(id_tags)) {
 		return ''
 	}
-	return 'AND id_activity IN (SELECT id_activity FROM tags_act WHERE id_tags IN (' + id_tags + ') group by id_activity) '
+	return 'AND id_activity IN (SELECT id_activity FROM tags_act WHERE id_tags IN (' + id_tags + ') GROUP BY id_activity) '
 }
 
 function fixFilterByEntintyCreator(id_entity_creator) {
