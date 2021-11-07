@@ -36,6 +36,8 @@ export async function createNewAddress(db, req) {
 	sql += latitude + ', '
 	sql += longitude
 	sql += '); '
+
+	//log(sql)
 	return new Promise(resolve => {
 		db.query(sql, (err, result) => {
 			if (err) {

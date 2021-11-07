@@ -49,31 +49,30 @@ export async function createNewEntity(db, req) {
 	sql += '"' + utilities.sha256(req.body.mail) + '", '
 	sql += phone + ', '
 	sql += '"' + req.body.pass + '", '
-	sql += '"' + req.body.avatar 
+	sql += '"' + req.body.avatar  + '"'
 	sql += '); '
+
+	//log(sql)
 
 	var idEntityCreate = new Promise(resolve => {
 		db.query(sql, (err, result) => {
 			if (err) {
 				console.log(err)
-				resolve(JSON.stringify(-1))
+				resolve(-1)
 			}
 			resolve(result.insertId)
 		})
+
 	})
 
-	if (idEntityCreate === -1){
-		return -1
-	}
-
 	let arr = []
-	for(let i of req.body.tags_act) {
+	for(let i of req.body.tags_ent) {
 		arr.push(parseInt(i))
 	}
 	if (!query.queryInsertOneToMuch(db, await idEntityCreate, arr, 'tags_ent', 'id_entity', 'id_tags')) {
 		return 'Error: NO se ha podido insertar Etiquetas'
 	}	
-	return idEntityCreate
+	return JSON.stringify(await idEntityCreate)
 }
 
 /**

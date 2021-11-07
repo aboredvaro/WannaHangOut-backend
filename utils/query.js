@@ -62,11 +62,13 @@ function stringInsertQueryOneToMuch(oneId, muchId, table, nameColunmOne, nameCol
  * @returns Devuelve true si la inserción es satisfactoria o false en caso contrario
  */
 export async function queryInsertOneToMuch(db, oneId, muchId, table, nameColunmOne, nameColumnMuch) {
+	//log(stringInsertQueryOneToMuch(oneId, muchId, table, nameColunmOne, nameColumnMuch))
 	return new Promise(resolve => {
 		db.query(stringInsertQueryOneToMuch(oneId, muchId, table, nameColunmOne, nameColumnMuch), (err) => {
 			if (err) {
 				console.log(err)
-				resolve(false)
+				//resolve(false)
+				return false
 			}
 			resolve(true)
 		})

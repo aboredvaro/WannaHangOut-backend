@@ -106,6 +106,7 @@ app.get('/api/getEntityByHash', (req, res) => {
 })
 
 app.post('/api/createNewEntity', (req, res) => {
+	//log(req.body)
 	entity.createNewEntity(db,req).then(response => {
 		res.send(response)
 	})

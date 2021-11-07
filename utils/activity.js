@@ -60,7 +60,7 @@ export async function createNewActivity(db, req) {
 		})
 	})
 
-	if (idActivityCreate === -1){
+	if (await idActivityCreate === -1){
 		return -1
 	} 
 	
