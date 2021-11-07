@@ -269,6 +269,7 @@ export async function filterActivitiesBy(db, req) {
 	sql += fixFilterByEntintyCreator(req.body.id_entity_creator)
 	var sqlLimit = 'LIMIT ' + fixLowerLimit(req.body.lowerLimit) + ', ' + fixUpperLimit(req.body.upperLimit) + ';'
 
+	//log(sql + sqlLimit)
 	return new Promise(resolve => {
 		db.query(sql + sqlLimit, (err, result) => {
 			if (err) {
@@ -354,6 +355,10 @@ function fixFilterBySeats(min, max) {
 }
 
 function fixFilterByDate(min, max) {
+	if(utilities.isEmpty(min) || utilities.isEmpty(max) ){
+		return ''
+	}
+
 	var dtMin = new Date(min)
 	var dtMax = new Date(max)
 
