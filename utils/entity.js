@@ -161,22 +161,21 @@ export async function isEntityRegistred(db, req){
 	var sql = 'SELECT COUNT(nick) as login '
 	sql += 'FROM entity '
 	sql += 'WHERE sha256 = "' + req.body.mail + '" '
-	sql += 'AND AND pass = "' + req.body.pass + '"; '
+	sql += 'AND pass = "' + req.body.pass + '"; '
 
-	var cuenta = new Promise(resolve => {
-		db.query(sql, (err, result) => {
-			if (err) {
-				console.log(err)
-				resolve(-1)
-			}
-			resolve(result.login)
+	const exists = async() => {
+		return new Promise(resolve => {
+			db.query(sql, (err, result) => {
+				if (err) {
+					console.log(err)
+					resolve(-1)
+				}
+				resolve(result[0].login === 1)
+			})
 		})
-	})
-	
-	if (cuenta === 1) {
-		return true
 	}
-	return false
+
+	return await exists()
 }
 
 export async function existNick(db, req){
