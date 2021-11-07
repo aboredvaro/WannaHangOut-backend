@@ -259,7 +259,7 @@ export async function getTagsOfActivityByID(db, activityID) {
  * 		  "price", "location", "dateAct", "min_duration", "id_entity_creator"}
  */
 export async function filterActivitiesBy(db, req) {
-	var sql = 'SELECT * FROM activity, address WHERE activity.id_address = address.id_address '
+	var sql = 'SELECT * FROM activity, address WHERE activity.deleted = 0 AND activity.id_address = address.id_address '
 	sql += fixFilterByLocation(req.body.location)
 	sql += fixFilterByPrice(req.body.price_min, req.body.price_max)
 	sql += fixFilterByDuration(req.body.min_duration_min, req.body.min_duracion_max)
@@ -269,7 +269,6 @@ export async function filterActivitiesBy(db, req) {
 	sql += fixFilterByEntintyCreator(req.body.id_entity_creator)
 	var sqlLimit = 'LIMIT ' + fixLowerLimit(req.body.lowerLimit) + ', ' + fixUpperLimit(req.body.upperLimit) + ';'
 	
-	log(sql + sqlLimit)
 	return new Promise(resolve => {
 		db.query(sql + sqlLimit, (err, result) => {
 			if (err) {
@@ -343,23 +342,23 @@ function fixUpperLimit(upp) {
 }
 
 function fixFilterByPrice(min, max) {
-	return fixMinMax(min, max, 'a.price')
+	return fixMinMax(min, max, 'price')
 }
 
 function fixFilterByDuration(min, max) {
-	return fixMinMax(min, max, 'a.min_duration')
+	return fixMinMax(min, max, 'min_duration')
 }
 
 function fixFilterBySeats(min, max) {
-	return fixMinMax(min, max, 'a.seats')
+	return fixMinMax(min, max, 'seats')
 }
 
 function fixFilterByDate(min, max) {
-	return fixMinMax(min, max, 'a.dateAct')
+	return fixMinMax(min, max, 'dateAct')
 }
 
 function fixFilterByLocation(location) {
-	if ((typeof location) !== 'undefined') {
+	if ((typeof location) !== 'undefined' || location !== '- - - -') {
 		return 'AND location = "' + location + '" '
 	}
 	return ''
@@ -373,7 +372,7 @@ function fixFilterByType(id_tags) {
 }
 
 function fixFilterByEntintyCreator(id_entity_creator) {
-	if (utilities.isEmpty(id_entity_creator)) {
+	if (utilities.isEmpty(id_entity_creator) || id_entity_creator !== '- - - -') {
 		return ''
 	}
 	return 'AND id_activity IN (SELECT id_activity FROM activity WHERE id_entity_creator IN (' + id_entity_creator + ') GROUP BY id_activity) '

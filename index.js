@@ -185,9 +185,7 @@ app.post('/api/createNewActivity', (req, res) => {
 })
 
 app.post('/api/updateActivity', (req, res) => {
-	log(req.body)
 	activity.updateActivity(db,req).then(response => {
-		log(response)
 		res.send(response)
 	})
 })
