@@ -160,7 +160,8 @@ app.get('/api/getTagsOfActivityByID', (req, res) => {
 	})
 })
 
-app.get('/api/filterActivitiesBy', (req, res) => {
+app.post('/api/filterActivitiesBy', (req, res) => {
+	log(req)
 	activity.filterActivitiesBy(db,req).then(response => {
 		res.send(response)
 	})
