@@ -269,12 +269,13 @@ export async function filterActivitiesBy(db, req) {
 	sql += fixFilterByEntintyCreator(req.body.id_entity_creator)
 	var sqlLimit = 'LIMIT ' + fixLowerLimit(req.body.lowerLimit) + ', ' + fixUpperLimit(req.body.upperLimit) + ';'
 	
+	log(sql + sqlLimit)
 	return new Promise(resolve => {
 		db.query(sql + sqlLimit, (err, result) => {
 			if (err) {
 				console.log(err)
 			}
-			resolve(JSON.parse(JSON.stringify(result)))
+			resolve(result)
 		})
 	})
 }
@@ -358,7 +359,7 @@ function fixFilterByDate(min, max) {
 }
 
 function fixFilterByLocation(location) {
-	if ((typeof location) !== 'undefined' || location !== '- - - -') {
+	if ((typeof location) !== 'undefined') {
 		return 'AND location = "' + location + '" '
 	}
 	return ''
@@ -372,7 +373,7 @@ function fixFilterByType(id_tags) {
 }
 
 function fixFilterByEntintyCreator(id_entity_creator) {
-	if (utilities.isEmpty(id_entity_creator) || id_entity_creator !== '- - - -') {
+	if (utilities.isEmpty(id_entity_creator)) {
 		return ''
 	}
 	return 'AND id_activity IN (SELECT id_activity FROM activity WHERE id_entity_creator IN (' + id_entity_creator + ') GROUP BY id_activity) '
