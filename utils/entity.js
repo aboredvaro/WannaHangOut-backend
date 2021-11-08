@@ -48,7 +48,7 @@ export async function createNewEntity(db, req) {
 	sql += '"' + req.body.mail + '", '
 	sql += '"' + utilities.sha256(req.body.mail) + '", '
 	sql += phone + ', '
-	sql += '"' + req.body.pass + '", '
+	sql += '"' + utilities.sha256(req.body.pass) + '", '
 	sql += '"' + req.body.avatar  + '"'
 	sql += '); '
 
@@ -62,7 +62,6 @@ export async function createNewEntity(db, req) {
 			}
 			resolve(result.insertId)
 		})
-
 	})
 
 	let arr = []
@@ -103,8 +102,6 @@ export async function updateEntity(db, req) {
 		return 'Formato incorrecto de: "Aficciones del Usuario".'
 	} else if (utilities.isEmpty(req.body.mail)) {
 		return 'Formato incorrecto de: "Correo Electrónico".'
-	} else if (utilities.isEmpty(req.body.pass)) {
-		return 'Formato incorrecto de: "password".'
 	} else if (utilities.isEmpty(req.body.tags_ent)) {
 		return 'Formato incorrecto de: "tags".'
 	} else if (utilities.isEmpty(req.body.avatar)) {
@@ -135,6 +132,9 @@ export async function updateEntity(db, req) {
 	sql += 'description = "' + req.body.description + '", '
 	sql += 'mail = "' + req.body.mail + '", '
 	sql += 'sha256 = "' + utilities.sha256(req.body.mail) + '", '
+	if (!utilities.isEmpty(req.body.pass)) {
+		sql += 'pass = "' + utilities.sha256(req.body.pass) + '", '
+	}
 	sql += 'phone = ' + phone + ', '
 	sql += 'avatar = "' + req.body.avatar + '", '
 	sql += 'deleted = ' + deleted + ' '

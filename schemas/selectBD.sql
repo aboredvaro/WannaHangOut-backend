@@ -4,7 +4,6 @@
 -- BD Beta
  USE heroku_314befdd836197e;
 
-
 SELECT * FROM tags_act;
 SELECT * FROM entityToActivity;
 SELECT * FROM img_review;
@@ -15,7 +14,6 @@ SELECT * FROM tags_ent;
 SELECT * FROM entity;
 SELECT * FROM address;
 
-
 SELECT * FROM activity;
 
 SELECT * FROM provinces;
@@ -23,10 +21,6 @@ SELECT * FROM images;
 SELECT * FROM tags;
 SELECT * FROM rol;
 
-SELECT COUNT(nick) as login
-FROM entity
-WHERE sha256 = "82109A53D09F69518E408196D3C4F6B587B3836B93B38F7C7F5682DAB8444CDD"
-	AND pass = "03AC674216F3E15C761EE1A5E255F067953623C8B388B4459E13F978D7C846F4"
-
 -- DELETE FROM entity WHERE id_entity = 85;
 -- DELETE FROM address WHERE id_address = 275;
+

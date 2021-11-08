@@ -127,7 +127,7 @@ app.post('/api/createNewEntity', (req, res) => {
 })
 
 app.put('/api/updateEntity', (req, res) => {
-	entity.createNewEntity(db,req).then(response => {
+	entity.updateEntity(db,req).then(response => {
 		res.send(response)
 	})
 })
@@ -163,15 +163,6 @@ app.get('/api/getActivityByID', (req, res) => {
 		return res.send('El id no tiene un formato correcto')
 	}
 	activity.getActivityByID(db, req.query.id_activity).then(response => {
-		return res.send(response)
-	})
-})
-
-app.get('/api/getTagsOfActivityByID', (req, res) => {
-	if (utilities.getNumber(req.query.id_activity) == -1) {
-		return res.send('El id no tiene un formato correcto')
-	}
-	activity.getTagsOfActivityByID(db, req.query.id_activity).then(response => {
 		return res.send(response)
 	})
 })
@@ -259,6 +250,13 @@ app.put('/api/updateAddress', (req, res) => {
 
 app.get('/api/getAllTags', (req, res) => {
 	tag.getAllTags(db).then(response => {
+		res.send(response)
+	})
+})
+
+app.post('/api/getTagsByIdAndType', (req, res) => {
+	//log(req.body)
+	tag.getTagsByIdAndType(db, req).then(response => {
 		res.send(response)
 	})
 })

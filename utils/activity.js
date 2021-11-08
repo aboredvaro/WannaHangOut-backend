@@ -217,29 +217,6 @@ export async function getActivityByID(db, activityID) {
 }
 
 /**
- * @description Devuelve todas las tags asociadas a una actividad, dado el id de dicha actividad
- * @param {*} db Base de Datos de consulta
- * @param {*} activityID id a consultar
- * @returns JSON con los siguientes datos {"id_tags", "name"}
- */
-export async function getTagsOfActivityByID(db, activityID) {
-	if ((await query.getMaxIdFromTable(db, 'activity')) < activityID || activityID < 1) {
-		return 'id fuera de rango'
-	}
-	var sqlSelect = 'SELECT t.id_tags, t.name '
-	var sqlFrom = 'FROM tags_act ta, tags t '
-	var sqlWhere = 'WHERE ta.id_tags = t.id_tags AND ta.id_activity = ' + activityID + ';'
-	return new Promise(resolve => {
-		db.query(sqlSelect + sqlFrom + sqlWhere, (err, result) => {
-			if (err) {
-				console.log(err)
-			}
-			resolve(JSON.stringify(result))
-		})
-	})
-}
-
-/**
  * @description Esta función es genérica, se encarga de aplicar varios filtros, según los criterios 
  * 			 seleccionados de "price", "duration", "date", "seats", "id_address", "type".
  * 			 La cantidad de "activities" devueltas está comprendida entre [lowerLimit, upperLimit]
