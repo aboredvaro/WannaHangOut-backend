@@ -157,48 +157,14 @@ export async function isEntityRegistred(db, req){
 	} else if (utilities.isEmpty(req.body.pass)) {
 		return 'Formato incorrecto de: "pass".'
 	}
-
-	var sql = 'SELECT COUNT(nick) as login '
-	sql += 'FROM entity '
-	sql += 'WHERE sha256 = "' + req.body.mail + '" '
-	sql += 'AND pass = "' + req.body.pass + '"; '
-
-	const exists = async() => {		return new Promise(resolve => {
-			db.query(sql, (err, result) => {
-				if (err) {
-					console.log(err)
-					resolve(-1)
-				}
-				resolve(result[0].login === 1)
-			})
-		})
-	}
-
-	return await exists()
+	return await query.isInDatabase(db, 'nick', 'entity', 'sha256 = "' + req.body.mail + '" AND pass = "' + req.body.pass + '"')
 }
 
 export async function existNick(db, req){
 	if (utilities.isEmpty(req.body.nick)) {
 		return 'Formato incorrecto de: "nick".'
 	}
-
-	var sql = 'SELECT COUNT(nick) as login '
-	sql += 'FROM entity '
-	sql += 'WHERE nick = "' + req.body.nick + '"; '
-
-	const cuenta = async() => {
-		return new Promise(resolve => {
-			db.query(sql, (err, result) => {
-				if (err) {
-					console.log(err)
-					resolve(-1)
-				}
-				resolve(result[0].login === 1)
-			})
-		})
-	}
-
-	return await cuenta()
+	return await query.isInDatabase(db, 'nick', 'entity', 'nick = "' + req.body.nick + '"')
 }
 
 /**

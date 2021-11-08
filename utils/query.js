@@ -120,3 +120,31 @@ export async function isDeleted(db, table, columna, id_object) {
 
 	return true
 }
+
+/**
+ * 
+ * @param {*} db 			Base de datos donde se hace la consulta 
+ * @param {*} column 		Nombre de la columna que servirá para contar
+ * @param {*} fromTables 	Tabla o conjunto de tablas que se quieren analizar
+ * @param {*} conditionWhere 	Condición Where que se debe cumplir para la consulta
+ * @returns 
+ */
+export async function isInDatabase(db, column, fromTables, conditionWhere) {
+
+	var select = 'SELECT COUNT(' + column + ') as cuenta '
+	var from = 'FROM ' + fromTables + ' '
+	var where = 'WHERE ' + conditionWhere + ';'
+	var sql = select + from + where
+
+	//log(sql)
+	return new Promise(resolve => {
+		db.query(sql, (err, result) => {
+			if (err) {
+				console.log(err)
+				resolve(-1)
+			}
+			resolve(result[0].cuenta !== 0)
+		})
+	})
+
+}
