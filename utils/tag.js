@@ -8,7 +8,7 @@ import log from './log.js'
  * @returns Devuelve true si la inserción es satisfactoria o false en caso contrario
  */
 export async function deleteTagsByIdOfEntityOrActivity2(db, id, table, columna) {
-	var sql = 'DELETE FROM ' + table + 'WHERE ' + columna + ' = ' + id + ';'
+	var sql = 'DELETE FROM ' + table + ' WHERE ' + columna + ' = ' + id + ';'
 	new Promise(resolve => {
 		db.query(sql, (err) => {
 			if (err) {

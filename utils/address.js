@@ -83,7 +83,7 @@ export async function updateAddress(db, req) {
 	sql += 'location = "' + req.body.location + '", '
 	sql += 'direction = "' + req.body.direction + '", '
 	sql += 'latitude = ' + latitude + ', '
-	sql += 'longitude = ' + longitude + ', '
+	sql += 'longitude = ' + longitude + ' '
 	sql += 'WHERE id_address = ' + id_address + '; '
 	return new Promise(resolve => {
 		db.query(sql, (err) => {

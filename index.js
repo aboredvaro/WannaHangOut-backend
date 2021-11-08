@@ -127,7 +127,7 @@ app.post('/api/createNewEntity', (req, res) => {
 })
 
 app.put('/api/updateEntity', (req, res) => {
-	entity.createNewEntity(db,req).then(response => {
+	entity.updateEntity(db,req).then(response => {
 		res.send(response)
 	})
 })

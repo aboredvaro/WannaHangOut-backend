@@ -12,7 +12,7 @@ import * as address from './address.js'
 export async function createNewEntity(db, req) {
 	var id_role = utilities.getNumber(req.body.id_role)
 	var phone = utilities.getNumber(req.body.phone)
-
+ 
 	if (id_role === -1){
 		return 'Formato incorrecto de: "Rol de usuario".'
 	} else if (phone === -1){
@@ -106,7 +106,7 @@ export async function updateEntity(db, req) {
 	} else if (utilities.isEmpty(req.body.pass)) {
 		return 'Formato incorrecto de: "password".'
 	} else if (utilities.isEmpty(req.body.tags_ent)) {
-		return 'Formato incorrecto de: "password".'
+		return 'Formato incorrecto de: "tags".'
 	} else if (utilities.isEmpty(req.body.avatar)) {
 		return 'Formato incorrecto de: "avatar".'
 	}
@@ -120,7 +120,7 @@ export async function updateEntity(db, req) {
 	}
 
 	let arr = []
-	for(let i of req.body.tags_act) {
+	for(let i of req.body.tags_ent) {
 		arr.push(parseInt(i))
 	}
 	if (!query.queryInsertOneToMuch(db, id_entity, arr, 'tags_ent', 'id_entity', 'id_tags')) {
@@ -137,7 +137,7 @@ export async function updateEntity(db, req) {
 	sql += 'sha256 = "' + utilities.sha256(req.body.mail) + '", '
 	sql += 'phone = ' + phone + ', '
 	sql += 'avatar = "' + req.body.avatar + '", '
-	sql += 'deleted = ' + deleted + ', '
+	sql += 'deleted = ' + deleted + ' '
 	sql += 'WHERE id_entity = ' + id_entity + '; '
 
 	return new Promise(resolve => {
@@ -185,7 +185,7 @@ export async function existNick(db, req){
 
 	var sql = 'SELECT COUNT(nick) as login '
 	sql += 'FROM entity '
-	sql += 'WHERE nick = "' + req.body.nick + '; '
+	sql += 'WHERE nick = "' + req.body.nick + '"; '
 
 	var cuenta = new Promise(resolve => {
 		db.query(sql, (err, result) => {
@@ -193,7 +193,8 @@ export async function existNick(db, req){
 				console.log(err)
 				resolve(-1)
 			}
-			resolve(result.login)
+			log(result[0].login===1)
+			resolve(result[0].login===1)
 		})
 	})
 

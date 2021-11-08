@@ -85,7 +85,7 @@ export async function queryInsertOneToMuch(db, oneId, muchId, table, nameColunmO
  * @returns Devuelve true si la inserción es satisfactoria o false en caso contrario
  */
 export async function deleteSimpleFromTable(db, id, table, columna) {
-	var sql = 'DELETE FROM ' + table + 'WHERE ' + columna + ' = ' + id + ';'
+	var sql = 'DELETE FROM ' + table + ' WHERE ' + columna + ' = ' + id + ';'
 	new Promise(resolve => {
 		db.query(sql, (err) => {
 			if (err) {
