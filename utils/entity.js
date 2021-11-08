@@ -213,7 +213,7 @@ export async function existNick(db, req){
 export async function deleteEntityById(db, id_entity) {
 
 	var sql = 'UPDATE entity SET '
-	sql += 'deleted = ' + 1 + ', '
+	sql += 'deleted = ' + 1 + ' '
 	sql += 'WHERE id_entity = ' + id_entity + '; '
 
 	return new Promise(resolve => {
