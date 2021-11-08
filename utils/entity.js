@@ -163,8 +163,7 @@ export async function isEntityRegistred(db, req){
 	sql += 'WHERE sha256 = "' + req.body.mail + '" '
 	sql += 'AND pass = "' + req.body.pass + '"; '
 
-	const exists = async() => {
-		return new Promise(resolve => {
+	const exists = async() => {		return new Promise(resolve => {
 			db.query(sql, (err, result) => {
 				if (err) {
 					console.log(err)
@@ -187,21 +186,19 @@ export async function existNick(db, req){
 	sql += 'FROM entity '
 	sql += 'WHERE nick = "' + req.body.nick + '"; '
 
-	var cuenta = new Promise(resolve => {
-		db.query(sql, (err, result) => {
-			if (err) {
-				console.log(err)
-				resolve(-1)
-			}
-			log(result[0].login===1)
-			resolve(result[0].login===1)
+	const cuenta = async() => {
+		return new Promise(resolve => {
+			db.query(sql, (err, result) => {
+				if (err) {
+					console.log(err)
+					resolve(-1)
+				}
+				resolve(result[0].login === 1)
+			})
 		})
-	})
-
-	if (cuenta === 1) {
-		return true
 	}
-	return false
+
+	return await cuenta()
 }
 
 /**
@@ -260,11 +257,13 @@ export async function getEntityByID(db, entityID) {
 	if(await query.isDeleted(db, 'entity', 'id_entity', entityID)) {
 		return ('Este id fue borrado de la BD')
 	}
+	log(sqlBodyQueryGetEntity() + 'WHERE id_entity = ' + entityID)
 	return new Promise(resolve => {
 		db.query(sqlBodyQueryGetEntity() + 'WHERE id_entity = ' + entityID, (err, result) => {
 			if (err) {
 				console.log(err)
 			}
+			log(result[0])
 			resolve(result[0])
 		})
 	})
