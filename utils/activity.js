@@ -116,7 +116,7 @@ export async function updateActivity(db, req) {
 	}
 
 	if (!query.deleteSimpleFromTable(db, id_activity, 'tags_act', 'id_activity')) {
-		return 'Error: NO se ha podido insertar Etiquetas'
+		return 'Error: NO se ha podido eliminar Etiquetas'
 	}
 
 	let arr = []

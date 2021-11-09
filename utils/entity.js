@@ -113,7 +113,7 @@ export async function updateEntity(db, req) {
 	}
 
 	if (!query.deleteSimpleFromTable(db, id_entity, 'tags_ent', 'id_entity')) {
-		return 'Error: NO se ha podido insertar Etiquetas'
+		return 'Error: NO se ha podido eliminar Etiquetas'
 	}
 
 	let arr = []
