@@ -127,14 +127,14 @@ export async function updateActivity(db, req) {
 		return 'Error: NO se ha podido insertar Etiquetas'
 	}
 
-	var sql = 'UPDATE entity SET '
+	var sql = 'UPDATE activity SET '
 	sql += 'id_entity_creator = ' + id_entity_creator + ', '
 	sql += 'title = "' + req.body.title + '", '
 	sql += 'description = "' + req.body.description + '", '
-	sql += 'seat = ' + seats + ', '
+	sql += 'seats = ' + seats + ', '
 	sql += 'price = ' + price + ', '
 	sql += 'dateAct = "' + req.body.dateAct + '", '
-	sql += 'min_duracion = ' + min_duration + ', '
+	sql += 'min_duration = ' + min_duration + ', '
 	sql += 'deleted = ' + deleted + ' '
 	sql += 'WHERE id_activity = ' + id_activity + '; '
 
