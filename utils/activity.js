@@ -135,7 +135,7 @@ export async function updateActivity(db, req) {
 	sql += 'price = ' + price + ', '
 	sql += 'dateAct = "' + req.body.dateAct + '", '
 	sql += 'min_duracion = ' + min_duration + ', '
-	sql += 'deleted = ' + deleted + ', '
+	sql += 'deleted = ' + deleted + ' '
 	sql += 'WHERE id_activity = ' + id_activity + '; '
 
 	return new Promise(resolve => {
