@@ -13,8 +13,7 @@ export async function createNewImage(db, req) {
 		return 'Formato incorrecto de: "url de imagen".'
 	}
 
-	var sql = 'INSERT INTO images ('
-	sql += 'urlPath) VALUES ('
+	var sql = 'INSERT INTO images (urlPath) VALUES ('
 	sql += '"' + req.body.urlPath + '", '
 	sql += '); '
 

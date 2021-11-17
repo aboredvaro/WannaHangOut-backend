@@ -244,6 +244,18 @@ app.put('/api/updateAddress', (req, res) => {
 
 //  //  //  //  //
 //
+//  API IMAGES
+//
+//  //  //  //  //
+
+app.get('/api/getAllTags', (req, res) => {
+	tag.getActivityImagesByID(db).then(response => {
+		res.send(response)
+	})
+})
+
+//  //  //  //  //
+//
 //  API TAGS
 //
 //  //  //  //  //
