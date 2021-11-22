@@ -102,8 +102,6 @@ export async function updateEntity(db, req) {
 		return 'Formato incorrecto de: "Aficciones del Usuario".'
 	} else if (utilities.isEmpty(req.body.mail)) {
 		return 'Formato incorrecto de: "Correo Electrónico".'
-	} else if (utilities.isEmpty(req.body.tags_ent)) {
-		return 'Formato incorrecto de: "tags".'
 	} else if (utilities.isEmpty(req.body.avatar)) {
 		return 'Formato incorrecto de: "avatar".'
 	}
@@ -111,17 +109,18 @@ export async function updateEntity(db, req) {
 	if (!address.updateAddress(db, req)){
 		return 'Error: NO se ha podido actualizar la Dirección'
 	}
-
-	if (!query.deleteSimpleFromTable(db, id_entity, 'tags_ent', 'id_entity')) {
-		return 'Error: NO se ha podido eliminar Etiquetas'
-	}
-
-	let arr = []
-	for(let i of req.body.tags_ent) {
-		arr.push(parseInt(i))
-	}
-	if (!query.queryInsertOneToMuch(db, id_entity, arr, 'tags_ent', 'id_entity', 'id_tags')) {
-		return 'Error: NO se ha podido insertar Etiquetas'
+	
+	if (!utilities.isEmpty(req.body.tags_ent)) {
+		if (!query.deleteSimpleFromTable(db, id_entity, 'tags_ent', 'id_entity')) {
+			return 'Error: NO se ha podido eliminar Etiquetas'
+		}
+		let arr = []
+		for(let i of req.body.tags_ent) {
+			arr.push(parseInt(i))
+		}
+		if (!query.queryInsertOneToMuch(db, id_entity, arr, 'tags_ent', 'id_entity', 'id_tags')) {
+			return 'Error: NO se ha podido insertar Etiquetas'
+		}
 	}
 
 	var sql = 'UPDATE entity SET '

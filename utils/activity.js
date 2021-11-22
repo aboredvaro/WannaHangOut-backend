@@ -113,10 +113,10 @@ export async function updateActivity(db, req) {
 		return 'Error: NO se ha podido actualizar la Dirección'
 	}
 
-	if (!query.deleteSimpleFromTable(db, id_activity, 'tags_act', 'id_activity')) {
-		return 'Error: NO se ha podido eliminar Etiquetas'
-	}
 	if (!utilities.isEmpty(req.body.tags_act)) {
+		if (!query.deleteSimpleFromTable(db, id_activity, 'tags_act', 'id_activity')) {
+			return 'Error: NO se ha podido eliminar Etiquetas'
+		}
 		let arr = []
 		for(let i of req.body.tags_act) {
 			arr.push(parseInt(i))
