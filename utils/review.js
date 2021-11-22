@@ -76,16 +76,19 @@ export async function updateReview(db, req) {
 		return 'Formato incorrecto de: "Título del Evento".'
 	} else if (utilities.isEmpty(req.query.description)) {
 		return 'Formato incorrecto de: "Descripción del Evento".'
-	} else if (utilities.isEmpty(req.query.img_review)) {
-		return 'Formato incorrecto de: "Imágenes asociadas".'
 	}
-
-	if (!query.deleteSimpleFromTable(db, id_review, 'img_review', 'id_review')) {
-		return 'Error: NO se ha podido insertar Etiquetas'
-	}
-
-	if (!query.queryInsertOneToMuch(db, req.query.tags_ent.split(','), id_activity, 'tags_act', 'id_activity')) {
-		return 'Error: NO se ha podido insertar Etiquetas'
+	
+	if (!utilities.isEmpty(req.body.img_review)) {
+		if (!query.deleteSimpleFromTable(db, id_review, 'img_review', 'id_review')) {
+			return 'Error: NO se ha podido eliminar imagenes'
+		}
+		let arr = []
+		for(let i of req.body.img_review) {
+			arr.push(parseInt(i))
+		}
+		if (!query.queryInsertOneToMuch(db, id_review, arr, 'img_review', 'id_review', 'id_image')) {
+			return 'Error: NO se ha podido insertar Etiquetas'
+		}
 	}
 
 	var sql = 'UPDATE entity SET '
@@ -144,6 +147,23 @@ export async function getReviewByID(db, id_review) {
 				console.log(err)
 			}
 			resolve(result[0])
+		})
+	})
+}
+
+export async function deleteReviewById(db, id_review) {
+
+	var sql = 'UPDATE review SET '
+	sql += 'deleted = ' + 1 + ' '
+	sql += 'WHERE id_review = ' + id_review + '; '
+
+	return new Promise(resolve => {
+		db.query(sql, (err) => {
+			if (err) {
+				console.log(err)
+				resolve(false)
+			}
+			resolve(true)
 		})
 	})
 }
