@@ -13,6 +13,7 @@ import * as activity from './utils/activity.js'
 import * as entity from './utils/entity.js'
 import * as address from './utils/address.js'
 import * as review from './utils/review.js'
+import * as image from './utils/image.js'
 import * as tag from './utils/tag.js'
 
 app.use(cors())
@@ -179,8 +180,16 @@ app.get('/api/getEntitiesWithActivities', (req, res) => {
 	})
 })
 
+app.get('/api/getImageByIdActivity', (req, res) => {
+	if (utilities.getNumber(req.query.id_activity) == -1) {
+		return res.send('El id no tiene un formato correcto')
+	}
+	image.getImageByIdAndType(db, req.query.id_activity, 1).then(response => {
+		res.send(response)
+	})
+})
+
 app.post('/api/filterActivitiesBy', (req, res) => {
-	//log(req.body)
 	activity.filterActivitiesBy(db,req).then(response => {
 		res.send(response)
 	})
@@ -240,7 +249,14 @@ app.put('/api/updateAddress', (req, res) => {
 //
 //  //  //  //  //
 
-// To implement
+app.get('/api/getImageByIdReview', (req, res) => {
+	if (utilities.getNumber(req.query.id_review) == -1) {
+		return res.send('El id no tiene un formato correcto')
+	}
+	image.getImageByIdAndType(db, req.query.id_activity, 2).then(response => {
+		res.send(response)
+	})
+})
 
 //  //  //  //  //
 //
