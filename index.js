@@ -189,6 +189,15 @@ app.get('/api/getImageByIdActivity', (req, res) => {
 	})
 })
 
+app.get('/api/getAverageScoreByActivities', (req, res) => {
+	if (utilities.getNumber(req.query.id_activity) == -1) {
+		return res.send('El id no tiene un formato correcto')
+	}
+	activity.getAverageScoreByActivities(db, req.query.id_activity).then(response => {
+		res.send(response)
+	})
+})
+
 app.post('/api/filterActivitiesBy', (req, res) => {
 	activity.filterActivitiesBy(db,req).then(response => {
 		res.send(response)
