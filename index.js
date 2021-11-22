@@ -189,15 +189,6 @@ app.get('/api/getImageByIdActivity', (req, res) => {
 	})
 })
 
-app.get('/api/getAverageScoreByActivities', (req, res) => {
-	if (utilities.getNumber(req.query.id_activity) == -1) {
-		return res.send('El id no tiene un formato correcto')
-	}
-	activity.getAverageScoreByActivities(db, req.query.id_activity).then(response => {
-		res.send(response)
-	})
-})
-
 app.post('/api/filterActivitiesBy', (req, res) => {
 	activity.filterActivitiesBy(db,req).then(response => {
 		res.send(response)
@@ -263,6 +254,24 @@ app.get('/api/getImageByIdReview', (req, res) => {
 		return res.send('El id no tiene un formato correcto')
 	}
 	image.getImageByIdAndType(db, req.query.id_activity, 2).then(response => {
+		res.send(response)
+	})
+})
+
+app.get('/api/getAverageScoreByActivities', (req, res) => {
+	if (utilities.getNumber(req.query.id_activity) == -1) {
+		return res.send('El id no tiene un formato correcto')
+	}
+	review.getAverageScoreByActivities(db, req.query.id_activity).then(response => {
+		res.send(response)
+	})
+})
+
+app.get('/api/getAverageScoreByEntityCreator', (req, res) => {
+	if (utilities.getNumber(req.query.id_entity_creator) == -1) {
+		return res.send('El id no tiene un formato correcto')
+	}
+	review.getAverageScoreByEntityCreator(db, req.query.id_entity_creator).then(response => {
 		res.send(response)
 	})
 })

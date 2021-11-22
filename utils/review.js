@@ -148,6 +148,34 @@ export async function getReviewByID(db, id_review) {
 	})
 }
 
+export async function getAverageScoreByActivities(db, id_activity){
+	var sql = 'SELECT COUNT(id_review) as reviews, ROUND(AVG(points),2) as media '
+	sql += 'FROM review '
+	sql += 'WHERE deleted = 0 AND id_activity = ' + id_activity + '; '
+	return new Promise(resolve => {
+		db.query(sql, (err, result) => {
+			if (err) {
+				console.log(err)
+			}
+			resolve(result)
+		})
+	})
+}
+
+export async function getAverageScoreByEntityCreator(db, id_entity_creator){
+	var sql = 'SELECT COUNT(a.id_activity) as reviews, ROUND(AVG(r.points),2) as media '
+	sql += 'FROM review r, activity a '
+	sql += 'WHERE a.id_activity = r.id_activity AND r.deleted = 0 AND a.deleted = 0 AND a.id_entity_creator = ' + id_entity_creator + '; '
+	return new Promise(resolve => {
+		db.query(sql, (err, result) => {
+			if (err) {
+				console.log(err)
+			}
+			resolve(result)
+		})
+	})
+}
+
 //  //  //  //  //  //  //  //  //  //  //  //
 //								    //
 //  FUNCIONES SECUNDARIAS, PERO NECESARIAS  //

@@ -284,20 +284,6 @@ export async function getEntitiesWithActivities(db){
 	})
 }
 
-export async function getAverageScoreByActivities(db, id_activity){
-	var sql = 'SELECT COUNT(id_review) as total, AVG(points) as media '
-	sql += 'FROM review '
-	sql += 'WHERE deleted = 0 AND id_activity = ' + id_activity + '; '
-	return new Promise(resolve => {
-		db.query(sql, (err, result) => {
-			if (err) {
-				console.log(err)
-			}
-			resolve(result)
-		})
-	})
-}
-
 export async function sortActivitiesBy(db, params) {
 
 	// To complete
