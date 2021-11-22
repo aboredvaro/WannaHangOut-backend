@@ -107,8 +107,6 @@ export async function updateActivity(db, req) {
 		return 'Formato incorrecto de: "Descripción del Evento".'
 	} else if (utilities.isEmpty(req.body.dateAct)) {
 		return 'Formato incorrecto de: "Fecha del Evento".'
-	} else if (utilities.isEmpty(req.body.tags_act)) {
-		return 'Formato incorrecto de: "Etiquetas identificadoras".'
 	}
 
 	if (!address.updateAddress(db, req)){
@@ -118,13 +116,14 @@ export async function updateActivity(db, req) {
 	if (!query.deleteSimpleFromTable(db, id_activity, 'tags_act', 'id_activity')) {
 		return 'Error: NO se ha podido eliminar Etiquetas'
 	}
-
-	let arr = []
-	for(let i of req.body.tags_act) {
-		arr.push(parseInt(i))
-	}
-	if (!query.queryInsertOneToMuch(db, id_activity, arr, 'tags_act', 'id_activity', 'id_tags')) {
-		return 'Error: NO se ha podido insertar Etiquetas'
+	if (!utilities.isEmpty(req.body.tags_act)) {
+		let arr = []
+		for(let i of req.body.tags_act) {
+			arr.push(parseInt(i))
+		}
+		if (!query.queryInsertOneToMuch(db, id_activity, arr, 'tags_act', 'id_activity', 'id_tags')) {
+			return 'Error: NO se ha podido insertar Etiquetas'
+		}
 	}
 
 	var sql = 'UPDATE activity SET '
