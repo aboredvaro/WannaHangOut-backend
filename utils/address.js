@@ -2,6 +2,8 @@ import log from './log.js'
 import * as utilities from './utilities.js'
 import * as query from './query.js'
 
+//https://maps.googleapis.com/maps/api/geocode/json?key=AIzaSyBQZ23z4oVQQOIPu7xZ6J8QWbgi7hspy2M&address=calle%20dos%20de%20mayo%2022%2014200%20pe%C3%B1arroya-pueblonuevo
+
 /**
  * @description Registra una nueva Dirección en la BD
  * @param {*} db 
@@ -15,11 +17,7 @@ export async function createNewAddress(db, req) {
 
 	if (codPos === -1){
 		return 'Formato incorrecto de: "Código Postal".'
-	} else if (latitude === -1) {
-		return 'Formato incorrecto de: "Latitud".'
-	} else if (longitude === -1) {
-		return 'Formato incorrecto de: "Longitud".'
-	}else if (utilities.isEmpty(req.body.location)) {
+	} else if (utilities.isEmpty(req.body.location)) {
 		return 'Formato incorrecto de: "Localidad".'
 	} else if (utilities.isEmpty(req.body.direction)) {
 		return 'Formato incorrecto de: "Dirección".'

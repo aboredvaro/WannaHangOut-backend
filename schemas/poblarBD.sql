@@ -100,7 +100,7 @@ INSERT INTO provinces VALUES
 	(52,  "Melilla");
     
 INSERT INTO address (id_address, id_province, codPos, location, direction, latitude, longitude) VALUES
-	(1, 14, 14200, "Peñarroya-Pueblonuevo", "C/ Dos de mayo, 22", 3788473, -4779152),
+	(1, 14, 14200, "Peñarroya-Pueblonuevo", "C/ Dos de mayo, 22", 39.08989925, -0.545081986577831),
 	(2, 3, 3002, "Alicante", "Ronda Sur, S/N", 3788473, -4779152),
 	(3, 3, 3002, "Alicante", "Ronda Sur, S/N", 3788473, -4779152),
 	(4, 3, 3002, "Alicante", "Ronda Sur, S/N", 3788473, -4779152),
