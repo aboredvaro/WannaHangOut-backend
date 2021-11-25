@@ -1,4 +1,4 @@
-import log from './log.js'
+// import log from './log.js'
 
 export async function getAllEntities(db) {
 
@@ -16,7 +16,7 @@ export async function getEntityByID(db, entityID) {
 	if ((await getMaxIdEntity(db)) < entityID || entityID < 1) {
 		return 'id fuera de rango'
 	}
-	log(sqlBodyQueryGetEntity() + 'WHERE id_entity = ' + entityID)
+	// log(sqlBodyQueryGetEntity() + 'WHERE id_entity = ' + entityID)
 	return new Promise(resolve => {
 		db.query(sqlBodyQueryGetEntity() + 'WHERE id_entity = ' + entityID, (err, result) => {
 			if (err) {

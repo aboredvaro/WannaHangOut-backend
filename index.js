@@ -33,7 +33,7 @@ const db_config = {
 	acquireTimeout: 300
 }
 
-const db = mysql.createPool(db_config)
+export const db = mysql.createPool(db_config)
 
 db.getConnection((err, connection) => {
 
