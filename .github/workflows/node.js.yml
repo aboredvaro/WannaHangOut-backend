@@ -1,0 +1,32 @@
+name: Node.js CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+    
+  workflow_dispatch: # Allows you to run this workflow manually from the Actions tab
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [14.17.3]
+
+    steps:
+      - uses: actions/checkout@v2
+      
+      - name: Setting up Node ${{ matrix.node_version }}
+        uses: actions/setup-node@v2.1.5
+        with:
+          node-version: 14.17.3
+      
+      - name: Setting up yarn enviroment
+        uses: borales/actions-yarn@v2.3.0
+        with:
+          cmd: install # will run `yarn install` command
+        
+      - name: Run CI Tests
+        run: yarn run test
