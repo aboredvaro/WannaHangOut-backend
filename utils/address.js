@@ -1,6 +1,8 @@
+
 import log from './log.js'
 import * as utilities from './utilities.js'
 import * as query from './query.js'
+import process from 'process'
 
 /**
  * @description Registra una nueva Dirección en la BD
@@ -20,6 +22,15 @@ export async function createNewAddress(db, req) {
 	} else if (utilities.isEmpty(req.body.direction)) {
 		return 'Formato incorrecto de: "Dirección".'
 	}
+
+	var coordenadasGoogle=encodeURI('https://maps.googleapis.com/maps/api/geocode/json?key=' + process.env.REACT_APP_APIKEY_GOOGLE + '&address=' + req.body.direction + ', ' + codPos + ', ' + req.body.location)
+
+	log(coordenadasGoogle)
+
+	const address = await fetch(coordenadasGoogle)
+		.then(response => response.json())
+
+	log(address)
 
 	var id_province = Math.trunc(codPos/1000)
 	
