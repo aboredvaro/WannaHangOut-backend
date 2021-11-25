@@ -21,7 +21,7 @@ jobs:
       - name: Setting up Node ${{ matrix.node_version }}
         uses: actions/setup-node@v2.1.5
         with:
-          version: 14.17.3
+          node-version: 14.17.3
       
       - name: Setting up yarn enviroment
         uses: borales/actions-yarn@v2.3.0
