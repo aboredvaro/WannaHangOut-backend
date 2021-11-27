@@ -15,6 +15,7 @@ SELECT * FROM entity;
 SELECT * FROM address;
 
 SELECT * FROM activity;
+SELECT * FROM review;
 
 SELECT * FROM provinces;
 SELECT * FROM images;
@@ -23,4 +24,5 @@ SELECT * FROM rol;
 
 -- DELETE FROM entity WHERE id_entity = 85;
 -- DELETE FROM address WHERE id_address = 275;
+-- UPDATE `heroku_314befdd836197e`.`review` SET `title` = 'Ni tan mal', `description` = 'Para un rato no estuvo mal', `points` = '5' WHERE (`id_review` = '4');
 
