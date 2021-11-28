@@ -9,31 +9,36 @@ import * as tag from './tag.js'
  * @param {*} req 
  * @returns Devuelve -1 en caso de error o el id_review de la review creada
  */
-export async function createNewReview(db, req) {
-	var id_activity = utilities.getNumber(req.query.id_activity)
-	var points = utilities.getNumber(req.query.points)
+ export async function createNewReview(db, req) {
+	var id_activity = utilities.getNumber(req.body.id_activity)
+	var id_entity = utilities.getNumber(req.body.id_entity)
+	var points = utilities.getNumber(req.body.points)
 
 	if (id_activity === -1){
 		return 'Formato incorrecto de: "id_activity".'
-	} else if (points === -1) {
+	} else if (id_entity === -1) {
+		return 'Formato incorrecto de: "id_entity".'
+	}else if (points === -1) {
 		return 'Formato incorrecto de: "Puntos".'
-	} else if (utilities.isEmpty(req.query.title)) {
+	} else if (utilities.isEmpty(req.body.title)) {
 		return 'Formato incorrecto de: "Título de la review".'
-	} else if (utilities.isEmpty(req.query.description)) {
+	} else if (utilities.isEmpty(req.body.description)) {
 		return 'Formato incorrecto de: "Descripción de la review".'
-	} else if (utilities.isEmpty(req.query.img_review)) {
+	} else if (utilities.isEmpty(req.body.img_review)) {
 		return 'Formato incorrecto de: "Imágenes asociadas".'
 	}
 
 	// insertar la review
 	var sql = 'INSERT INTO review ('
-	sql += 'id_activity, title, description, points) VALUES ('
+	sql += 'id_activity, id_entity, title, description, points) VALUES ('
 	sql += id_activity + ', '
-	sql += '"' + req.query.title + '", '
-	sql += '"' + req.query.description + '", '
-	sql += points + ', '
+	sql += id_entity + ', '
+	sql += '"' + req.body.title + '", '
+	sql += '"' + req.body.description + '", '
+	sql += points 
 	sql += '); '
 
+	log(sql)
 	var idReviewCreate = new Promise(resolve => {
 		db.query(sql, (err, result) => {
 			if (err) {
