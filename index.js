@@ -297,6 +297,15 @@ app.get('/api/getAverageScoreByEntityCreator', (req, res) => {
 	})
 })
 
+app.get('/api/getAllReviewByActivityID', (req, res) => {
+	if (utilities.getNumber(req.query.id_activity) == -1) {
+		return res.send('El id no tiene un formato correcto')
+	}
+	review.getAllReviewByActivityID(db, req.query.id_activity).then(response => {
+		res.send(response)
+	})
+})
+
 //  //  //  //  //
 //
 //  API IMAGES
