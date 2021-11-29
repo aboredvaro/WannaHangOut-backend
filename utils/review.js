@@ -67,9 +67,10 @@ import * as tag from './tag.js'
  * @returns Devuelve false en caso de error true en caso contrario
  */
 export async function updateReview(db, req) {
-	var id_review = utilities.getNumber(req.query.id_review)
-	var id_activity = utilities.getNumber(req.query.id_activity)
-	var points = utilities.getNumber(req.query.points)
+	log('BBBBBBBBBB')
+	var id_review = utilities.getNumber(req.body.id_review)
+	var id_activity = utilities.getNumber(req.body.id_activity)
+	var points = utilities.getNumber(req.body.points)
 
 	if (id_review === -1){
 		return 'Formato incorrecto de: "id_review".'
@@ -77,13 +78,13 @@ export async function updateReview(db, req) {
 		return 'Formato incorrecto de: "id_activity".'
 	} else if (points === -1) {
 		return 'Formato incorrecto de: "Puntos".'
-	} else if (utilities.isEmpty(req.query.title)) {
+	} else if (utilities.isEmpty(req.body.title)) {
 		return 'Formato incorrecto de: "Título del Evento".'
-	} else if (utilities.isEmpty(req.query.description)) {
+	} else if (utilities.isEmpty(req.body.description)) {
 		return 'Formato incorrecto de: "Descripción del Evento".'
 	}
 	
-	if (!utilities.isEmpty(req.body.img_review)) {
+	/*if (!utilities.isEmpty(req.body.img_review)) {
 		if (!query.deleteSimpleFromTable(db, id_review, 'img_review', 'id_review')) {
 			return 'Error: NO se ha podido eliminar imagenes'
 		}
@@ -94,15 +95,15 @@ export async function updateReview(db, req) {
 		if (!query.queryInsertOneToMuch(db, id_review, arr, 'img_review', 'id_review', 'id_image')) {
 			return 'Error: NO se ha podido insertar Etiquetas'
 		}
-	}
+	}*/
 
-	var sql = 'UPDATE entity SET '
+	var sql = 'UPDATE review SET '
 	sql += 'id_activity = ' + id_activity + ', '
 	sql += 'title = "' + req.query.title + '", '
 	sql += 'description = "' + req.query.description + '", '
 	sql += 'points = ' + points + ', '
 	sql += 'WHERE id_review = ' + id_review + '; '
-
+	log(sql)
 	return new Promise(resolve => {
 		db.query(sql, (err) => {
 			if (err) {

@@ -256,6 +256,7 @@ app.post('/api/createNewReview', (req, res) => {
 })
 
 app.post('/api/updateReview', (req, res) => {
+	log('AAAAAAA')
 	review.updateReview(db,req).then(response => {
 		res.send(response)
 	})
@@ -275,6 +276,15 @@ app.get('/api/getImageByIdReview', (req, res) => {
 		return res.send('El id no tiene un formato correcto')
 	}
 	image.getImageByIdAndType(db, req.query.id_activity, 2).then(response => {
+		res.send(response)
+	})
+})
+
+app.get('/api/getReviewByID', (req, res) => {
+	if (utilities.getNumber(req.query.id_review) == -1) {
+		return res.send('El id no tiene un formato correcto')
+	}
+	review.getReviewByID(db, req.query.id_review).then(response => {
 		res.send(response)
 	})
 })
