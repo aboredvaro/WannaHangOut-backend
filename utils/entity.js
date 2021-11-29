@@ -236,7 +236,7 @@ export async function getEntityByID(db, entityID) {
 
 export async function getEntityByHash(db, entityHash) {
 	return new Promise(resolve => {
-		db.query(sqlBodyQueryGetEntity() + 'WHERE sha256 = ' + entityHash, (err, result) => {
+		db.query(sqlBodyQueryGetEntity() + 'WHERE sha256 = \"' + entityHash + '\"', (err, result) => {
 			if (err) {
 				console.log(err)
 			}

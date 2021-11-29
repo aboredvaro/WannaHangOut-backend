@@ -101,7 +101,7 @@ app.get('/api/getEntityByID', (req, res) => {
 })
 
 app.get('/api/getEntityByHash', (req, res) => {
-	entity.getEntityByID(db, req.query.id_entity).then(response => {
+	entity.getEntityByHash(db, req.query.entityHash).then(response => {
 		return res.send(response)
 	})
 })
