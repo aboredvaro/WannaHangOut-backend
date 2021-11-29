@@ -99,9 +99,9 @@ export async function updateReview(db, req) {
 
 	var sql = 'UPDATE review SET '
 	sql += 'id_activity = ' + id_activity + ', '
-	sql += 'title = "' + req.query.title + '", '
-	sql += 'description = "' + req.query.description + '", '
-	sql += 'points = ' + points + ', '
+	sql += 'title = "' + req.body.title + '", '
+	sql += 'description = "' + req.body.description + '", '
+	sql += 'points = ' + points + ' '
 	sql += 'WHERE id_review = ' + id_review + '; '
 	log(sql)
 	return new Promise(resolve => {
