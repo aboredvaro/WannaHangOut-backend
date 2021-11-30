@@ -126,7 +126,7 @@ export async function getAllReviewByActivityID(db, activityID) {
 		return 'id fuera de rango'
 	}
 	return new Promise(resolve => {
-		db.query(sqlBodyQueryGetReview() + 'WHERE id_activity = ' + activityID, (err, result) => {
+		db.query(sqlBodyQueryGetReview() + 'WHERE deleted = 0 and id_activity = ' + activityID, (err, result) => {
 			if (err) {
 				console.log(err)
 			}
