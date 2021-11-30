@@ -67,7 +67,6 @@ import * as tag from './tag.js'
  * @returns Devuelve false en caso de error true en caso contrario
  */
 export async function updateReview(db, req) {
-	log('BBBBBBBBBB')
 	var id_review = utilities.getNumber(req.body.id_review)
 	var id_activity = utilities.getNumber(req.body.id_activity)
 	var points = utilities.getNumber(req.body.points)
