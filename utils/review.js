@@ -53,7 +53,7 @@ import * as tag from './tag.js'
 		return -1
 	}
 
-	if(query.queryInsertOneToMuch(db, await idReviewCreate, req.query.img_review.split(','), 'img_review', 'id_review', 'id_image')){
+	if(query.queryInsertManyPhotos(db, await idReviewCreate, 'img_review', 'id_review', req.body.img_review.split(','))){
 		return 'Error: NO se ha podido insertar las imágenes'
 	}
 	
