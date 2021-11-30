@@ -293,8 +293,8 @@ export async function sortActivitiesBy(db, params) {
 
 
 export async function checkIfUserInActivity(db, id_entity, id_activity){
-	var id_entity = utilities.getNumber(req.body.id_entity)
-	var id_activity = utilities.getNumber(req.body.id_activity)
+	var id_entity = utilities.getNumber(id_entity)
+	var id_activity = utilities.getNumber(id_activity)
 	if (id_entity === -1){
 		return 'Formato incorrecto de: "id_entity".'
 	} else if (id_activity === -1){
@@ -302,15 +302,16 @@ export async function checkIfUserInActivity(db, id_entity, id_activity){
 	}
 
 	var sql = 'SELECT EXISTS(SELECT * FROM entitytoactivity WHERE  '
-	sql += 'id_entity = ' + id_entity + ', '
-	sql += 'and id_activity = ' + id_activity +'; '
+	sql += 'id_entity = ' + id_entity + ' '
+	sql += 'and id_activity = ' + id_activity +') as cond; '
 	log(sql)
 	return new Promise(resolve => {
 		db.query(sql, (err, result) => {
 			if (err) {
 				console.log(err)
 			}
-			resolve(result)
+			log(result[0].cond)
+			resolve(result[0])
 		})
 	})
 }
