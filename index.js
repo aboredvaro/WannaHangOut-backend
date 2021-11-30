@@ -256,13 +256,13 @@ app.put('/api/updateAddress', (req, res) => {
 //  //  //  //  //
 
 app.post('/api/createNewReview', (req, res) => {
+	log(req)
 	review.createNewReview(db,req).then(response => {
 		res.send(response)
 	})
 })
 
 app.post('/api/updateReview', (req, res) => {
-	log('AAAAAAA')
 	review.updateReview(db,req).then(response => {
 		res.send(response)
 	})
