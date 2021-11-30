@@ -84,7 +84,7 @@ export async function updateReview(db, req) {
 		return 'Formato incorrecto de: "Descripción del Evento".'
 	}
 	
-	/*if (!utilities.isEmpty(req.body.img_review)) {
+	if (!utilities.isEmpty(req.body.img_review)) {
 		if (!query.deleteSimpleFromTable(db, id_review, 'img_review', 'id_review')) {
 			return 'Error: NO se ha podido eliminar imagenes'
 		}
@@ -92,10 +92,10 @@ export async function updateReview(db, req) {
 		for(let i of req.body.img_review) {
 			arr.push(parseInt(i))
 		}
-		if (!query.queryInsertOneToMuch(db, id_review, arr, 'img_review', 'id_review', 'id_image')) {
+		if (!query.ueryInsertManyPhotos(db, id_review, arr, 'img_review', 'id_review', 'id_image')) {
 			return 'Error: NO se ha podido insertar Etiquetas'
 		}
-	}*/
+	}
 
 	var sql = 'UPDATE review SET '
 	sql += 'id_activity = ' + id_activity + ', '
