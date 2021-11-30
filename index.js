@@ -281,7 +281,7 @@ app.get('/api/getImageByIdReview', (req, res) => {
 	if (utilities.getNumber(req.query.id_review) == -1) {
 		return res.send('El id no tiene un formato correcto')
 	}
-	image.getImageByIdAndType(db, req.query.id_activity, 2).then(response => {
+	image.getImageByIdAndType(db, req.query.id_review, 2).then(response => {
 		res.send(response)
 	})
 })
