@@ -291,6 +291,30 @@ export async function sortActivitiesBy(db, params) {
 	// Sorting: "price", "duration", "date", "seats", "type"
 }
 
+
+export async function checkIfUserInActivity(db, id_entity, id_activity){
+	var id_entity = utilities.getNumber(req.body.id_entity)
+	var id_activity = utilities.getNumber(req.body.id_activity)
+	if (id_entity === -1){
+		return 'Formato incorrecto de: "id_entity".'
+	} else if (id_activity === -1){
+		return 'Formato incorrecto de: "id_activity".'
+	}
+
+	var sql = 'SELECT EXISTS(SELECT * FROM entitytoactivity WHERE  '
+	sql += 'id_entity = ' + id_entity + ', '
+	sql += 'and id_activity = ' + id_activity +'; '
+	log(sql)
+	return new Promise(resolve => {
+		db.query(sql, (err, result) => {
+			if (err) {
+				console.log(err)
+			}
+			resolve(result)
+		})
+	})
+}
+
 //  //  //  //  //  //  //  //  //  //  //  //
 //								    //
 //  FUNCIONES SECUNDARIAS, PERO NECESARIAS  //

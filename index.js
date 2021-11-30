@@ -216,6 +216,12 @@ app.post('/api/deleteActivityById', (req, res) => {
 	})
 })
 
+app.post('/api/checkIfUserInActivity', (req, res) => {
+	activity.checkIfUserInActivity(db, req.body.id_entity, req.body.id_activity).then(response => {
+		res.send(response)
+	})
+})
+
 //  //  //  //  //
 //
 //  API ADDRESS
