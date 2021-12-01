@@ -114,6 +114,21 @@ export async function getAddressByID(db, addressID) {
 	})
 }
 
+export async function getAllAddressOfActivities(db) {
+	var sqlSelect = 'SELECT ad.id_address, p.province, ad.codPos, ad.location, ad.direction, ad.latitude, ad.longitude  '
+	var sqlFrom = 'FROM address ad, activity ac, provinces p '
+	var sqlWhere = 'WHERE ad.id_address = ac.id_activity and ad.id_province = p.id_province and ac.deleted = 0 and ac.dateAct >= now(); '
+
+	return new Promise(resolve => {
+		db.query(sqlSelect + sqlFrom + sqlWhere, (err, result) => {
+			if (err) {
+				console.log(err)
+			}
+			resolve(result)
+		})
+	})
+}
+
 /**
  * @description Hace uso de la API de google para obtener longitud y latitud de una dirección dada
  * @param {*} direction	dirección postal
@@ -128,3 +143,4 @@ async function getGoogleCoordinatesByAddress(direccion, codPostal, poblacion){
 	var taskId = utilities.getJsonValue(address, 'geometry')
 	return taskId.location
 }
+

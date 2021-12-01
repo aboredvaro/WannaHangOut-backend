@@ -291,10 +291,7 @@ export async function sortActivitiesBy(db, params) {
 	// Sorting: "price", "duration", "date", "seats", "type"
 }
 
-
 export async function checkIfUserInActivity(db, id_entity, id_activity){
-	var id_entity = utilities.getNumber(id_entity)
-	var id_activity = utilities.getNumber(id_activity)
 	if (id_entity === -1){
 		return 'Formato incorrecto de: "id_entity".'
 	} else if (id_activity === -1){

@@ -237,6 +237,12 @@ app.get('/api/getAddressByID', (req, res) => {
 	})
 })
 
+app.get('/api/getAllAddressOfActivities', (req, res) => {
+	address.getAllAddressOfActivities(db,).then(response => {
+		res.send(response)
+	})
+})
+
 app.post('/api/createNewAddress', (req, res) => {
 	address.createNewAddress(db,req).then(response => {
 		res.send(response)
