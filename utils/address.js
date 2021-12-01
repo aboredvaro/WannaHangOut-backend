@@ -30,8 +30,8 @@ export async function createNewAddress(db, req) {
 	sql += codPos + ', '
 	sql += '"' + req.body.location + '", '
 	sql += '"' + req.body.direction + '", '
-	sql += coordenadas.lng + ', '
-	sql += coordenadas.lat
+	sql += coordenadas.lat + ', '
+	sql += coordenadas.lng
 	sql += '); '
 
 	log(sql)
