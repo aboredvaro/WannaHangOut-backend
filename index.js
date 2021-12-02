@@ -328,6 +328,12 @@ app.get('/api/getAllReviewByActivityID', (req, res) => {
 	})
 })
 
+app.post('/api/userHasReviewInActivity', (req, res) => {
+	review.userHasReviewInActivity(db, req.body.id_entity, req.body.id_activity).then(response => {
+		res.send(response)
+	})
+})
+
 //  //  //  //  //
 //
 //  API IMAGES
