@@ -243,11 +243,11 @@ export async function filterActivitiesBy(db, req) {
 	sql += fixFilterByDate(req.body.dateAct_min, req.body.dateAct_max)
 	sql += fixFilterByType(req.body.id_tags)
 	sql += fixFilterByEntintyCreator(req.body.id_entity_creator)
-	var sqlLimit = 'LIMIT ' + fixLowerLimit(req.body.lowerLimit) + ', ' + fixUpperLimit(req.body.upperLimit) + ';'
+	sql += 'LIMIT ' + fixLowerLimit(req.body.lowerLimit) + ', ' + fixUpperLimit(req.body.upperLimit) + ';'
 
 	//log(sql + sqlLimit)
 	return new Promise(resolve => {
-		db.query(sql + sqlLimit, (err, result) => {
+		db.query(sql, (err, result) => {
 			if (err) {
 				console.log(err)
 			}
@@ -358,6 +358,25 @@ export async function getSeatAvailables(db, id_activity){
 				resolve(-1)
 			}
 			resolve(result.cnt)
+		})
+	})
+}
+
+export async function searchActivitiesByKeywords(db, keyWords){
+	var select = 'SELECT a.id_activity, a.title, a.seats - (SELECT COUNT(*) FROM entitytoactivity WHERE id_activity = a.id_activity) as seatsAvailable, a.dateAct, a.price, ad.location, ad.codPos, ad.direction '
+	var from = 'FROM activity a, address ad '
+	var where = 'WHERE a.id_address = ad.id_address AND a.deleted = 0 ' 
+	var rest = 'ORDER BY dateAct ASC LIMIT 5;'
+	keyWords.forEach(function (word) {
+		where += 'AND a.title LIKE "%' + word + '%" ' 
+	})
+	var sql = select + from + where + rest
+	return new Promise(resolve => {
+		db.query(sql, (err, result) => {
+			if (err) {
+				console.log(err)
+			}
+			resolve(result)
 		})
 	})
 }

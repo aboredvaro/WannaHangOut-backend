@@ -149,13 +149,13 @@ INSERT INTO entity (id_entity, id_role, id_address, phone, sha256, pass, mail, n
 	(15, 1, 30, 999666012, "7D771847542DFD43D3D5E2C5591F954D0F05E2E3A5BE98C9280E3D731EFC63B5", "03AC674216F3E15C761EE1A5E255F067953623C8B388B4459E13F978D7C846F4", "summerbreath@mail.com", "Soplo de verano", "Restaurante vegano", null, "Nuevo restaurante para aquellos que solo comen verde", "https://images.clarin.com/2018/03/05/SyvD3Jj_M_1256x620__1.jpg");
 
 INSERT INTO activity (id_activity, id_entity_creator, id_address, dateAct, title, description, seats, price, min_duration) VALUES
-	(1, 2, 1, "2021-11-30", "Party de Halloween", "Nos vamos de botellona por el centro...", 155, 12.50, 15),
+	(1, 2, 1, "2021-12-31", "Fiesta Nochevieja", "Alquelaremos un local y empezaremos el año nuevo con una gran fiesta +18 años (alcohol). No os olvidéis vuestro pasaporte COVID", 100, 30, 480),
 	(2, 1, 2, "2021-11-30", "Acampada", "Visita guiada al muro de hielo...", 200, 0, 90),
 	(3, 3, 3, "2021-12-30", "Come y bebe", "Come y bebe todo lo que puedas...", 40, 10, 45),
 	(4, 8, 4, "2021-12-30", "Anyone available?", "Tonight near city centre. I'm bored", 25, 0, 45),
-	(5, 4, 5, "2022-01-01", "Fiesta de disfraces", "Pues eso se acerca Halloween ¿alquien quiere venirse disfrazado y ir a pedir xuxes?", 60, 0, 45),
+	(5, 4, 5, "2022-02-12", "Fiesta de disfraces", "Pues eso se acerca Halloween ¿alquien quiere venirse disfrazado y ir a pedir xuxes?", 60, 0, 45),
 	(6, 6, 6, "2022-01-01", "Nuevo Capuccino", "Para celebrar nuestros nuevos cafés almuerzo con descuento y actuación matutina no te lo pierdas", 15, 4, 90),
-	(7, 1, 7, "2022-01-01",  "Prueba", "Espero no publicar esto sin querer", 6, 10, 5),
+	(7, 1, 7, "2022-01-01", "Prueba", "Espero no publicar esto sin querer", 6, 10, 5),
 	(8, 3, 8, "2022-01-01", "Quiero conocer gente nueva", "Soy nuevo en la ciudad quiero conocer gente nueva soy nuevo estudiante de la UPV. Cervezas?", 20, 40, 120),
 	(9, 5, 9, "2022-01-01", "Noche de música", "Esta noche viene unas cuantas bandas locales a tocar pásate y escucha al pueblo cantar", 14, 15, 240),
 	(10, 2, 10, "2021-12-30", "Introduce título", "La verdad esq soy nuevo aquí alguien quiere quedar mañana por la tarde? No tengo nada que hacer", 18, 150, 45),
@@ -304,7 +304,6 @@ INSERT INTO tags_act VALUES
     (6, 2),
     (6, 6),
     (7, 3),
-    (7, 7),
     (11, 7),
     (12, 3),
     (12, 8),
