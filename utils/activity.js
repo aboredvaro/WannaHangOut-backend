@@ -311,6 +311,57 @@ export async function checkIfUserInActivity(db, id_entity, id_activity){
 	})
 }
 
+export async function isActivityDeprecated(db, id_activity){
+	var sql = 'SELECT COUNT(*) as cnt '
+	sql += 'FROM activity '
+	sql += 'WHERE id_activity = ' + id_activity +' AND dateAct>=now(); '
+	var cnt = new Promise(resolve => {
+		db.query(sql, (err, result) => {
+			if (err) {
+				console.log(err)
+				resolve(-1)
+			}
+			resolve(result.cnt)
+		})
+	})
+	if (cnt === 0) return true
+	return false
+}
+
+export async function isActivityDeleted(db, id_activity){
+	var sql = 'SELECT COUNT(*) as cnt '
+	sql += 'FROM activity '
+	sql += 'WHERE id_activity = ' + id_activity +' AND deleted=1; '
+	var cnt = new Promise(resolve => {
+		db.query(sql, (err, result) => {
+			if (err) {
+				console.log(err)
+				resolve(-1)
+			}
+			resolve(result.cnt)
+		})
+	})
+	if (cnt === 1) return true
+	return false
+}
+
+export async function getSeatAvailables(db, id_activity){
+	var sql = 'SELECT ( '
+	sql += 'SELECT seats FROM activity WHERE id_activity = ' + id_activity
+	sql += ') - ('
+	sql += 'SELECT COUNT(*) FROM entitytoactivity WHERE id_activity = ' + id_activity
+	sql += ') as seatsAvailable'
+	return Promise(resolve => {
+		db.query(sql, (err, result) => {
+			if (err) {
+				console.log(err)
+				resolve(-1)
+			}
+			resolve(result.cnt)
+		})
+	})
+}
+
 //  //  //  //  //  //  //  //  //  //  //  //
 //								    //
 //  FUNCIONES SECUNDARIAS, PERO NECESARIAS  //

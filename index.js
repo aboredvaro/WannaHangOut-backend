@@ -15,6 +15,7 @@ import * as address from './utils/address.js'
 import * as review from './utils/review.js'
 import * as image from './utils/image.js'
 import * as tag from './utils/tag.js'
+import * as registro from './utils/registro.js'
 
 app.use(cors())
 app.use(express.json())
@@ -362,6 +363,36 @@ app.post('/api/getTagsByIdAndType', (req, res) => {
 	//log(req.body)
 	tag.getTagsByIdAndType(db, req).then(response => {
 		res.send(response)
+	})
+})
+
+//  //  //  //  //
+//
+//  API REGISTRO DE ENTIDADES EN ACTIVIDADES
+//
+//  //  //  //  //
+
+app.get('/api/setEntityToActivity', (req, res) => {
+	if (utilities.getNumber(req.query.id_entity) == -1) {
+		return res.send('El id_entity no tiene un formato correcto')
+	}
+	if (utilities.getNumber(req.query.id_activity) == -1) {
+		return res.send('El id_activity no tiene un formato correcto')
+	}
+	registro.setEntityToActivity(db, req.query.id_entity).then(response => {
+		return res.send(response)
+	})
+})
+
+app.get('/api/deleteEntityToActivity', (req, res) => {
+	if (utilities.getNumber(req.query.id_entity) == -1) {
+		return res.send('El id_entity no tiene un formato correcto')
+	}
+	if (utilities.getNumber(req.query.id_activity) == -1) {
+		return res.send('El id_activity no tiene un formato correcto')
+	}
+	registro.deleteEntityToActivity(db, req.query.id_entity).then(response => {
+		return res.send(response)
 	})
 })
 
