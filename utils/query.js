@@ -75,6 +75,44 @@ export async function queryInsertOneToMuch(db, oneId, muchId, table, nameColunmO
 	})
 }
 
+export async function queryInsertManyPhotos(db, oneId, table, nameColunmOne, photoURLs) {
+	var photoN = photoURLs.length
+	var sqlPhoto = 'INSERT INTO images (urlPath) VALUES ' 
+	for (let i = 0; i < photoURLs.length; i++) {
+		sqlPhoto += '("' + photoURLs[i] + '"), '
+	}
+
+	sqlPhoto=sqlPhoto.substring(0, sqlPhoto.length - 2) + ';'
+	var photoId= new Promise(resolve => {
+		db.query(sqlPhoto, (err, result) => {
+			if (err) {
+				console.log(err)
+				//resolve(false)
+				return false
+			}
+			resolve(result.insertId)
+		})
+	})
+	
+	var sqlRelation = 'INSERT INTO ' + table + ' ('+ nameColunmOne + ' , id_image) VALUES ' 
+	for (let i = 0; i < photoN; i++) {
+		sqlRelation += '(' + oneId + ', ' + (await photoId + (i * 10)) + '), '
+	}
+	sqlRelation=sqlRelation.substring(0, sqlRelation.length - 2) + ';'
+	log(sqlRelation)
+	return new Promise(resolve => {
+		db.query(sqlRelation, (err) => {
+			if (err) {
+				console.log(err)
+				//resolve(false)
+				return false
+			}
+			resolve(true)
+		})
+	})
+
+}
+
 /**
  * @description Elimina todas las filas de una tabla que cumplan que 
  *  			el id está contenido en la columna dada

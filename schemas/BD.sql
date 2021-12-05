@@ -123,6 +123,7 @@ CREATE TABLE img_review (
 CREATE TABLE entityToActivity (
 	id_entity INT NOT NULL,
     id_activity INT NOT NULL,
+    PRIMARY KEY (id_entity, id_activity),
 	FOREIGN KEY (id_entity) REFERENCES entity (id_entity),
 	FOREIGN KEY (id_activity) REFERENCES activity (id_activity)
 );

@@ -49,3 +49,25 @@ export function sha256(message) {
 	const myHash = sjcl.codec.hex.fromBits(myBitArray)
 	return myHash.toUpperCase()
 }
+
+/**
+ * @description Recorre un JSON en busca un objeto
+ * @param {*} obj 	Objeto JSON a revisar
+ * @param {*} name 	Nombre de la propiedad que se busca
+ * @returns 		Retorna el valor asignado a la propiedad
+ */
+export function getJsonValue(obj, name){
+	var result = null
+	var value  = null
+	for(var key in obj){        
+		value = obj[key]
+		if(key == name){
+			return value
+		} else {
+			if( typeof value == 'object' ){
+				result = getJsonValue(value, name)
+			}
+		}
+	}
+	return result
+}

@@ -48,7 +48,7 @@ export async function createNewEntity(db, req) {
 	sql += '"' + req.body.mail + '", '
 	sql += '"' + utilities.sha256(req.body.mail) + '", '
 	sql += phone + ', '
-	sql += '"' + req.body.pass + '", '
+	sql += '"' + utilities.sha256(req.body.pass) + '", '
 	sql += '"' + req.body.avatar  + '"'
 	sql += '); '
 
@@ -62,7 +62,6 @@ export async function createNewEntity(db, req) {
 			}
 			resolve(result.insertId)
 		})
-
 	})
 
 	let arr = []
@@ -103,10 +102,6 @@ export async function updateEntity(db, req) {
 		return 'Formato incorrecto de: "Aficciones del Usuario".'
 	} else if (utilities.isEmpty(req.body.mail)) {
 		return 'Formato incorrecto de: "Correo Electrónico".'
-	} else if (utilities.isEmpty(req.body.pass)) {
-		return 'Formato incorrecto de: "password".'
-	} else if (utilities.isEmpty(req.body.tags_ent)) {
-		return 'Formato incorrecto de: "tags".'
 	} else if (utilities.isEmpty(req.body.avatar)) {
 		return 'Formato incorrecto de: "avatar".'
 	}
@@ -114,17 +109,18 @@ export async function updateEntity(db, req) {
 	if (!address.updateAddress(db, req)){
 		return 'Error: NO se ha podido actualizar la Dirección'
 	}
-
-	if (!query.deleteSimpleFromTable(db, id_entity, 'tags_ent', 'id_entity')) {
-		return 'Error: NO se ha podido insertar Etiquetas'
-	}
-
-	let arr = []
-	for(let i of req.body.tags_ent) {
-		arr.push(parseInt(i))
-	}
-	if (!query.queryInsertOneToMuch(db, id_entity, arr, 'tags_ent', 'id_entity', 'id_tags')) {
-		return 'Error: NO se ha podido insertar Etiquetas'
+	
+	if (!utilities.isEmpty(req.body.tags_ent)) {
+		if (!query.deleteSimpleFromTable(db, id_entity, 'tags_ent', 'id_entity')) {
+			return 'Error: NO se ha podido eliminar Etiquetas'
+		}
+		let arr = []
+		for(let i of req.body.tags_ent) {
+			arr.push(parseInt(i))
+		}
+		if (!query.queryInsertOneToMuch(db, id_entity, arr, 'tags_ent', 'id_entity', 'id_tags')) {
+			return 'Error: NO se ha podido insertar Etiquetas'
+		}
 	}
 
 	var sql = 'UPDATE entity SET '
@@ -135,6 +131,9 @@ export async function updateEntity(db, req) {
 	sql += 'description = "' + req.body.description + '", '
 	sql += 'mail = "' + req.body.mail + '", '
 	sql += 'sha256 = "' + utilities.sha256(req.body.mail) + '", '
+	if (!utilities.isEmpty(req.body.pass)) {
+		sql += 'pass = "' + utilities.sha256(req.body.pass) + '", '
+	}
 	sql += 'phone = ' + phone + ', '
 	sql += 'avatar = "' + req.body.avatar + '", '
 	sql += 'deleted = ' + deleted + ' '
@@ -237,11 +236,11 @@ export async function getEntityByID(db, entityID) {
 
 export async function getEntityByHash(db, entityHash) {
 	return new Promise(resolve => {
-		db.query(sqlBodyQueryGetEntity() + 'WHERE sha256 = ' + entityHash, (err, result) => {
+		db.query(sqlBodyQueryGetEntity() + 'WHERE sha256 = "' + entityHash + '"', (err, result) => {
 			if (err) {
 				console.log(err)
 			}
-			resolve(result[0])
+			resolve(result && result[0])
 		})
 	})
 }

@@ -107,35 +107,34 @@ export async function updateActivity(db, req) {
 		return 'Formato incorrecto de: "Descripción del Evento".'
 	} else if (utilities.isEmpty(req.body.dateAct)) {
 		return 'Formato incorrecto de: "Fecha del Evento".'
-	} else if (utilities.isEmpty(req.body.tags_act)) {
-		return 'Formato incorrecto de: "Etiquetas identificadoras".'
 	}
 
 	if (!address.updateAddress(db, req)){
 		return 'Error: NO se ha podido actualizar la Dirección'
 	}
 
-	if (!query.deleteSimpleFromTable(db, id_activity, 'tags_act', 'id_activity')) {
-		return 'Error: NO se ha podido insertar Etiquetas'
+	if (!utilities.isEmpty(req.body.tags_act)) {
+		if (!query.deleteSimpleFromTable(db, id_activity, 'tags_act', 'id_activity')) {
+			return 'Error: NO se ha podido eliminar Etiquetas'
+		}
+		let arr = []
+		for(let i of req.body.tags_act) {
+			arr.push(parseInt(i))
+		}
+		if (!query.queryInsertOneToMuch(db, id_activity, arr, 'tags_act', 'id_activity', 'id_tags')) {
+			return 'Error: NO se ha podido insertar Etiquetas'
+		}
 	}
 
-	let arr = []
-	for(let i of req.body.tags_act) {
-		arr.push(parseInt(i))
-	}
-	if (!query.queryInsertOneToMuch(db, id_activity, arr, 'tags_act', 'id_activity', 'id_tags')) {
-		return 'Error: NO se ha podido insertar Etiquetas'
-	}
-
-	var sql = 'UPDATE entity SET '
+	var sql = 'UPDATE activity SET '
 	sql += 'id_entity_creator = ' + id_entity_creator + ', '
 	sql += 'title = "' + req.body.title + '", '
 	sql += 'description = "' + req.body.description + '", '
-	sql += 'seat = ' + seats + ', '
+	sql += 'seats = ' + seats + ', '
 	sql += 'price = ' + price + ', '
 	sql += 'dateAct = "' + req.body.dateAct + '", '
-	sql += 'min_duracion = ' + min_duration + ', '
-	sql += 'deleted = ' + deleted + ', '
+	sql += 'min_duration = ' + min_duration + ', '
+	sql += 'deleted = ' + deleted + ' '
 	sql += 'WHERE id_activity = ' + id_activity + '; '
 
 	return new Promise(resolve => {
@@ -217,29 +216,6 @@ export async function getActivityByID(db, activityID) {
 }
 
 /**
- * @description Devuelve todas las tags asociadas a una actividad, dado el id de dicha actividad
- * @param {*} db Base de Datos de consulta
- * @param {*} activityID id a consultar
- * @returns JSON con los siguientes datos {"id_tags", "name"}
- */
-export async function getTagsOfActivityByID(db, activityID) {
-	if ((await query.getMaxIdFromTable(db, 'activity')) < activityID || activityID < 1) {
-		return 'id fuera de rango'
-	}
-	var sqlSelect = 'SELECT t.id_tags, t.name '
-	var sqlFrom = 'FROM tags_act ta, tags t '
-	var sqlWhere = 'WHERE ta.id_tags = t.id_tags AND ta.id_activity = ' + activityID + ';'
-	return new Promise(resolve => {
-		db.query(sqlSelect + sqlFrom + sqlWhere, (err, result) => {
-			if (err) {
-				console.log(err)
-			}
-			resolve(JSON.stringify(result))
-		})
-	})
-}
-
-/**
  * @description Esta función es genérica, se encarga de aplicar varios filtros, según los criterios 
  * 			 seleccionados de "price", "duration", "date", "seats", "id_address", "type".
  * 			 La cantidad de "activities" devueltas está comprendida entre [lowerLimit, upperLimit]
@@ -307,11 +283,83 @@ export async function getEntitiesWithActivities(db){
 		})
 	})
 }
+
 export async function sortActivitiesBy(db, params) {
 
 	// To complete
 	// Implemented in JS from JSON
 	// Sorting: "price", "duration", "date", "seats", "type"
+}
+
+export async function checkIfUserInActivity(db, id_entity, id_activity){
+	if (id_entity === -1){
+		return 'Formato incorrecto de: "id_entity".'
+	} else if (id_activity === -1){
+		return 'Formato incorrecto de: "id_activity".'
+	}
+
+	var sql = 'SELECT EXISTS(SELECT * FROM entitytoactivity WHERE  '
+	sql += 'id_entity = ' + id_entity + ' '
+	sql += 'and id_activity = ' + id_activity +') as cond; '
+	return new Promise(resolve => {
+		db.query(sql, (err, result) => {
+			if (err) {
+				console.log(err)
+			}
+			resolve(result[0])
+		})
+	})
+}
+
+export async function isActivityDeprecated(db, id_activity){
+	var sql = 'SELECT COUNT(*) as cnt '
+	sql += 'FROM activity '
+	sql += 'WHERE id_activity = ' + id_activity +' AND dateAct>=now(); '
+	var cnt = new Promise(resolve => {
+		db.query(sql, (err, result) => {
+			if (err) {
+				console.log(err)
+				resolve(-1)
+			}
+			resolve(result.cnt)
+		})
+	})
+	if (cnt === 0) return true
+	return false
+}
+
+export async function isActivityDeleted(db, id_activity){
+	var sql = 'SELECT COUNT(*) as cnt '
+	sql += 'FROM activity '
+	sql += 'WHERE id_activity = ' + id_activity +' AND deleted=1; '
+	var cnt = new Promise(resolve => {
+		db.query(sql, (err, result) => {
+			if (err) {
+				console.log(err)
+				resolve(-1)
+			}
+			resolve(result.cnt)
+		})
+	})
+	if (cnt === 1) return true
+	return false
+}
+
+export async function getSeatAvailables(db, id_activity){
+	var sql = 'SELECT ( '
+	sql += 'SELECT seats FROM activity WHERE id_activity = ' + id_activity
+	sql += ') - ('
+	sql += 'SELECT COUNT(*) FROM entitytoactivity WHERE id_activity = ' + id_activity
+	sql += ') as seatsAvailable'
+	return Promise(resolve => {
+		db.query(sql, (err, result) => {
+			if (err) {
+				console.log(err)
+				resolve(-1)
+			}
+			resolve(result.cnt)
+		})
+	})
 }
 
 //  //  //  //  //  //  //  //  //  //  //  //
