@@ -223,6 +223,16 @@ app.post('/api/checkIfUserInActivity', (req, res) => {
 	})
 })
 
+app.post('/api/searchActivitiesByKeywords', (req, res) => {
+	const arr = req.body
+	if (Object.keys(req.body).length === 0 || arr.length === 0) {
+		res.send('')
+	}
+	activity.searchActivitiesByKeywords(db, req.body).then(response => {
+		res.send(response)
+	})
+})
+
 //  //  //  //  //
 //
 //  API ADDRESS
