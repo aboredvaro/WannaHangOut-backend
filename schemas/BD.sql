@@ -3,8 +3,12 @@
 -- USE heroku_8710917fecf1cf0;
 
 -- BD Beta
- CREATE DATABASE IF NOT EXISTS heroku_314befdd836197e;
- USE heroku_314befdd836197e;
+ -- CREATE DATABASE IF NOT EXISTS heroku_314befdd836197e;
+ -- USE heroku_314befdd836197e;
+
+-- BD local
+CREATE DATABASE IF NOT EXISTS PIN;
+USE PIN;
 
 -- Roles que pueden tener cada Entity
 CREATE TABLE rol (
@@ -16,7 +20,7 @@ CREATE TABLE rol (
 -- Etiquetas que describen cada Entity y Activity
 CREATE TABLE tags (
 	id_tags INT AUTO_INCREMENT,
-	name VARCHAR(20) NOT NULL,
+	name VARCHAR(30) NOT NULL,
 	PRIMARY KEY (id_tags)
 );
 
@@ -54,7 +58,7 @@ CREATE TABLE entity (
     id_role TINYINT NOT NULL,
     id_address INT NOT NULL,
     nick VARCHAR(20) UNIQUE NOT NULL,
-    name VARCHAR(30) NOT NULL,
+    name VARCHAR(100) NOT NULL,
     surname VARCHAR(120),
     description VARCHAR(500) NOT NULL,
     mail VARCHAR(120) NOT NULL,
@@ -97,13 +101,14 @@ CREATE TABLE img_act (
 );
 
 -- Comentarios asociados a cada Actividad
+-- El id_review sobra, podría ser clave primaria (id_activity, id_entity)
 CREATE TABLE review (
     id_review INT AUTO_INCREMENT,
     id_activity INT NOT NULL,
     id_entity INT NOT NULL,
     title VARCHAR(100) NOT NULL,
-    description VARCHAR(500),
-    points TINYINT(1) NOT NULL,         -- Puntuación del 0 al 9
+    description VARCHAR(500) DEFAULT NULL,
+    points TINYINT(1) NOT NULL,         -- Puntuación del 0 al 5
     deleted BOOLEAN NOT NULL DEFAULT 0,
     PRIMARY KEY(id_review),
     FOREIGN KEY (id_activity) REFERENCES activity (id_activity),
