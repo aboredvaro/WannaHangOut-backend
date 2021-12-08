@@ -1,8 +1,14 @@
 -- BD Producción
+-- CREATE DATABASE IF NOT EXISTS heroku_8710917fecf1cf0;
 -- USE heroku_8710917fecf1cf0;
 
 -- BD Beta
- USE heroku_314befdd836197e;
+ -- CREATE DATABASE IF NOT EXISTS heroku_314befdd836197e;
+ -- USE heroku_314befdd836197e;
+
+-- BD local
+CREATE DATABASE IF NOT EXISTS PIN;
+USE PIN;
 
 DROP TABLE tags_ent;
 DROP TABLE tags_act;
