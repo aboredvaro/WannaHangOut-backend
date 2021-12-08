@@ -363,9 +363,9 @@ export async function getSeatAvailables(db, id_activity){
 }
 
 export async function searchActivitiesByKeywords(db, keyWords){
-	var select = 'SELECT a.id_activity, a.title, a.seats - (SELECT COUNT(*) FROM entitytoactivity WHERE id_activity = a.id_activity) as seatsAvailable, a.dateAct, a.price, ad.location, ad.codPos, ad.direction '
+	var select = 'SELECT a.id_activity, a.title, a.dateAct, a.min_duration, a.price, ad.location, ad.codPos, ad.direction, a.seats - (SELECT COUNT(*) FROM entitytoactivity WHERE id_activity = a.id_activity) as seatsAvailable, ROUND(1-((a.seats - (SELECT COUNT(*) FROM entitytoactivity WHERE id_activity = a.id_activity)) / 100),2) as ocupation '
 	var from = 'FROM activity a, address ad '
-	var where = 'WHERE a.id_address = ad.id_address AND a.deleted = 0 ' 
+	var where = 'WHERE a.id_address = ad.id_address AND a.deleted = 0 AND a.dateAct >= now() ' 
 	var rest = 'ORDER BY dateAct ASC LIMIT 5;'
 	keyWords.forEach(function (word) {
 		where += 'AND a.title LIKE "%' + word + '%" ' 
