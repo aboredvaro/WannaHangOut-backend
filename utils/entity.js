@@ -228,8 +228,8 @@ export async function getEntityByID(db, entityID) {
 			if (err) {
 				console.log(err)
 			}
-			log(result[0])
-			resolve(result[0])
+			//log(result[0])
+			resolve(result && result[0])
 		})
 	})
 }
