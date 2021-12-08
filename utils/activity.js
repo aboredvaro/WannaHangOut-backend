@@ -177,7 +177,8 @@ export async function deleteActivityById(db, id_activity) {
  * @returns JSON
  */
 export async function getAllActivities(db, listAll) {
-	var sql = sqlBodyQueryGetActivity() + 'WHERE deleted = ' + 0
+	var sql = sqlBodyQueryGetActivity() + 'WHERE dateAct >= now() AND deleted = ' + 0 + ' '
+	sql += 'ORDER BY dateAct ASC '
 	if (listAll > 0 ) {
 		sql = sqlBodyQueryGetActivity()
 	}
@@ -235,7 +236,13 @@ export async function getActivityByID(db, activityID) {
  * 		  "price", "location", "dateAct", "min_duration", "id_entity_creator"}
  */
 export async function filterActivitiesBy(db, req) {
-	var sql = 'SELECT * FROM activity, address WHERE activity.deleted = 0 AND activity.id_address = address.id_address '
+	var sql = 'SELECT id_activity, nick, title, activity.description, seats, price, dateAct, min_duration, address.id_address, province, codPos, location, direction, latitude, longitude '
+	sql += 'FROM activity, address, provinces, entity '
+	sql += 'WHERE activity.id_address = address.id_address '
+	sql += 'AND entity.id_entity = activity.id_entity_creator '
+	sql += 'AND provinces.id_province = address.id_province '
+	sql += 'AND activity.deleted = 0 '
+	sql += 'AND dateAct >= now() '
 	sql += fixFilterByLocation(req.body.location)
 	sql += fixFilterByPrice(req.body.price_min, req.body.price_max)
 	sql += fixFilterByDuration(req.body.min_duration_min, req.body.min_duracion_max)
@@ -243,9 +250,10 @@ export async function filterActivitiesBy(db, req) {
 	sql += fixFilterByDate(req.body.dateAct_min, req.body.dateAct_max)
 	sql += fixFilterByType(req.body.id_tags)
 	sql += fixFilterByEntintyCreator(req.body.id_entity_creator)
+	sql += 'ORDER BY dateAct ASC '
 	sql += 'LIMIT ' + fixLowerLimit(req.body.lowerLimit) + ', ' + fixUpperLimit(req.body.upperLimit) + ';'
 
-	//log(sql + sqlLimit)
+	//log(sql)
 	return new Promise(resolve => {
 		db.query(sql, (err, result) => {
 			if (err) {
@@ -363,9 +371,9 @@ export async function getSeatAvailables(db, id_activity){
 }
 
 export async function searchActivitiesByKeywords(db, keyWords){
-	var select = 'SELECT a.id_activity, a.title, a.seats - (SELECT COUNT(*) FROM entitytoactivity WHERE id_activity = a.id_activity) as seatsAvailable, a.dateAct, a.price, ad.location, ad.codPos, ad.direction '
+	var select = 'SELECT a.id_activity, a.title, a.dateAct, a.min_duration, a.price, ad.location, ad.codPos, ad.direction, a.seats - (SELECT COUNT(*) FROM entitytoactivity WHERE id_activity = a.id_activity) as seatsAvailable, ROUND(1-((a.seats - (SELECT COUNT(*) FROM entitytoactivity WHERE id_activity = a.id_activity)) / 100),2) as ocupation '
 	var from = 'FROM activity a, address ad '
-	var where = 'WHERE a.id_address = ad.id_address AND a.deleted = 0 ' 
+	var where = 'WHERE a.id_address = ad.id_address AND a.deleted = 0 AND a.dateAct >= now() ' 
 	var rest = 'ORDER BY dateAct ASC LIMIT 5;'
 	keyWords.forEach(function (word) {
 		where += 'AND a.title LIKE "%' + word + '%" ' 
