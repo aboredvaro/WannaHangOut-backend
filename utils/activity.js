@@ -50,7 +50,7 @@ export async function createNewActivity(db, req) {
 	sql += min_duration
 	sql += '); '
 
-	var idActivityCreate = new Promise(resolve => {
+	const idActivityCreate = new Promise(resolve => {
 		db.query(sql, (err, result) => {
 			if (err) {
 				console.log(err)
@@ -72,7 +72,7 @@ export async function createNewActivity(db, req) {
 		return 'Error: NO se ha podido insertar Etiquetas'
 	}
 	
-	return idActivityCreate
+	return await idActivityCreate
 }
 
 /**
