@@ -56,3 +56,10 @@ $ yarn run lint
 $ yarn run lint --fix
 
 ```
+
+### Stanford Javascript Crypto Library (hash256)
+
+``` bash
+$ yarn add sjcl
+
+```

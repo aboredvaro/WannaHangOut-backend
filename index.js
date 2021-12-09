@@ -7,13 +7,15 @@ import express from 'express'
 import cors from 'cors'
 import mysql from 'mysql'
 
-import * as estandarizar from './utils/estandarizar.js'
-
+import log from './utils/log.js'
+import * as utilities from './utils/utilities.js'
 import * as activity from './utils/activity.js'
 import * as entity from './utils/entity.js'
-import log from './utils/log.js'
+import * as address from './utils/address.js'
 import * as review from './utils/review.js'
+import * as image from './utils/image.js'
 import * as tag from './utils/tag.js'
+import * as registro from './utils/registro.js'
 
 app.use(cors())
 app.use(express.json())
@@ -81,11 +83,280 @@ app.get('/env', (req, res) => {
 //  //  //  //  //
 
 app.get('/api/getAllEntities', (req, res) => {
-	entity.getAllEntities(db).then(response => {
+	var listAll = utilities.getNumber(req.query.id_all)
+	if (listAll === -1) {
+		listAll = 0
+	}
+	entity.getAllEntities(db, listAll).then(response => {
 		res.send(response)
 	})
 })
 
+app.get('/api/getEntityByID', (req, res) => {
+	if (utilities.getNumber(req.query.id_entity) == -1) {
+		return res.send('El id no tiene un formato correcto')
+	}
+	entity.getEntityByID(db, req.query.id_entity).then(response => {
+		return res.send(response)
+	})
+})
+
+app.get('/api/getEntityByHash', (req, res) => {
+	entity.getEntityByHash(db, req.query.entityHash).then(response => {
+		return res.send(response)
+	})
+})
+
+app.post('/api/isEntityRegistred', (req, res) => {
+	//log(req.body)
+	entity.isEntityRegistred(db,req).then(response => {
+		res.send(response)
+	})
+})
+
+app.post('/api/existNick', (req, res) => {
+	//log(req.body)
+	entity.existNick(db,req).then(response => {
+		res.send(response)
+	})
+})
+
+app.post('/api/createNewEntity', (req, res) => {
+	//log(req.body)
+	entity.createNewEntity(db,req).then(response => {
+		res.send(response)
+	})
+})
+
+app.put('/api/updateEntity', (req, res) => {
+	entity.updateEntity(db,req).then(response => {
+		res.send(response)
+	})
+})
+
+app.post('/api/deleteEntityById', (req, res) => {
+	if (utilities.getNumber(req.body.id_entity) == -1) {
+		log(req.query.id_entity)
+		return res.send('El id no tiene un formato correcto')
+	}
+	entity.deleteEntityById(db, req.body.id_entity).then(response => {
+		res.send(response)
+	})
+})
+
+//  //  //  //  //
+//
+//  API ACTIVITY
+//
+//  //  //  //  //
+
+app.get('/api/getAllActivities', (req, res) => {
+	var listAll = utilities.getNumber(req.query.id_all)
+	if (listAll === -1) {
+		listAll = 0
+	}
+	activity.getAllActivities(db, listAll).then(response => {
+		res.send(response)
+	})
+})
+
+app.get('/api/getActivityByID', (req, res) => {
+	if (utilities.getNumber(req.query.id_activity) == -1) {
+		return res.send('El id no tiene un formato correcto')
+	}
+	activity.getActivityByID(db, req.query.id_activity).then(response => {
+		return res.send(response)
+	})
+})
+
+app.get('/api/getLocationWithActivities', (req, res) => {
+	activity.getLocationWithActivities(db).then(response => {
+		res.send(response)
+	})
+})
+
+app.get('/api/getEntitiesWithActivities', (req, res) => {
+	activity.getEntitiesWithActivities(db).then(response => {
+		res.send(response)
+	})
+})
+
+app.get('/api/getImageByIdActivity', (req, res) => {
+	if (utilities.getNumber(req.query.id_activity) == -1) {
+		return res.send('El id no tiene un formato correcto')
+	}
+	image.getImageByIdAndType(db, req.query.id_activity, 1).then(response => {
+		res.send(response)
+	})
+})
+
+app.post('/api/filterActivitiesBy', (req, res) => {
+	activity.filterActivitiesBy(db,req).then(response => {
+		res.send(response)
+	})
+})
+
+app.post('/api/createNewActivity', (req, res) => {
+	activity.createNewActivity(db,req).then(response => {
+		res.send(JSON.stringify(response))
+	})
+})
+
+app.post('/api/updateActivity', (req, res) => {
+	activity.updateActivity(db,req).then(response => {
+		res.send(response)
+	})
+})
+
+app.post('/api/deleteActivityById', (req, res) => {
+	if (utilities.getNumber(req.body.id_activity) == -1) {
+		return res.send('El id no tiene un formato correcto')
+	}
+	activity.deleteActivityById(db, req.body.id_activity).then(response => {
+		res.send(response)
+	})
+})
+
+app.post('/api/checkIfUserInActivity', (req, res) => {
+	activity.checkIfUserInActivity(db, req.body.id_entity, req.body.id_activity).then(response => {
+		res.send(response)
+	})
+})
+
+app.post('/api/searchActivitiesByKeywords', (req, res) => {
+	const arr = req.body
+	if (Object.keys(req.body).length === 0 || arr.length === 0) {
+		res.send('')
+	}
+	activity.searchActivitiesByKeywords(db, req.body).then(response => {
+		res.send(response)
+	})
+})
+
+//  //  //  //  //
+//
+//  API ADDRESS
+//
+//  //  //  //  //
+
+app.get('/api/getAddressByID', (req, res) => {
+	if (utilities.getNumber(req.query.id_address) == -1) {
+		return res.send('El id no tiene un formato correcto')
+	}
+	address.getAddressByID(db,req.query.id_address).then(response => {
+		res.send(response)
+	})
+})
+
+app.get('/api/getAllAddressOfActivities', (req, res) => {
+	address.getAllAddressOfActivities(db,).then(response => {
+		res.send(response)
+	})
+})
+
+app.post('/api/createNewAddress', (req, res) => {
+	address.createNewAddress(db,req).then(response => {
+		res.send(response)
+	})
+})
+
+app.put('/api/updateAddress', (req, res) => {
+	address.updateAddress(db,req).then(response => {
+		res.send(response)
+	})
+})
+
+//  //  //  //  //
+//
+//  API REVIEW
+//
+//  //  //  //  //
+
+app.post('/api/createNewReview', (req, res) => {
+	log(req)
+	review.createNewReview(db,req).then(response => {
+		res.send(response)
+	})
+})
+
+app.post('/api/updateReview', (req, res) => {
+	review.updateReview(db,req).then(response => {
+		res.send(response)
+	})
+})
+
+app.post('/api/deleteReviewById', (req, res) => {
+	if (utilities.getNumber(req.body.id_review) == -1) {
+		return res.send('El id no tiene un formato correcto')
+	}
+	review.deleteReviewById(db, req.body.id_review).then(response => {
+		res.send(response)
+	})
+})
+
+app.get('/api/getImageByIdReview', (req, res) => {
+	if (utilities.getNumber(req.query.id_review) == -1) {
+		return res.send('El id no tiene un formato correcto')
+	}
+	image.getImageByIdAndType(db, req.query.id_review, 2).then(response => {
+		res.send(response)
+	})
+})
+
+app.get('/api/getReviewByID', (req, res) => {
+	if (utilities.getNumber(req.query.id_review) == -1) {
+		return res.send('El id no tiene un formato correcto')
+	}
+	review.getReviewByID(db, req.query.id_review).then(response => {
+		res.send(response)
+	})
+})
+
+app.get('/api/getAverageScoreByActivities', (req, res) => {
+	if (utilities.getNumber(req.query.id_activity) == -1) {
+		return res.send('El id no tiene un formato correcto')
+	}
+	review.getAverageScoreByActivities(db, req.query.id_activity).then(response => {
+		res.send(response)
+	})
+})
+
+app.get('/api/getAverageScoreByEntityCreator', (req, res) => {
+	if (utilities.getNumber(req.query.id_entity_creator) == -1) {
+		return res.send('El id no tiene un formato correcto')
+	}
+	review.getAverageScoreByEntityCreator(db, req.query.id_entity_creator).then(response => {
+		res.send(response)
+	})
+})
+
+app.get('/api/getAllReviewByActivityID', (req, res) => {
+	if (utilities.getNumber(req.query.id_activity) == -1) {
+		return res.send('El id no tiene un formato correcto')
+	}
+	review.getAllReviewByActivityID(db, req.query.id_activity).then(response => {
+		res.send(response)
+	})
+})
+
+app.post('/api/userHasReviewInActivity', (req, res) => {
+	review.userHasReviewInActivity(db, req.body.id_entity, req.body.id_activity).then(response => {
+		res.send(response)
+	})
+})
+
+//  //  //  //  //
+//
+//  API IMAGES
+//
+//  //  //  //  //
+/*
+app.get('/api/getAllTags', (req, res) => {
+	tag.getActivityImagesByID(db).then(response => {
+		res.send(response)
+	})
+})
+*/
 //  //  //  //  //
 //
 //  API TAGS
@@ -98,55 +369,42 @@ app.get('/api/getAllTags', (req, res) => {
 	})
 })
 
-//  //  //  //  //
-//
-//  API ACTIVITY
-//
-//  //  //  //  //
-
-app.get('/api/getAllActivities', (req, res) => {
-	activity.getAllActivities(db).then(response => {
+app.post('/api/getTagsByIdAndType', (req, res) => {
+	//log(req.body)
+	tag.getTagsByIdAndType(db, req).then(response => {
 		res.send(response)
 	})
 })
 
-app.get('/api/getActivityByID', (req, res) => {
-	if (estandarizar.getNumber(req.query.id_activity) == -1) {
-		return res.send('El id no tiene un formato correcto')
+//  //  //  //  //
+//
+//  API REGISTRO DE ENTIDADES EN ACTIVIDADES
+//
+//  //  //  //  //
+
+app.get('/api/setEntityToActivity', (req, res) => {
+	if (utilities.getNumber(req.query.id_entity) == -1) {
+		return res.send('El id_entity no tiene un formato correcto')
 	}
-	activity.getActivityByID(db, req.query.id_activity).then(response => {
+	if (utilities.getNumber(req.query.id_activity) == -1) {
+		return res.send('El id_activity no tiene un formato correcto')
+	}
+	registro.setEntityToActivity(db, req.query.id_entity).then(response => {
 		return res.send(response)
 	})
 })
 
-app.get('/api/getTagsOfActivityByID', (req, res) => {
-	if (estandarizar.getNumber(req.query.id_activity) == -1) {
-		return res.send('El id no tiene un formato correcto')
+app.get('/api/deleteEntityToActivity', (req, res) => {
+	if (utilities.getNumber(req.query.id_entity) == -1) {
+		return res.send('El id_entity no tiene un formato correcto')
 	}
-	activity.getTagsOfActivityByID(db, req.query.id_activity).then(response => {
+	if (utilities.getNumber(req.query.id_activity) == -1) {
+		return res.send('El id_activity no tiene un formato correcto')
+	}
+	registro.deleteEntityToActivity(db, req.query.id_entity).then(response => {
 		return res.send(response)
 	})
 })
-
-app.get('/api/filterActivitiesBy', (req, res) => {
-	activity.filterActivitiesBy(db,req).then(response => {
-		res.send(response)
-	})
-})
-
-app.post('/api/createNewActivity', (req, res) => {
-	activity.createNewActivity(db,req).then(response => {
-		res.send(response)
-	})
-})
-
-//  //  //  //  //
-//
-//  API REVIEW
-//
-//  //  //  //  //
-
-// To implement
 
 //  //  //  //  //
 //
