@@ -16,6 +16,7 @@ import * as review from './utils/review.js'
 import * as image from './utils/image.js'
 import * as tag from './utils/tag.js'
 import * as registro from './utils/registro.js'
+import * as cloudinary from './utils/cloudinary.js'
 
 app.use(cors())
 app.use(express.json())
@@ -406,9 +407,18 @@ app.get('/api/deleteEntityToActivity', (req, res) => {
 	})
 })
 
+/*
+app.get('/api/theCloudinary', (req, res) => {
+	const path = ['./img/IMG_9698b.jpg','./img/Captura.JPG','./img/Captura2.JPG']
+	cloudinary.putImagesIntoCloudinary(path, 'avatar').then(response => {
+		return res.send(response)
+	})
+})
+*/
+
 //  //  //  //  //
 //
-//  START LISTENING
+//  START LISTENINGcloudinary
 //
 //  //  //  //  //
 
