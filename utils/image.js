@@ -39,6 +39,7 @@ export async function getImageByIdAndType(db, id_object, type) {
 	var select = 'SELECT i.id_image, i.urlPath, '
 	var from = 'FROM images i, '
 	var where = 'WHERE img.id_image = i.id_image AND img.deleted = 0 '
+	var orderBy = 'ORDER BY i.id_image ASC'
 
 	switch (type) {
 	case 1:
@@ -52,10 +53,9 @@ export async function getImageByIdAndType(db, id_object, type) {
 		where += 'AND id_review = ' + id_object + ' '
 		break
 	default:
-		return '"type fuera de rango".'
+		return '"type" fuera de rango.'
 	}
-	where += ';'
-	var sql = select + from + where
+	var sql = select + from + where + orderBy
 	//log(sql)
 	return new Promise(resolve => {
 		db.query(sql, (err, result) => {
