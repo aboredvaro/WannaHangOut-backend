@@ -29,10 +29,10 @@ export async function createNewImage(db, req) {
 }
 
 /**
- * @param {*} db			Base de datos donde se hace la consulta 
- * @param {*} req.body.id 	Id a consultar
- * @param {*} req.body.type 	typo a consultar, type=1 para tags de entidad, type=2 para tags de actividad
- * @returns 				JSON con los siguientes datos {id_tags, name, id}
+ * @param {*} db		Base de datos donde se hace la consulta 
+ * @param {*} id_object	Id a consultar
+ * @param {*} type		typo a consultar, type=1 para imágenes de actividad, type=2 para imágenes de review
+ * @returns 			JSON con los siguientes datos {id_image, urlPath}
  */
 export async function getImageByIdAndType(db, id_object, type) {
 
