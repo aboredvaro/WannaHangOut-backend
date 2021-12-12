@@ -351,13 +351,24 @@ app.post('/api/userHasReviewInActivity', (req, res) => {
 //  API IMAGES
 //
 //  //  //  //  //
-/*
-app.get('/api/getAllTags', (req, res) => {
-	tag.getActivityImagesByID(db).then(response => {
+app.get('/api/getImagesOfActivity', (req, res) => {
+	if (utilities.getNumber(req.query.id_activity) == -1) {
+		return res.send('El id no tiene un formato correcto')
+	}
+	image.getImageByIdAndType(db, req.query.id_activity, 1).then(response => {
 		res.send(response)
 	})
 })
-*/
+
+app.get('/api/getImagesOfReview', (req, res) => {
+	if (utilities.getNumber(req.query.id_review) == -1) {
+		return res.send('El id no tiene un formato correcto')
+	}
+	image.getImageByIdAndType(db, req.query.id_review, 2).then(response => {
+		res.send(response)
+	})
+})
+
 //  //  //  //  //
 //
 //  API TAGS
