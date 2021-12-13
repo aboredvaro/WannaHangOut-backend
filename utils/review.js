@@ -13,7 +13,7 @@ export async function createNewReview(db, req) {
 	var id_activity = utilities.getNumber(req.body.id_activity)
 	var id_entity = utilities.getNumber(req.body.id_entity)
 	var points = utilities.getNumber(req.body.points)
-
+/*
 	if (id_activity === -1){
 		return 'Formato incorrecto de: "id_activity".'
 	} else if (id_entity === -1) {
@@ -27,7 +27,7 @@ export async function createNewReview(db, req) {
 	} else if (utilities.isEmpty(req.body.img_review)) {
 		return 'Formato incorrecto de: "Imágenes asociadas".'
 	}
-
+*/
 	// insertar la review
 	var sql = 'INSERT INTO review ('
 	sql += 'id_activity, id_entity, title, description, points) VALUES ('
@@ -70,7 +70,7 @@ export async function updateReview(db, req) {
 	var id_review = utilities.getNumber(req.body.id_review)
 	var id_activity = utilities.getNumber(req.body.id_activity)
 	var points = utilities.getNumber(req.body.points)
-
+/*
 	if (id_review === -1){
 		return 'Formato incorrecto de: "id_review".'
 	} else if (id_activity === -1){
@@ -82,7 +82,7 @@ export async function updateReview(db, req) {
 	} else if (utilities.isEmpty(req.body.description)) {
 		return 'Formato incorrecto de: "Descripción del Evento".'
 	}
-	
+*/	
 	if (!utilities.isEmpty(req.body.img_review)) {
 		if (!query.deleteSimpleFromTable(db, id_review, 'img_review', 'id_review')) {
 			return 'Error: NO se ha podido eliminar imagenes'

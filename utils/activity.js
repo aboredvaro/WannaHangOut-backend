@@ -14,7 +14,7 @@ export async function createNewActivity(db, req) {
 	var seats = utilities.getNumber(req.body.seats)
 	var price = utilities.getNumber(req.body.price)
 	var min_duration = utilities.getNumber(req.body.min_duration)
-
+/*
 	if (min_duration === -1){
 		return 'Formato incorrecto de: "Duración del Evento".'
 	} else if (price === -1) {
@@ -32,7 +32,7 @@ export async function createNewActivity(db, req) {
 	} else if (utilities.isEmpty(req.body.tags_act)) {
 		return 'Formato incorrecto de: "Etiquetas identificadoras".'
 	}
-	
+*/	
 	var id_address = await address.createNewAddress(db, req)
 	if (id_address === -1){
 		return 'Error: NO se ha podido insertar Dirección'
@@ -88,7 +88,7 @@ export async function updateActivity(db, req) {
 	var price = utilities.getNumber(req.body.price)
 	var min_duration = utilities.getNumber(req.body.min_duration)
 	var deleted = utilities.getNumber(req.body.deleted)
-
+/*
 	if (id_activity === -1){
 		return 'Formato incorrecto de: "id_activity.'
 	} else if (min_duration === -1){
@@ -108,7 +108,7 @@ export async function updateActivity(db, req) {
 	} else if (utilities.isEmpty(req.body.dateAct)) {
 		return 'Formato incorrecto de: "Fecha del Evento".'
 	}
-
+*/
 	if (!address.updateAddress(db, req)){
 		return 'Error: NO se ha podido actualizar la Dirección'
 	}

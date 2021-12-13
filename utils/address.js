@@ -12,7 +12,7 @@ import fetch from 'node-fetch'
  */
 export async function createNewAddress(db, req) {
 	var codPos = utilities.getNumber(req.body.codPos)
-
+/*
 	if (codPos === -1){
 		return 'Formato incorrecto de: "Código Postal".'
 	} else if (utilities.isEmpty(req.body.location)) {
@@ -20,7 +20,7 @@ export async function createNewAddress(db, req) {
 	} else if (utilities.isEmpty(req.body.direction)) {
 		return 'Formato incorrecto de: "Dirección".'
 	}
-
+*/
 	var id_province = Math.trunc(codPos/1000)
 	var coordenadas = await getGoogleCoordinatesByAddress(req.body.direction,codPos, req.body.location)
 	
@@ -55,7 +55,7 @@ export async function createNewAddress(db, req) {
 export async function updateAddress(db, req) {
 	var id_address = utilities.getNumber(req.body.id_address)
 	var codPos = utilities.getNumber(req.body.codPos)
-
+/*
 	if (id_address === -1){
 		return 'Formato incorrecto de: "id_address".'
 	} else if (codPos === -1){
@@ -65,7 +65,7 @@ export async function updateAddress(db, req) {
 	} else if (utilities.isEmpty(req.body.direction)) {
 		return 'Formato incorrecto de: "Dirección".'
 	}
-
+*/
 	var id_province = Math.trunc(codPos/1000)
 	var coordenadas = await getGoogleCoordinatesByAddress(req.body.direction,codPos, req.body.location)
 

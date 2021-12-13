@@ -12,7 +12,7 @@ import * as address from './address.js'
 export async function createNewEntity(db, req) {
 	var id_role = utilities.getNumber(req.body.id_role)
 	var phone = utilities.getNumber(req.body.phone)
- 
+/* 
 	if (id_role === -1){
 		return 'Formato incorrecto de: "Rol de usuario".'
 	} else if (phone === -1){
@@ -30,7 +30,7 @@ export async function createNewEntity(db, req) {
 	} else if (utilities.isEmpty(req.body.tags_ent)) {
 		return 'Formato incorrecto de: "etiquetas".'
 	}
-	
+*/	
 	var id_address = await address.createNewAddress(db, req)
 
 	if (id_address === -1){
@@ -85,7 +85,7 @@ export async function updateEntity(db, req) {
 	var id_role = utilities.getNumber(req.body.id_role)
 	var phone = utilities.getNumber(req.body.phone)
 	var deleted = utilities.getNumber(req.body.deleted)
-
+/*
 	if (id_entity === -1){
 		return 'Formato incorrecto de: "id_entity".'
 	} else if (id_role === -1){
@@ -105,7 +105,7 @@ export async function updateEntity(db, req) {
 	} else if (utilities.isEmpty(req.body.avatar)) {
 		return 'Formato incorrecto de: "avatar".'
 	}
-
+*/
 	if (!address.updateAddress(db, req)){
 		return 'Error: NO se ha podido actualizar la Dirección'
 	}
