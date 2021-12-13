@@ -9,7 +9,7 @@ import * as tag from './tag.js'
  * @param {*} req 
  * @returns Devuelve -1 en caso de error o el id_review de la review creada
  */
- export async function createNewReview(db, req) {
+export async function createNewReview(db, req) {
 	var id_activity = utilities.getNumber(req.body.id_activity)
 	var id_entity = utilities.getNumber(req.body.id_entity)
 	var points = utilities.getNumber(req.body.points)

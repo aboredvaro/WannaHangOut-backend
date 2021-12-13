@@ -186,7 +186,7 @@ app.get('/api/getImageByIdActivity', (req, res) => {
 	if (utilities.getNumber(req.query.id_activity) == -1) {
 		return res.send('El id no tiene un formato correcto')
 	}
-	image.getImageByIdAndType(db, req.query.id_activity, 1).then(response => {
+	image.getImagesByIdAndType(db, req.query.id_activity, 1, req.query.cant).then(response => {
 		res.send(response)
 	})
 })
@@ -299,7 +299,7 @@ app.get('/api/getImageByIdReview', (req, res) => {
 	if (utilities.getNumber(req.query.id_review) == -1) {
 		return res.send('El id no tiene un formato correcto')
 	}
-	image.getImageByIdAndType(db, req.query.id_review, 2).then(response => {
+	image.getImagesByIdAndType(db, req.query.id_review, 2, req.query.cant).then(response => {
 		res.send(response)
 	})
 })
