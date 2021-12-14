@@ -389,7 +389,7 @@ export async function searchActivitiesByKeywords(db, keyWords){
 	})
 }
 
-export async function getActivitiesFromEntity(db, id_entity){
+export async function getActivitiesCreatedByEntity(db, id_entity){
 	if (id_entity === -1){
 		return 'Formato incorrecto de: "id_entity".'
 	} 

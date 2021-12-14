@@ -234,8 +234,8 @@ app.post('/api/searchActivitiesByKeywords', (req, res) => {
 	})
 })
 
-app.get('/api/getActivitiesFromEntity', (req, res) => {
-	activity.getActivitiesFromEntity(db, req.query.id_entity).then(response => {
+app.get('/api/getActivitiesCreatedByEntity', (req, res) => {
+	activity.getActivitiesCreatedByEntity(db, req.query.id_entity).then(response => {
 		res.send(response)
 	})
 })
