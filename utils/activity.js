@@ -14,7 +14,7 @@ export async function createNewActivity(db, req) {
 	var seats = utilities.getNumber(req.body.seats)
 	var price = utilities.getNumber(req.body.price)
 	var min_duration = utilities.getNumber(req.body.min_duration)
-/*
+
 	if (min_duration === -1){
 		return 'Formato incorrecto de: "Duración del Evento".'
 	} else if (price === -1) {
@@ -32,7 +32,7 @@ export async function createNewActivity(db, req) {
 	} else if (utilities.isEmpty(req.body.tags_act)) {
 		return 'Formato incorrecto de: "Etiquetas identificadoras".'
 	}
-*/	
+
 	var id_address = await address.createNewAddress(db, req)
 	if (id_address === -1){
 		return 'Error: NO se ha podido insertar Dirección'
@@ -88,7 +88,7 @@ export async function updateActivity(db, req) {
 	var price = utilities.getNumber(req.body.price)
 	var min_duration = utilities.getNumber(req.body.min_duration)
 	var deleted = utilities.getNumber(req.body.deleted)
-/*
+
 	if (id_activity === -1){
 		return 'Formato incorrecto de: "id_activity.'
 	} else if (min_duration === -1){
@@ -108,7 +108,7 @@ export async function updateActivity(db, req) {
 	} else if (utilities.isEmpty(req.body.dateAct)) {
 		return 'Formato incorrecto de: "Fecha del Evento".'
 	}
-*/
+
 	if (!address.updateAddress(db, req)){
 		return 'Error: NO se ha podido actualizar la Dirección'
 	}
@@ -172,16 +172,15 @@ export async function deleteActivityById(db, id_activity) {
 }
 
 /**
- * @description Devuelve un JSON sin filtrar, con todas las Actividades NO BORRADAS
- * @param {*} db
- * @returns JSON
+ * @deprecated		Lo cambiamos para la feria por consulta hipermegatroncha
+ * @description 	Devuelve un JSON sin filtrar, con todas las Actividades NO BORRADAS
+ * @param {*} 		db
+ * @returns 		JSON
  */
-export async function getAllActivities(db, listAll) {
+export async function getAllActivities1(db) {
 	var sql = sqlBodyQueryGetActivity() + 'WHERE dateAct >= now() AND deleted = ' + 0 + ' '
 	sql += 'ORDER BY dateAct ASC '
-	if (listAll > 0 ) {
-		sql = sqlBodyQueryGetActivity()
-	}
+
 	return new Promise(resolve => {
 		db.query(sql , (err, result) => {
 			if (err) {
@@ -193,13 +192,14 @@ export async function getAllActivities(db, listAll) {
 }
 
 /**
- * @description Devuelve una actividad dado el id de dicha actividad
- * @param {*} db Base de Datos de consulta
+ * @deprecated			Lo cambiamos para la feria por consulta hipermegatroncha
+ * @description 		Devuelve una actividad dado el id de dicha actividad
+ * @param {*} db 		Base de Datos de consulta
  * @param {*} activityID id a consultar
- * @returns JSON con los siguientes datos {"id_activity", "title", "description", "seats", 
- * 		  "price", "location", "dateAct", "min_duration", "id_entity_creator"}
+ * @returns 			JSON con los siguientes datos {"id_activity", "title", "description", "seats", 
+ * 		  				"price", "location", "dateAct", "min_duration", "id_entity_creator"}
  */
-export async function getActivityByID(db, activityID) {
+export async function getActivityByID1(db, activityID) {
 	if ((await query.getMaxIdFromTable(db, 'activity')) < activityID || activityID < 1) {
 		return 'Este id no pertenece a ninguna actividad'
 	}
@@ -214,6 +214,108 @@ export async function getActivityByID(db, activityID) {
 			resolve(result[0])
 		})
 	})
+}
+
+/**
+ * @description	Devuelve todas las actividades no borradas o a partir de la fecha de hoy
+ * @param {*} db 	Base de datos donde hacer la consulta
+ * @returns 		JSON con todos los datos necesarios de una actividad
+ */
+export async function getActivityByID(db, activityID) {
+	var sql = sqlBodyActividad() + 'AND dateAct >= now() AND ac.id_activity = ' + activityID
+	return new Promise(resolve => {
+		db.query(sql , (err, result) => {
+			if (err) {
+				console.log(err)
+			}
+			resolve(result)
+		})
+	})
+}
+
+/**
+ * @description	Devuelve todas las actividades no borradas o a partir de la fecha de hoy
+ * @param {*} db 	Base de datos donde hacer la consulta
+ * @returns 		JSON con todos los datos necesarios de una actividad
+ */
+export async function getAllActivities(db) {
+	var sql = sqlBodyActividad() + 'AND dateAct >= now() '
+	return new Promise(resolve => {
+		db.query(sql , (err, result) => {
+			if (err) {
+				console.log(err)
+			}
+			resolve(result)
+		})
+	})
+}
+
+/**
+ * 
+ * @param {*} db 
+ * @param {*} id_entity 
+ * @returns 
+ */
+export async function getActivitiesCreatedByEntity(db, id_entity){
+	if (utilities.getNumber(id_entity) == -1) {
+		return 'Formato incorrecto de: "id_entity".'
+	}
+
+	var sql = sqlBodyActividad() + 'WHERE deleted = ' + 0 + ' '
+	sql += 'AND id_entity_creator = ' + id_entity
+	sql += ' ORDER BY dateAct ASC '
+	
+	return new Promise(resolve => {
+		db.query(sql , (err, result) => {
+			if (err) {
+				console.log(err)
+			}
+			resolve(result)
+		})
+	})
+}
+
+/**
+ * @description		Devuelve todas las actividades NO BORRADAS a las que se ha apuntado una ENTIDAD
+ * @param {*} db 		Base de datos donde se hace la consulta
+ * @param {*} id_entity 	id de la entidad a consultar
+ * @returns 			Devuelve un JSON con todos los datos de la actividad
+ */
+export async function getActivitiesUserSignUpTo(db, id_entity){
+	if (id_entity === -1){
+		return 'Formato incorrecto de: "id_entity".'
+	} 
+	
+	var sql = sqlBodyQueryGetActivity() + 'AND ac.id_activity IN (SELECT id_activity FROM entityToActivity WHERE id_entity = ' + id_entity + ') '
+	sql += 'ORDER BY dateAct ASC '
+	
+	return new Promise(resolve => {
+		db.query(sql , (err, result) => {
+			if (err) {
+				console.log(err)
+			}
+			resolve(result)
+		})
+	})
+}
+
+function sqlBodyActividad(){
+	var select = 'SELECT ac.id_activity, ac.title, ac.description, ac.seats, '
+	select += 'ac.seats - (SELECT COUNT(*) FROM entitytoactivity WHERE id_activity = ac.id_activity) as seatsAvailable, '
+	select += 'ROUND(1-((ac.seats - (SELECT COUNT(*) FROM entitytoactivity WHERE id_activity = ac.id_activity)) / 100),2) as ocupation, '
+	select += 'ac.price, ac.dateAct, ac.min_duration, '
+	select += '(SELECT i.urlPath FROM images i, img_act im WHERE im.id_image = i.id_image AND im.deleted = 0 AND id_activity = ac.id_activity ORDER BY i.id_image ASC LIMIT 1) as urlPath, '
+	select += 'en.id_entity as id_entity_creator, en.name, '
+	select += '(SELECT COUNT(a.id_activity) FROM review r, activity a WHERE a.id_activity = r.id_activity AND r.deleted = 0 AND a.deleted = 0 AND a.id_entity_creator = en.id_entity) as totalReviewsOfEntity, '
+	select += '(SELECT ROUND(AVG(r.points),2) FROM review r, activity a WHERE a.id_activity = r.id_activity AND r.deleted = 0 AND a.deleted = 0 AND a.id_entity_creator = en.id_entity) as avgScoreOfEntity, '
+	select += 'en.avatar, ad.id_address, ad.direction, ad.codPos, ad.location, pr.province, ad.latitude, ad.longitude '
+	var from = 'FROM activity ac, entity en, address ad, provinces pr '
+	var where = 'WHERE ac.id_entity_creator = en.id_entity '
+	where += 'and ac.deleted = 0 '
+	where += 'and ad.id_address = ac.id_address '
+	where += 'and ad.id_province = pr.id_province '
+
+	return select + from + where
 }
 
 /**
@@ -381,44 +483,6 @@ export async function searchActivitiesByKeywords(db, keyWords){
 	var sql = select + from + where + rest
 	return new Promise(resolve => {
 		db.query(sql, (err, result) => {
-			if (err) {
-				console.log(err)
-			}
-			resolve(result)
-		})
-	})
-}
-
-export async function getActivitiesCreatedByEntity(db, id_entity){
-	if (id_entity === -1){
-		return 'Formato incorrecto de: "id_entity".'
-	} 
-	
-	var sql = sqlBodyQueryGetActivity() + 'WHERE deleted = ' + 0 + ' '
-	sql += 'AND id_entity_creator = ' + id_entity
-	sql += ' ORDER BY dateAct ASC '
-	
-	return new Promise(resolve => {
-		db.query(sql , (err, result) => {
-			if (err) {
-				console.log(err)
-			}
-			resolve(result)
-		})
-	})
-}
-
-export async function getActivitiesUserSignUpTo(db, id_entity){
-	if (id_entity === -1){
-		return 'Formato incorrecto de: "id_entity".'
-	} 
-	
-	var sql = sqlBodyQueryGetActivity() + 'WHERE deleted = ' + 0 + ' '
-	sql += 'AND id_activity IN (SELECT id_activity FROM entityToActivity WHERE id_entity = ' + id_entity + ')'
-	sql += ' ORDER BY dateAct ASC '
-	
-	return new Promise(resolve => {
-		db.query(sql , (err, result) => {
 			if (err) {
 				console.log(err)
 			}

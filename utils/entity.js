@@ -4,7 +4,7 @@ import * as query from './query.js'
 import * as address from './address.js'
 
 /**
- * @description Registra una nueva Entidad en la BD
+ * @description Registra una nueva Entidad en la BD, tiene valores por defecto para que no de errores en la feria
  * @param {*} db 
  * @param {*} req 
  * @returns Devuelve -1 en caso de error o el id_Entity de la Entidad creada
@@ -36,7 +36,7 @@ export async function createNewEntity(db, req) {
 	sql += id_address + ', '
 	sql += '"' + nick + '", '
 	sql += '"' + req.body.name + '", '
-	sql += '"' + req.body.surname + '", '
+	sql += '"' + surname + '", '
 	sql += '"' + description + '", '
 	sql += '"' + req.body.mail + '", '
 	sql += '"' + utilities.sha256(req.body.mail) + '", '
@@ -80,7 +80,7 @@ export async function updateEntity(db, req) {
 	var id_role = utilities.getNumber(req.body.id_role)
 	var phone = utilities.getNumber(req.body.phone)
 	var deleted = utilities.getNumber(req.body.deleted)
-/*
+
 	if (id_entity === -1){
 		return 'Formato incorrecto de: "id_entity".'
 	} else if (id_role === -1){
@@ -100,7 +100,7 @@ export async function updateEntity(db, req) {
 	} else if (utilities.isEmpty(req.body.avatar)) {
 		return 'Formato incorrecto de: "avatar".'
 	}
-*/
+
 	if (!address.updateAddress(db, req)){
 		return 'Error: NO se ha podido actualizar la Dirección'
 	}
@@ -145,6 +145,12 @@ export async function updateEntity(db, req) {
 	})
 }
 
+/**
+ * @description Comprueba las credenciales de una entidad, es decir, si mail y pass están registrados
+ * @param {*} db 
+ * @param {*} req 
+ * @returns 
+ */
 export async function isEntityRegistred(db, req){
 	if (utilities.isEmpty(req.body.mail)) {
 		return 'Formato incorrecto de: "mail".'

@@ -152,11 +152,7 @@ app.post('/api/deleteEntityById', (req, res) => {
 //  //  //  //  //
 
 app.get('/api/getAllActivities', (req, res) => {
-	var listAll = utilities.getNumber(req.query.id_all)
-	if (listAll === -1) {
-		listAll = 0
-	}
-	activity.getAllActivities(db, listAll).then(response => {
+	activity.getAllActivities(db, req).then(response => {
 		res.send(response)
 	})
 })
