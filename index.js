@@ -240,6 +240,12 @@ app.get('/api/getActivitiesCreatedByEntity', (req, res) => {
 	})
 })
 
+app.get('/api/getActivitiesUserSignUpTo', (req, res) => {
+	activity.getActivitiesUserSignUpTo(db, req.query.id_entity).then(response => {
+		res.send(response)
+	})
+})
+
 //  //  //  //  //
 //
 //  API ADDRESS

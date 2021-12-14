@@ -394,8 +394,27 @@ export async function getActivitiesCreatedByEntity(db, id_entity){
 		return 'Formato incorrecto de: "id_entity".'
 	} 
 	
-	var sql = sqlBodyQueryGetActivity() + 'WHERE dateAct >= now() AND deleted = ' + 0 + ' '
+	var sql = sqlBodyQueryGetActivity() + 'WHERE deleted = ' + 0 + ' '
 	sql += 'AND id_entity_creator = ' + id_entity
+	sql += ' ORDER BY dateAct ASC '
+	
+	return new Promise(resolve => {
+		db.query(sql , (err, result) => {
+			if (err) {
+				console.log(err)
+			}
+			resolve(result)
+		})
+	})
+}
+
+export async function getActivitiesUserSignUpTo(db, id_entity){
+	if (id_entity === -1){
+		return 'Formato incorrecto de: "id_entity".'
+	} 
+	
+	var sql = sqlBodyQueryGetActivity() + 'WHERE deleted = ' + 0 + ' '
+	sql += 'AND id_activity IN (SELECT id_activity FROM entityToActivity WHERE id_entity = ' + id_entity + ')'
 	sql += ' ORDER BY dateAct ASC '
 	
 	return new Promise(resolve => {
