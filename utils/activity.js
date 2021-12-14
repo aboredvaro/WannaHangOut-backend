@@ -389,6 +389,25 @@ export async function searchActivitiesByKeywords(db, keyWords){
 	})
 }
 
+export async function getActivitiesFromEntity(db, id_entity){
+	if (id_entity === -1){
+		return 'Formato incorrecto de: "id_entity".'
+	} 
+	
+	var sql = sqlBodyQueryGetActivity() + 'WHERE dateAct >= now() AND deleted = ' + 0 + ' '
+	sql += 'AND id_entity_creator = ' + id_entity
+	sql += ' ORDER BY dateAct ASC '
+	
+	return new Promise(resolve => {
+		db.query(sql , (err, result) => {
+			if (err) {
+				console.log(err)
+			}
+			resolve(result)
+		})
+	})
+}
+
 //  //  //  //  //  //  //  //  //  //  //  //
 //								    //
 //  FUNCIONES SECUNDARIAS, PERO NECESARIAS  //
