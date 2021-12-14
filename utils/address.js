@@ -11,25 +11,18 @@ import fetch from 'node-fetch'
  * @returns Devuelve -1 en caso de error o el id_Address de la Actividad creada
  */
 export async function createNewAddress(db, req) {
-	var codPos = utilities.getNumber(req.body.codPos)
-/*
-	if (codPos === -1){
-		return 'Formato incorrecto de: "Código Postal".'
-	} else if (utilities.isEmpty(req.body.location)) {
-		return 'Formato incorrecto de: "Localidad".'
-	} else if (utilities.isEmpty(req.body.direction)) {
-		return 'Formato incorrecto de: "Dirección".'
-	}
-*/
+	var codPos = utilities.getNumber(req.body.codPos) === -1 ? codPos = 46022 : req.body.codPos
 	var id_province = Math.trunc(codPos/1000)
-	var coordenadas = await getGoogleCoordinatesByAddress(req.body.direction,codPos, req.body.location)
+	var location = utilities.isEmpty(req.body.location) ? 'Valencia' : req.body.location
+	var direction = utilities.isEmpty(req.body.direction) ? 'Camí de Vera, s/n' : req.body.direction
+	var coordenadas = await getGoogleCoordinatesByAddress(direction, codPos, location)
 	
 	// Crear la consulta
 	var sql = 'INSERT INTO address (id_province, codPos, location, direction, latitude, longitude) VALUES ( '
 	sql += id_province + ', '
 	sql += codPos + ', '
-	sql += '"' + req.body.location + '", '
-	sql += '"' + req.body.direction + '", '
+	sql += '"' + location + '", '
+	sql += '"' + direction + '", '
 	sql += coordenadas.lat + ', '
 	sql += coordenadas.lng
 	sql += '); '
