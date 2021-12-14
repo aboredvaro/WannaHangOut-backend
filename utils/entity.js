@@ -10,9 +10,10 @@ import * as address from './address.js'
  * @returns Devuelve -1 en caso de error o el id_Entity de la Entidad creada
  */
 export async function createNewEntity(db, req) {
-	var id_role = utilities.getNumber(req.body.id_role) === -1 ? id_role = 2 : req.body.id_role
-	var phone = utilities.getNumber(req.body.phone) === -1 ? id_role = 600000000 : phone
+	var id_role = utilities.getNumber(req.body.id_role) === -1 ? 2 : req.body.id_role
+	var phone = utilities.getNumber(req.body.phone) === -1 ? 600000000 : req.body.phone
 	var nick = utilities.isEmpty(req.body.nick) ? 'FeriaPIN2021' : req.body.nick
+	var surname = utilities.isEmpty(req.body.surname) ? 'null' : req.body.surname
 	var description = utilities.isEmpty(req.body.description) ? 'FeriaPIN2021' : req.body.description
 	var avatar = utilities.isEmpty(req.body.avatar) ? 'https://res.cloudinary.com/wannahangout2021/image/upload/v1639329249/FeriaPIN2021/Avatar/bgpkh3ldbywnyquoyr0h.webp' : req.body.avatar
 
@@ -43,7 +44,7 @@ export async function createNewEntity(db, req) {
 	sql += '"' + utilities.sha256(req.body.pass) + '", '
 	sql += '"' + avatar  + '"'
 	sql += '); '
-	
+
 	//log(sql)
 	var idEntityCreate = new Promise(resolve => {
 		db.query(sql, (err, result) => {
