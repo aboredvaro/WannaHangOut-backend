@@ -242,6 +242,12 @@ app.get('/api/getActivitiesUserSignUpTo', (req, res) => {
 	})
 })
 
+app.get('/api/hola', (req, res) => {
+	activity.getActivityByID(db, req.query.id_entity).then(response => {
+		res.send(response)
+	})
+})
+
 //  //  //  //  //
 //
 //  API ADDRESS

@@ -223,6 +223,7 @@ export async function getActivityByID1(db, activityID) {
  */
 export async function getActivityByID(db, activityID) {
 	var sql = sqlBodyActividad() + 'AND ac.id_activity = ' + activityID
+	/*
 	return new Promise(resolve => {
 		db.query(sql , (err, result) => {
 			if (err) {
@@ -231,6 +232,34 @@ export async function getActivityByID(db, activityID) {
 			resolve(result)
 		})
 	})
+	*/
+		
+	let sql1 = new Promise(resolve => {
+		db.query(sql , (err, result) => {
+			if (err) {
+				console.log(err)
+			}
+			resolve(result)
+		})
+	})
+
+	sql = 'select ta.id_tags, t.name '
+	sql += 'from tags_act ta, tags t '
+	sql += 'where ta.id_tags = t.id_tags '
+	sql += 'and ta.id_activity = ' + activityID
+	let sql2 = new Promise(resolve => {
+		db.query(sql , (err, result) => {
+			if (err) {
+				console.log(err)
+			}
+			resolve(result)
+		})
+	})
+
+	let json = await sql1
+	let tag = await sql2
+	json[0].tags = {...tag}
+	return json[0]
 }
 
 /**
