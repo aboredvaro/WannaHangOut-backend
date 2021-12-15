@@ -24,19 +24,17 @@ export async function putImageIntoCloudinary(image, type) {
 		api_secret: `${process.env.CLOUDINARY_APISECRET}`,
 		url: `${process.env.CLOUDINARY_URL}`
 	})
-
-	log(image)
-	log(type)
 	
+	let size = setSizeOfImage(type)
 	return new Promise((resolve, reject) => {
 		cloudinary.v2.uploader.upload(image, 
 			{
 				resouce_type: 'image', 
-				folder: pathOfImage(type), 
-				format: 'webp',
-				width: 500, 
-				//height: 500, 
-				crop: 'scale'
+				folder: getPathOfImage(type), 
+				format: 'webp',				
+				width: size.width, 
+				height: size.height, 
+				crop: size.crop
 			}, 
 			(error, result) => {
 				if (error) {
@@ -47,7 +45,6 @@ export async function putImageIntoCloudinary(image, type) {
 			}
 		)
 	})	
-	
 }
 
 /**
@@ -69,7 +66,7 @@ export async function putImagesIntoCloudinary(images, type) {
  * @param {*} type  Tipo de la imagen 'shop', 'user', 'review' o 'activity'
  * @returns         Ruta donde se debe guardar la imagen
  */
-function pathOfImage(type) {
+function getPathOfImage(type) {
 	let pathSave 
 	if ( type == 'shop' ) {
 		pathSave = 'FeriaPIN2021/Avatar/Shop'
@@ -83,4 +80,27 @@ function pathOfImage(type) {
 		pathSave = 'FeriaPIN2021/sin_definir'
 	}
 	return pathSave
+}
+
+/**
+ * @description     Dependiendo del tipo de imagen, devuelve las dimensiones en las que se tiene que guardar la imagen
+ * @param {*} type  Tipo de la imagen 'shop', 'user', 'review' o 'activity', pero solo 'shop' y 'user' se redimensionan como avatar
+ * @returns         JSON con el alto, ancho y tipo de recorte
+ */
+function setSizeOfImage(type) {
+	let size 
+	if ( type == 'shop' || type == 'user' ) {
+		size = {
+			width: 500, 
+			height: 500, 
+			crop: 'fill'
+		}
+	} else {
+		size = {
+			width: 1280, 
+			height: 720, 
+			crop: 'fill'
+		}
+	}
+	return size
 }

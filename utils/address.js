@@ -60,7 +60,7 @@ export async function updateAddress(db, req) {
 	}
 	*/
 	var id_province = Math.trunc(codPos/1000)
-	var coordenadas = await getGoogleCoordinatesByAddress(req.body.direction,codPos, req.body.location)
+	var coordenadas = await getGoogleCoordinatesByAddress(req.body.direction, codPos, req.body.location)
 
 	var sql = 'UPDATE address SET '
 	sql += 'id_province = ' + id_province + ', '
@@ -137,3 +137,28 @@ async function getGoogleCoordinatesByAddress(direccion, codPostal, poblacion){
 	return taskId.location
 }
 
+async function getGoogleAddress(string){
+	var coordenadasGoogle=encodeURI('https://maps.googleapis.com/maps/api/place/textsearch/json?key=' + process.env.REACT_APP_APIKEY_GOOGLE + '&query=' + string)
+	var address = await fetch(coordenadasGoogle).then(response => response.json())
+	//log(address)
+	//log(utilities.getJsonValue(address, 'name'))
+	let coord = utilities.getJsonValue(address, 'geometry')
+	//log(coord.location.lat)
+	//log(coord.location.lng)
+
+	let address1 = address.split(' ') // ['Bienvenidos', 'a', 'EDteam']
+
+	log(address1)
+
+	log('"' + utilities.getJsonValue(address, 'name') + '", ' + coord.location.lat + ', ' + coord.location.lng + '),')
+	return address
+}
+
+export async function getGoogleAddressByString(string){
+	let direction =[]
+	for(let path of string) {
+		log(path)
+		direction.push(await getGoogleAddress(path))
+	}
+	return direction
+}

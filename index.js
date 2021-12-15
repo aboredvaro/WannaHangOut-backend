@@ -272,13 +272,25 @@ app.get('/api/getAllAddressOfActivities', (req, res) => {
 })
 
 app.post('/api/createNewAddress', (req, res) => {
-	address.createNewAddress(db,req).then(response => {
+	address.createNewAddress(db, req).then(response => {
 		res.send(response)
 	})
 })
 
 app.put('/api/updateAddress', (req, res) => {
-	address.updateAddress(db,req).then(response => {
+	address.updateAddress(db, req).then(response => {
+		res.send(response)
+	})
+})
+
+/**
+ * @description		Dada una cadena de string, consulta google y devuelve la dirección asociada
+ * @param req.body.path	ARRAY con las rutas en local de las imágenes que queremos subir
+ * @param req.body.type	String con el tipo de imagen ('shop', 'user', 'review' o 'activity')
+ * @returns			ARRAY con las url de las imágenes que se han insertado
+ */
+app.post('/api/getGoogleAddressByString', (req, res) => {
+	address.getGoogleAddressByString(req.body).then(response => {
 		res.send(response)
 	})
 })
@@ -385,6 +397,19 @@ app.get('/api/getImagesOfReview', (req, res) => {
 	})
 })
 
+/**
+ * @description		Inserta las imágenes en el servidor
+ * @param req.body.path	ARRAY con las rutas en local de las imágenes que queremos subir
+ * @param req.body.type	String con el tipo de imagen ('shop', 'user', 'review' o 'activity')
+ * @returns			ARRAY con las url de las imágenes que se han insertado
+ */
+app.post('/api/saveImagesInCloud', (req, res) => {
+	cloudinary.putImagesIntoCloudinary(req.body.path, req.body.type).then(response => {
+		return res.send(response)
+	})
+
+})
+
 //  //  //  //  //
 //
 //  API TAGS
@@ -432,14 +457,6 @@ app.get('/api/deleteEntityToActivity', (req, res) => {
 	registro.deleteEntityToActivity(db, req.query.id_entity).then(response => {
 		return res.send(response)
 	})
-})
-
-app.post('/api/theCloudinary', (req, res) => {
-
-	cloudinary.putImagesIntoCloudinary(req.body.path, req.body.type).then(response => {
-		return res.send(response)
-	})
-
 })
 
 //  //  //  //  //
