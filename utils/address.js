@@ -48,7 +48,7 @@ export async function createNewAddress(db, req) {
 export async function updateAddress(db, req) {
 	var id_address = utilities.getNumber(req.body.id_address)
 	var codPos = utilities.getNumber(req.body.codPos)
-/*
+	/*
 	if (id_address === -1){
 		return 'Formato incorrecto de: "id_address".'
 	} else if (codPos === -1){
@@ -58,7 +58,7 @@ export async function updateAddress(db, req) {
 	} else if (utilities.isEmpty(req.body.direction)) {
 		return 'Formato incorrecto de: "Dirección".'
 	}
-*/
+	*/
 	var id_province = Math.trunc(codPos/1000)
 	var coordenadas = await getGoogleCoordinatesByAddress(req.body.direction,codPos, req.body.location)
 
@@ -83,11 +83,11 @@ export async function updateAddress(db, req) {
 }
 
 /**
- * @description Devuelve una dirección dado el id de dicha dirección
- * @param {*} db Base de Datos de consulta
- * @param {*} addressID id a consultar
- * @returns JSON con los siguientes datos {"id_address", "province", "codPos", "location",
- * 				  "direction", latitude", longitude"}
+ * @description 		Devuelve una dirección dado el id de dicha dirección
+ * @param {*} db 		Base de Datos de consulta
+ * @param {*} addressID 	id a consultar
+ * @returns 			JSON con los siguientes datos {"id_address", "province", "codPos", "location",
+ * 				  		"direction", latitude", longitude"}
  */
 export async function getAddressByID(db, addressID) {
 	if ((await query.getMaxIdFromTable(db, 'address')) < addressID || addressID < 1) {
@@ -123,7 +123,7 @@ export async function getAllAddressOfActivities(db) {
 }
 
 /**
- * @description Hace uso de la API de google para obtener longitud y latitud de una dirección dada
+ * @description 		Hace uso de la API de google para obtener longitud y latitud de una dirección dada
  * @param {*} direction	dirección postal
  * @param {*} postalCode código postal
  * @param {*} town 		población
