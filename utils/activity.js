@@ -288,7 +288,7 @@ export async function getActivitiesUserSignUpTo(db, id_entity){
 	var sql = sqlBodyActividad() + 'AND ac.id_activity IN (SELECT id_activity FROM entityToActivity WHERE id_entity = ' + id_entity + ') '
 	sql += 'ORDER BY dateAct ASC '
 	
-	let sql1 = new Promise(resolve => {
+	return new Promise(resolve => {
 		db.query(sql , (err, result) => {
 			if (err) {
 				console.log(err)
@@ -296,24 +296,6 @@ export async function getActivitiesUserSignUpTo(db, id_entity){
 			resolve(result)
 		})
 	})
-
-	sql = 'select ta.id_tags, t.name '
-	sql += 'from tags_act ta, tags t '
-	sql += 'where ta.id_tags = t.id_tags '
-	sql += 'and ta.id_activity = ' + id_entity
-	let sql2 = new Promise(resolve => {
-		db.query(sql , (err, result) => {
-			if (err) {
-				console.log(err)
-			}
-			resolve(result)
-		})
-	})
-
-	let json = await sql1
-	let tag = await sql2
-	
-	return json.tags = tag
 }
 
 /**
