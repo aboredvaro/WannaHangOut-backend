@@ -434,14 +434,13 @@ app.get('/api/deleteEntityToActivity', (req, res) => {
 	})
 })
 
-/*
-app.get('/api/theCloudinary', (req, res) => {
-	const path = ['./img/IMG_9698b.jpg','./img/Captura.JPG','./img/Captura2.JPG']
-	cloudinary.putImagesIntoCloudinary(path, 'avatar').then(response => {
+app.post('/api/theCloudinary', (req, res) => {
+
+	cloudinary.putImagesIntoCloudinary(req.body.path, req.body.type).then(response => {
 		return res.send(response)
 	})
+
 })
-*/
 
 //  //  //  //  //
 //
