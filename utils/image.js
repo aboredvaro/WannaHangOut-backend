@@ -60,7 +60,7 @@ export async function getImagesByIdAndType(db, id_object, type, limit=0) {
 		return '"type" fuera de rango.'
 	}
 	var sql = select + from + where + extra
-	log(sql)
+	//log(sql)
 	return new Promise(resolve => {
 		db.query(sql, (err, result) => {
 			if (err) {

@@ -137,7 +137,7 @@ app.put('/api/updateEntity', (req, res) => {
 
 app.post('/api/deleteEntityById', (req, res) => {
 	if (utilities.getNumber(req.body.id_entity) == -1) {
-		log(req.query.id_entity)
+		//log(req.query.id_entity)
 		return res.send('El id no tiene un formato correcto')
 	}
 	entity.deleteEntityById(db, req.body.id_entity).then(response => {
@@ -290,7 +290,7 @@ app.put('/api/updateAddress', (req, res) => {
 //  //  //  //  //
 
 app.post('/api/createNewReview', (req, res) => {
-	log(req)
+	//log(req)
 	review.createNewReview(db,req).then(response => {
 		res.send(response)
 	})

@@ -27,7 +27,7 @@ export async function createNewAddress(db, req) {
 	sql += coordenadas.lng
 	sql += '); '
 
-	log(sql)
+	//log(sql)
 	return new Promise(resolve => {
 		db.query(sql, (err, result) => {
 			if (err) {
@@ -70,7 +70,7 @@ export async function updateAddress(db, req) {
 	sql += 'longitude = ' + coordenadas.lng + ', '
 	sql += 'latitude = ' + coordenadas.lat + ' '
 	sql += 'WHERE id_address = ' + id_address + '; '
-	log(sql)
+	//log(sql)
 	return new Promise(resolve => {
 		db.query(sql, (err) => {
 			if (err) {

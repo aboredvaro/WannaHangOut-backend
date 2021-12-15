@@ -46,7 +46,7 @@ export async function createNewEntity(db, req) {
 	sql += '"' + avatar  + '"'
 	sql += '); '
 
-	log(sql)
+	//log(sql)
 	var idEntityCreate = new Promise(resolve => {
 		db.query(sql, (err, result) => {
 			if (err) {
@@ -224,7 +224,7 @@ export async function getEntityByID(db, entityID) {
 	if(await query.isDeleted(db, 'entity', 'id_entity', entityID)) {
 		return ('Este id fue borrado de la BD')
 	}
-	log(sqlBodyQueryGetEntity() + 'WHERE id_entity = ' + entityID)
+	//log(sqlBodyQueryGetEntity() + 'WHERE id_entity = ' + entityID)
 	return new Promise(resolve => {
 		db.query(sqlBodyQueryGetEntity() + 'WHERE id_entity = ' + entityID, (err, result) => {
 			if (err) {
