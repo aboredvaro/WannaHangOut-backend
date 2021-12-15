@@ -222,7 +222,7 @@ export async function getActivityByID1(db, activityID) {
  * @returns 		JSON con todos los datos necesarios de una actividad
  */
 export async function getActivityByID(db, activityID) {
-	var sql = sqlBodyActividad() + 'AND dateAct >= now() AND ac.id_activity = ' + activityID
+	var sql = sqlBodyActividad() + 'AND ac.id_activity = ' + activityID
 	return new Promise(resolve => {
 		db.query(sql , (err, result) => {
 			if (err) {
@@ -251,19 +251,18 @@ export async function getAllActivities(db) {
 }
 
 /**
- * 
- * @param {*} db 
- * @param {*} id_entity 
- * @returns 
+ * @description		Devuelve todas las actividades creadas por una entidad
+ * @param {*} db 		Base de datos donde se hace la consulta
+ * @param {*} id_entity 	id de la entidad a consultar
+ * @returns 			Devuelve un JSON con todos los datos de la actividad
  */
 export async function getActivitiesCreatedByEntity(db, id_entity){
 	if (utilities.getNumber(id_entity) == -1) {
 		return 'Formato incorrecto de: "id_entity".'
 	}
 
-	var sql = sqlBodyActividad() + 'WHERE deleted = ' + 0 + ' '
-	sql += 'AND id_entity_creator = ' + id_entity
-	sql += ' ORDER BY dateAct ASC '
+	var sql = sqlBodyActividad() + 'AND ac.id_entity_creator = ' + id_entity + ' '
+	sql += 'ORDER BY dateAct ASC '
 	
 	return new Promise(resolve => {
 		db.query(sql , (err, result) => {
