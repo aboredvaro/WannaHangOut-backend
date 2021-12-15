@@ -187,7 +187,7 @@ app.get('/api/getImageByIdActivity', (req, res) => {
 	})
 })
 
-app.post('/api/filterActivitiesBy', (req, res) => {
+app.get('/api/filterActivitiesBy', (req, res) => {
 	activity.filterActivitiesBy(db,req).then(response => {
 		res.send(response)
 	})
@@ -242,11 +242,13 @@ app.get('/api/getActivitiesUserSignUpTo', (req, res) => {
 	})
 })
 
+/*
 app.get('/api/hola', (req, res) => {
 	activity.getActivityByID(db, req.query.id_entity).then(response => {
 		res.send(response)
 	})
 })
+*/
 
 //  //  //  //  //
 //
