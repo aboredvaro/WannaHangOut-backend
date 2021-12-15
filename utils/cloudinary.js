@@ -25,14 +25,17 @@ export async function putImageIntoCloudinary(image, type) {
 		url: `${process.env.CLOUDINARY_URL}`
 	})
 
+	log(image)
+	log(type)
+	
 	return new Promise((resolve, reject) => {
 		cloudinary.v2.uploader.upload(image, 
 			{
 				resouce_type: 'image', 
 				folder: pathOfImage(type), 
 				format: 'webp',
-				width: 250, 
-				//height: 250, 
+				width: 500, 
+				//height: 500, 
 				crop: 'scale'
 			}, 
 			(error, result) => {
@@ -41,8 +44,10 @@ export async function putImageIntoCloudinary(image, type) {
 					return
 				}
 				resolve(result.url)
-			})
+			}
+		)
 	})	
+	
 }
 
 /**
