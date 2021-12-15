@@ -39,6 +39,7 @@ CREATE TABLE provinces (
 );
 
 -- Tabla de direcciones, también contendrá las coordenadas para poder calcular la ruta
+/*
 CREATE TABLE address (
     id_address INT AUTO_INCREMENT,
     id_province INT NOT NULL,
@@ -50,9 +51,22 @@ CREATE TABLE address (
     PRIMARY KEY (id_address),
     FOREIGN KEY (id_province) REFERENCES provinces (id_province)
 );
+*/
+CREATE TABLE address (
+    id_address INT AUTO_INCREMENT,
+    id_province INT NOT NULL DEFAULT 46,
+    codPos INT(5) NOT NULL DEFAULT 46022,
+    location VARCHAR (120) NOT NULL DEFAULT "Valencia",
+    direction VARCHAR (300) NOT NULL DEFAULT "Camí de Vera, s/n",
+    latitude DOUBLE NOT NULL DEFAULT 39.48284584589209,
+    longitude DOUBLE NOT NULL DEFAULT -0.3477416146072911,
+    PRIMARY KEY (id_address),
+    FOREIGN KEY (id_province) REFERENCES provinces (id_province)
+);
 
 -- Entidades, son tanto participantes como creadores de contenidos.
 -- También son establecimientos que ofertan sus actividades (se distinguen por el role)
+/*
 CREATE TABLE entity (
     id_entity INT AUTO_INCREMENT,
     id_role TINYINT NOT NULL,
@@ -66,6 +80,25 @@ CREATE TABLE entity (
     pass VARCHAR(64) NOT NULL,
     phone INT NOT NULL, 
     avatar LONGTEXT NOT NULL,
+    deleted BOOLEAN NOT NULL DEFAULT 0,
+    PRIMARY KEY (id_entity),
+    FOREIGN KEY (id_role) REFERENCES rol (id_role),
+    FOREIGN KEY (id_address) REFERENCES address (id_address)
+);
+*/
+CREATE TABLE entity (
+    id_entity INT AUTO_INCREMENT,
+    id_role TINYINT NOT NULL DEFAULT 2,
+    id_address INT NOT NULL DEFAULT 21,
+    nick VARCHAR(20) UNIQUE NOT NULL DEFAULT "FeriaPIN2021",
+    name VARCHAR(100) NOT NULL,
+    surname VARCHAR(120),
+    description VARCHAR(500) NOT NULL DEFAULT "FeriaPIN2021",
+    mail VARCHAR(120) NOT NULL,
+    sha256 VARCHAR(64) NOT NULL,
+    pass VARCHAR(64) NOT NULL,
+    phone INT NOT NULL DEFAULT 600000000, 
+    avatar LONGTEXT,
     deleted BOOLEAN NOT NULL DEFAULT 0,
     PRIMARY KEY (id_entity),
     FOREIGN KEY (id_role) REFERENCES rol (id_role),

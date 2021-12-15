@@ -9,11 +9,11 @@ import * as tag from './tag.js'
  * @param {*} req 
  * @returns Devuelve -1 en caso de error o el id_review de la review creada
  */
- export async function createNewReview(db, req) {
+export async function createNewReview(db, req) {
 	var id_activity = utilities.getNumber(req.body.id_activity)
 	var id_entity = utilities.getNumber(req.body.id_entity)
 	var points = utilities.getNumber(req.body.points)
-
+	
 	if (id_activity === -1){
 		return 'Formato incorrecto de: "id_activity".'
 	} else if (id_entity === -1) {
@@ -82,7 +82,7 @@ export async function updateReview(db, req) {
 	} else if (utilities.isEmpty(req.body.description)) {
 		return 'Formato incorrecto de: "Descripción del Evento".'
 	}
-	
+
 	if (!utilities.isEmpty(req.body.img_review)) {
 		if (!query.deleteSimpleFromTable(db, id_review, 'img_review', 'id_review')) {
 			return 'Error: NO se ha podido eliminar imagenes'

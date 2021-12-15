@@ -132,7 +132,8 @@ INSERT INTO address (id_address, id_province, codPos, location, direction, latit
 	(18, 46, 46010, "Valencia", "C. de Amadeo de Saboya, 2-4", 39.474009473049556, -0.3630316433638434),
 	(6, 46, 46011, "Valencia", "Calle Dr. Lluch, 299-293", 39.47403934794228, -0.32737726469032713),
 	(8, 46, 46013, "Valencia", "Avinguda dels Germans Maristes, 15-11", 39.451769876036245, -0.36739977459014783),
-	(11, 12, 12530, "Burriana", "C. del Bronze, 26-34", 39.87747692547962, -0.11732116967371088);
+	(11, 12, 12530, "Burriana", "C. del Bronze, 26-34", 39.87747692547962, -0.11732116967371088),
+	(21, 46, 46022, "Valencia", "Camí de Vera, s/n", 39.48284584589209, -0.3477416146072911);
       
 INSERT INTO entity (id_entity, id_role, id_address, phone, sha256, pass, mail, nick, name, surname, description, avatar) VALUES
 	(1, 2, 12, 999555111, "AB08B0D233EDD559A58A0561C4569A67032B849B09C975178A8F61A8C4EBF4EF", "03AC674216F3E15C761EE1A5E255F067953623C8B388B4459E13F978D7C846F4", "prueba1@feriaupv.es", "keira_ortiz86", "Modesta", "Alfonso Campillo", "El único modo de hacer un gran trabajo es amar lo que haces - Steve Jobs", "https://www.caritas.org.mx/wp-content/uploads/2019/02/cualidades-persona-humanitaria.jpg"),

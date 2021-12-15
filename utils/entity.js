@@ -4,35 +4,28 @@ import * as query from './query.js'
 import * as address from './address.js'
 
 /**
- * @description Registra una nueva Entidad en la BD
+ * @description Registra una nueva Entidad en la BD, tiene valores por defecto para que no de errores en la feria
  * @param {*} db 
  * @param {*} req 
  * @returns Devuelve -1 en caso de error o el id_Entity de la Entidad creada
  */
 export async function createNewEntity(db, req) {
-	var id_role = utilities.getNumber(req.body.id_role)
-	var phone = utilities.getNumber(req.body.phone)
- 
-	if (id_role === -1){
-		return 'Formato incorrecto de: "Rol de usuario".'
-	} else if (phone === -1){
-		return 'Formato incorrecto de: "Teléfono de contacto".'
-	}  else if (utilities.isEmpty(req.body.nick)) {
-		return 'Formato incorrecto de: "Nick".'
-	} else if (utilities.isEmpty(req.body.name)) {
+	var id_role = utilities.getNumber(req.body.id_role) === -1 ? 2 : req.body.id_role
+	var phone = utilities.getNumber(req.body.phone) === -1 ? 600000000 : req.body.phone
+	var nick = utilities.isEmpty(req.body.nick) ? 'FeriaPIN2021' : req.body.nick
+	var surname = utilities.isEmpty(req.body.surname) ? 'null' : req.body.surname
+	var description = utilities.isEmpty(req.body.description) ? 'FeriaPIN2021' : req.body.description
+	var avatar = utilities.isEmpty(req.body.avatar) ? 'https://res.cloudinary.com/wannahangout2021/image/upload/v1639329249/FeriaPIN2021/Avatar/bgpkh3ldbywnyquoyr0h.webp' : req.body.avatar
+
+	if (utilities.isEmpty(req.body.name)) {
 		return 'Formato incorrecto de: "Nombre".'
-	} else if (utilities.isEmpty(req.body.description)) {
-		return 'Formato incorrecto de: "Aficciones del Usuario".'
 	} else if (utilities.isEmpty(req.body.mail)) {
 		return 'Formato incorrecto de: "Correo Electrónico".'
 	} else if (utilities.isEmpty(req.body.pass)) {
 		return 'Formato incorrecto de: "password".'
-	} else if (utilities.isEmpty(req.body.tags_ent)) {
-		return 'Formato incorrecto de: "etiquetas".'
 	}
-	
-	var id_address = await address.createNewAddress(db, req)
 
+	var id_address = await address.createNewAddress(db, req)
 	if (id_address === -1){
 		return 'Error: NO se ha podido insertar Dirección'
 	}
@@ -41,19 +34,18 @@ export async function createNewEntity(db, req) {
 	sql += 'id_role, id_address, nick, name, surname, description, mail, sha256, phone, pass, avatar) VALUES ('
 	sql += id_role + ', '
 	sql += id_address + ', '
-	sql += '"' + req.body.nick + '", '
+	sql += '"' + nick + '", '
 	sql += '"' + req.body.name + '", '
-	sql += '"' + req.body.surname + '", '
-	sql += '"' + req.body.description + '", '
+	sql += '"' + surname + '", '
+	sql += '"' + description + '", '
 	sql += '"' + req.body.mail + '", '
 	sql += '"' + utilities.sha256(req.body.mail) + '", '
 	sql += phone + ', '
 	sql += '"' + utilities.sha256(req.body.pass) + '", '
-	sql += '"' + req.body.avatar  + '"'
+	sql += '"' + avatar  + '"'
 	sql += '); '
 
 	//log(sql)
-
 	var idEntityCreate = new Promise(resolve => {
 		db.query(sql, (err, result) => {
 			if (err) {
@@ -64,13 +56,16 @@ export async function createNewEntity(db, req) {
 		})
 	})
 
-	let arr = []
-	for(let i of req.body.tags_ent) {
-		arr.push(parseInt(i))
+	if (!utilities.isEmpty(req.body.tags_ent)) {
+		let arr = []
+		for(let i of req.body.tags_ent) {
+			arr.push(parseInt(i))
+		}
+		if (!query.queryInsertOneToMuch(db, await idEntityCreate, arr, 'tags_ent', 'id_entity', 'id_tags')) {
+			return 'Error: NO se ha podido insertar Etiquetas'
+		}
 	}
-	if (!query.queryInsertOneToMuch(db, await idEntityCreate, arr, 'tags_ent', 'id_entity', 'id_tags')) {
-		return 'Error: NO se ha podido insertar Etiquetas'
-	}	
+	
 	return JSON.stringify(await idEntityCreate)
 }
 
@@ -150,6 +145,12 @@ export async function updateEntity(db, req) {
 	})
 }
 
+/**
+ * @description Comprueba las credenciales de una entidad, es decir, si mail y pass están registrados
+ * @param {*} db 
+ * @param {*} req 
+ * @returns 
+ */
 export async function isEntityRegistred(db, req){
 	if (utilities.isEmpty(req.body.mail)) {
 		return 'Formato incorrecto de: "mail".'

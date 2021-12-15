@@ -29,17 +29,22 @@ export async function createNewImage(db, req) {
 }
 
 /**
- * @param {*} db			Base de datos donde se hace la consulta 
- * @param {*} req.body.id 	Id a consultar
- * @param {*} req.body.type 	typo a consultar, type=1 para tags de entidad, type=2 para tags de actividad
- * @returns 				JSON con los siguientes datos {id_tags, name, id}
+ * @param {*} db		Base de datos donde se hace la consulta 
+ * @param {*} id_object	Id a consultar
+ * @param {*} type		typo a consultar, type=1 para imágenes de actividad, type=2 para imágenes de review
+ * @param {*} limit		número con la cantidad máxima de elementos devueltos, si no se indica ningún valor, los devuelve todos 
+ * @returns 			JSON con los siguientes datos {id_image, urlPath}
  */
-export async function getImageByIdAndType(db, id_object, type) {
+export async function getImagesByIdAndType(db, id_object, type, limit=0) {
 
 	var select = 'SELECT i.id_image, i.urlPath, '
 	var from = 'FROM images i, '
 	var where = 'WHERE img.id_image = i.id_image AND img.deleted = 0 '
-
+	var extra = 'ORDER BY i.id_image ASC '
+	if ( limit > 0 ) {
+		extra += 'LIMIT ' + limit
+	}
+	
 	switch (type) {
 	case 1:
 		select += 'img.id_activity '
@@ -52,11 +57,10 @@ export async function getImageByIdAndType(db, id_object, type) {
 		where += 'AND id_review = ' + id_object + ' '
 		break
 	default:
-		return '"type fuera de rango".'
+		return '"type" fuera de rango.'
 	}
-	where += ';'
-	var sql = select + from + where
-	//log(sql)
+	var sql = select + from + where + extra
+	log(sql)
 	return new Promise(resolve => {
 		db.query(sql, (err, result) => {
 			if (err) {
@@ -65,5 +69,4 @@ export async function getImageByIdAndType(db, id_object, type) {
 			resolve(result)
 		})
 	})
-	
 }

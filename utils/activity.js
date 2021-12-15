@@ -32,7 +32,7 @@ export async function createNewActivity(db, req) {
 	} else if (utilities.isEmpty(req.body.tags_act)) {
 		return 'Formato incorrecto de: "Etiquetas identificadoras".'
 	}
-	
+
 	var id_address = await address.createNewAddress(db, req)
 	if (id_address === -1){
 		return 'Error: NO se ha podido insertar Dirección'
@@ -172,16 +172,15 @@ export async function deleteActivityById(db, id_activity) {
 }
 
 /**
- * @description Devuelve un JSON sin filtrar, con todas las Actividades NO BORRADAS
- * @param {*} db
- * @returns JSON
+ * @deprecated		Lo cambiamos para la feria por consulta hipermegatroncha
+ * @description 	Devuelve un JSON sin filtrar, con todas las Actividades NO BORRADAS
+ * @param {*} 		db
+ * @returns 		JSON
  */
-export async function getAllActivities(db, listAll) {
+export async function getAllActivities1(db) {
 	var sql = sqlBodyQueryGetActivity() + 'WHERE dateAct >= now() AND deleted = ' + 0 + ' '
 	sql += 'ORDER BY dateAct ASC '
-	if (listAll > 0 ) {
-		sql = sqlBodyQueryGetActivity()
-	}
+
 	return new Promise(resolve => {
 		db.query(sql , (err, result) => {
 			if (err) {
@@ -193,13 +192,14 @@ export async function getAllActivities(db, listAll) {
 }
 
 /**
- * @description Devuelve una actividad dado el id de dicha actividad
- * @param {*} db Base de Datos de consulta
+ * @deprecated			Lo cambiamos para la feria por consulta hipermegatroncha
+ * @description 		Devuelve una actividad dado el id de dicha actividad
+ * @param {*} db 		Base de Datos de consulta
  * @param {*} activityID id a consultar
- * @returns JSON con los siguientes datos {"id_activity", "title", "description", "seats", 
- * 		  "price", "location", "dateAct", "min_duration", "id_entity_creator"}
+ * @returns 			JSON con los siguientes datos {"id_activity", "title", "description", "seats", 
+ * 		  				"price", "location", "dateAct", "min_duration", "id_entity_creator"}
  */
-export async function getActivityByID(db, activityID) {
+export async function getActivityByID1(db, activityID) {
 	if ((await query.getMaxIdFromTable(db, 'activity')) < activityID || activityID < 1) {
 		return 'Este id no pertenece a ninguna actividad'
 	}
@@ -212,6 +212,117 @@ export async function getActivityByID(db, activityID) {
 				console.log(err)
 			}
 			resolve(result[0])
+		})
+	})
+}
+
+/**
+ * @description	Devuelve todas las actividades no borradas o a partir de la fecha de hoy
+ * @param {*} db 	Base de datos donde hacer la consulta
+ * @returns 		JSON con todos los datos necesarios de una actividad
+ */
+export async function getActivityByID(db, activityID) {
+	var sql = sqlBodyActividad() + 'AND ac.id_activity = ' + activityID
+	/*
+	return new Promise(resolve => {
+		db.query(sql , (err, result) => {
+			if (err) {
+				console.log(err)
+			}
+			resolve(result)
+		})
+	})
+	*/
+		
+	let sql1 = new Promise(resolve => {
+		db.query(sql , (err, result) => {
+			if (err) {
+				console.log(err)
+			}
+			resolve(result)
+		})
+	})
+
+	sql = 'select ta.id_tags, t.name '
+	sql += 'from tags_act ta, tags t '
+	sql += 'where ta.id_tags = t.id_tags '
+	sql += 'and ta.id_activity = ' + activityID
+	let sql2 = new Promise(resolve => {
+		db.query(sql , (err, result) => {
+			if (err) {
+				console.log(err)
+			}
+			resolve(result)
+		})
+	})
+
+	let json = await sql1
+	let tag = await sql2
+	json[0].tags = {...tag}
+	return json[0]
+}
+
+/**
+ * @description	Devuelve todas las actividades no borradas o a partir de la fecha de hoy
+ * @param {*} db 	Base de datos donde hacer la consulta
+ * @returns 		JSON con todos los datos necesarios de una actividad
+ */
+export async function getAllActivities(db) {
+	var sql = sqlBodyActividad() + 'AND dateAct >= now() '
+	return new Promise(resolve => {
+		db.query(sql , (err, result) => {
+			if (err) {
+				console.log(err)
+			}
+			resolve(result)
+		})
+	})
+}
+
+/**
+ * @description		Devuelve todas las actividades creadas por una entidad
+ * @param {*} db 		Base de datos donde se hace la consulta
+ * @param {*} id_entity 	id de la entidad a consultar
+ * @returns 			Devuelve un JSON con todos los datos de la actividad
+ */
+export async function getActivitiesCreatedByEntity(db, id_entity){
+	if (utilities.getNumber(id_entity) == -1) {
+		return 'Formato incorrecto de: "id_entity".'
+	}
+
+	var sql = sqlBodyActividad() + 'AND ac.id_entity_creator = ' + id_entity + ' '
+	sql += 'ORDER BY dateAct ASC '
+	
+	return new Promise(resolve => {
+		db.query(sql , (err, result) => {
+			if (err) {
+				console.log(err)
+			}
+			resolve(result)
+		})
+	})
+}
+
+/**
+ * @description		Devuelve todas las actividades NO BORRADAS a las que se ha apuntado una ENTIDAD
+ * @param {*} db 		Base de datos donde se hace la consulta
+ * @param {*} id_entity 	id de la entidad a consultar
+ * @returns 			Devuelve un JSON con todos los datos de la actividad
+ */
+export async function getActivitiesUserSignUpTo(db, id_entity){
+	if (id_entity === -1){
+		return 'Formato incorrecto de: "id_entity".'
+	} 
+	
+	var sql = sqlBodyActividad() + 'AND ac.id_activity IN (SELECT id_activity FROM entityToActivity WHERE id_entity = ' + id_entity + ') '
+	sql += 'ORDER BY dateAct ASC '
+	
+	return new Promise(resolve => {
+		db.query(sql , (err, result) => {
+			if (err) {
+				console.log(err)
+			}
+			resolve(result)
 		})
 	})
 }
@@ -235,7 +346,7 @@ export async function getActivityByID(db, activityID) {
  * @returns JSON con los siguientes datos {"id_activity", "title", "description", "seats", 
  * 		  "price", "location", "dateAct", "min_duration", "id_entity_creator"}
  */
-export async function filterActivitiesBy(db, req) {
+export async function filterActivitiesBy1(db, req) {
 	var sql = 'SELECT id_activity, nick, title, activity.description, seats, price, dateAct, min_duration, address.id_address, province, codPos, location, direction, latitude, longitude '
 	sql += 'FROM activity, address, provinces, entity '
 	sql += 'WHERE activity.id_address = address.id_address '
@@ -243,6 +354,29 @@ export async function filterActivitiesBy(db, req) {
 	sql += 'AND provinces.id_province = address.id_province '
 	sql += 'AND activity.deleted = 0 '
 	sql += 'AND dateAct >= now() '
+	sql += fixFilterByLocation(req.body.location)
+	sql += fixFilterByPrice(req.body.price_min, req.body.price_max)
+	sql += fixFilterByDuration(req.body.min_duration_min, req.body.min_duracion_max)
+	sql += fixFilterBySeats(req.body.seats_min, req.body.seats_max)
+	sql += fixFilterByDate(req.body.dateAct_min, req.body.dateAct_max)
+	sql += fixFilterByType(req.body.id_tags)
+	sql += fixFilterByEntintyCreator(req.body.id_entity_creator)
+	sql += 'ORDER BY dateAct ASC '
+	sql += 'LIMIT ' + fixLowerLimit(req.body.lowerLimit) + ', ' + fixUpperLimit(req.body.upperLimit) + ';'
+
+	//log(sql)
+	return new Promise(resolve => {
+		db.query(sql, (err, result) => {
+			if (err) {
+				console.log(err)
+			}
+			resolve(result)
+		})
+	})
+}
+
+export async function filterActivitiesBy(db, req) {
+	var sql = sqlBodyActividad()
 	sql += fixFilterByLocation(req.body.location)
 	sql += fixFilterByPrice(req.body.price_min, req.body.price_max)
 	sql += fixFilterByDuration(req.body.min_duration_min, req.body.min_duracion_max)
@@ -290,13 +424,6 @@ export async function getEntitiesWithActivities(db){
 			resolve(result)
 		})
 	})
-}
-
-export async function sortActivitiesBy(db, params) {
-
-	// To complete
-	// Implemented in JS from JSON
-	// Sorting: "price", "duration", "date", "seats", "type"
 }
 
 export async function checkIfUserInActivity(db, id_entity, id_activity){
@@ -395,6 +522,25 @@ export async function searchActivitiesByKeywords(db, keyWords){
 //                                          //
 //  //  //  //  //  //  //  //  //  //  //  //
 
+function sqlBodyActividad(){
+	var select = 'SELECT ac.id_activity, ac.title, ac.description, ac.seats, '
+	select += 'ac.seats - (SELECT COUNT(*) FROM entitytoactivity WHERE id_activity = ac.id_activity) as seatsAvailable, '
+	select += 'ROUND(1-((ac.seats - (SELECT COUNT(*) FROM entitytoactivity WHERE id_activity = ac.id_activity)) / 100),2) as ocupation, '
+	select += 'ac.price, ac.dateAct, ac.min_duration, '
+	select += '(SELECT i.urlPath FROM images i, img_act im WHERE im.id_image = i.id_image AND im.deleted = 0 AND id_activity = ac.id_activity ORDER BY i.id_image ASC LIMIT 1) as urlPath, '
+	select += 'en.id_entity as id_entity_creator, en.name, '
+	select += '(SELECT COUNT(a.id_activity) FROM review r, activity a WHERE a.id_activity = r.id_activity AND r.deleted = 0 AND a.deleted = 0 AND a.id_entity_creator = en.id_entity) as totalReviewsOfEntity, '
+	select += '(SELECT ROUND(AVG(r.points),2) FROM review r, activity a WHERE a.id_activity = r.id_activity AND r.deleted = 0 AND a.deleted = 0 AND a.id_entity_creator = en.id_entity) as avgScoreOfEntity, '
+	select += 'en.avatar, ad.id_address, ad.direction, ad.codPos, ad.location, pr.province, ad.latitude, ad.longitude '
+	var from = 'FROM activity ac, entity en, address ad, provinces pr '
+	var where = 'WHERE ac.id_entity_creator = en.id_entity '
+	where += 'and ac.deleted = 0 '
+	where += 'and ad.id_address = ac.id_address '
+	where += 'and ad.id_province = pr.id_province '
+
+	return select + from + where
+}
+
 function sqlBodyQueryGetActivity(){
 	var sqlSelect = 'SELECT * '
 	var sqlFrom = 'FROM activity '
@@ -446,13 +592,13 @@ function fixFilterByDate(min, max) {
 	var stMin = dtMin.getFullYear() + '-' + (dtMin.getMonth()+1) + '-' + dtMin.getDate()
 	var stMax = dtMax.getFullYear() + '-' + (dtMax.getMonth()+1) + '-' + dtMax.getDate()
 
-	return 'AND dateAct BETWEEN "' + stMin + '" AND "' + stMax + '" '
+	return 'AND ac.dateAct BETWEEN "' + stMin + '" AND "' + stMax + '" '
 	//return ''
 }
 
 function fixFilterByLocation(location) {
 	if ((typeof location) !== 'undefined') {
-		return 'AND location = "' + location + '" '
+		return 'AND ad.location = "' + location + '" '
 	}
 	return ''
 }
@@ -461,14 +607,14 @@ function fixFilterByType(id_tags) {
 	if (utilities.isEmpty(id_tags)) {
 		return ''
 	}
-	return 'AND id_activity IN (SELECT id_activity FROM tags_act WHERE id_tags IN (' + id_tags + ') GROUP BY id_activity) '
+	return 'AND ac.id_activity IN (SELECT t.id_activity FROM tags_act t WHERE t.id_tags IN (' + id_tags + ') GROUP BY t.id_activity) '
 }
 
 function fixFilterByEntintyCreator(id_entity_creator) {
 	if (utilities.isEmpty(id_entity_creator)) {
 		return ''
 	}
-	return 'AND id_activity IN (SELECT id_activity FROM activity WHERE id_entity_creator IN (' + id_entity_creator + ') GROUP BY id_activity) '
+	return 'AND ac.id_activity IN (SELECT a1.id_activity FROM activity a1 WHERE a1.id_entity_creator IN (' + id_entity_creator + ') GROUP BY a1.id_activity) '
 }
 
 function fixMinMax(min, max, tabla) {

@@ -16,6 +16,7 @@ import * as review from './utils/review.js'
 import * as image from './utils/image.js'
 import * as tag from './utils/tag.js'
 import * as registro from './utils/registro.js'
+import * as cloudinary from './utils/cloudinary.js'
 
 app.use(cors())
 app.use(express.json())
@@ -151,11 +152,7 @@ app.post('/api/deleteEntityById', (req, res) => {
 //  //  //  //  //
 
 app.get('/api/getAllActivities', (req, res) => {
-	var listAll = utilities.getNumber(req.query.id_all)
-	if (listAll === -1) {
-		listAll = 0
-	}
-	activity.getAllActivities(db, listAll).then(response => {
+	activity.getAllActivities(db, req).then(response => {
 		res.send(response)
 	})
 })
@@ -185,7 +182,7 @@ app.get('/api/getImageByIdActivity', (req, res) => {
 	if (utilities.getNumber(req.query.id_activity) == -1) {
 		return res.send('El id no tiene un formato correcto')
 	}
-	image.getImageByIdAndType(db, req.query.id_activity, 1).then(response => {
+	image.getImagesByIdAndType(db, req.query.id_activity, 1, req.query.cant).then(response => {
 		res.send(response)
 	})
 })
@@ -229,6 +226,24 @@ app.post('/api/searchActivitiesByKeywords', (req, res) => {
 		res.send('')
 	}
 	activity.searchActivitiesByKeywords(db, req.body).then(response => {
+		res.send(response)
+	})
+})
+
+app.get('/api/getActivitiesCreatedByEntity', (req, res) => {
+	activity.getActivitiesCreatedByEntity(db, req.query.id_entity).then(response => {
+		res.send(response)
+	})
+})
+
+app.get('/api/getActivitiesUserSignUpTo', (req, res) => {
+	activity.getActivitiesUserSignUpTo(db, req.query.id_entity).then(response => {
+		res.send(response)
+	})
+})
+
+app.get('/api/hola', (req, res) => {
+	activity.getActivityByID(db, req.query.id_entity).then(response => {
 		res.send(response)
 	})
 })
@@ -298,7 +313,7 @@ app.get('/api/getImageByIdReview', (req, res) => {
 	if (utilities.getNumber(req.query.id_review) == -1) {
 		return res.send('El id no tiene un formato correcto')
 	}
-	image.getImageByIdAndType(db, req.query.id_review, 2).then(response => {
+	image.getImagesByIdAndType(db, req.query.id_review, 2, req.query.cant).then(response => {
 		res.send(response)
 	})
 })
@@ -350,13 +365,24 @@ app.post('/api/userHasReviewInActivity', (req, res) => {
 //  API IMAGES
 //
 //  //  //  //  //
-/*
-app.get('/api/getAllTags', (req, res) => {
-	tag.getActivityImagesByID(db).then(response => {
+app.get('/api/getImagesOfActivity', (req, res) => {
+	if (utilities.getNumber(req.query.id_activity) == -1) {
+		return res.send('El id no tiene un formato correcto')
+	}
+	image.getImageByIdAndType(db, req.query.id_activity, 1).then(response => {
 		res.send(response)
 	})
 })
-*/
+
+app.get('/api/getImagesOfReview', (req, res) => {
+	if (utilities.getNumber(req.query.id_review) == -1) {
+		return res.send('El id no tiene un formato correcto')
+	}
+	image.getImageByIdAndType(db, req.query.id_review, 2).then(response => {
+		res.send(response)
+	})
+})
+
 //  //  //  //  //
 //
 //  API TAGS
@@ -406,9 +432,18 @@ app.get('/api/deleteEntityToActivity', (req, res) => {
 	})
 })
 
+/*
+app.get('/api/theCloudinary', (req, res) => {
+	const path = ['./img/IMG_9698b.jpg','./img/Captura.JPG','./img/Captura2.JPG']
+	cloudinary.putImagesIntoCloudinary(path, 'avatar').then(response => {
+		return res.send(response)
+	})
+})
+*/
+
 //  //  //  //  //
 //
-//  START LISTENING
+//  START LISTENINGcloudinary
 //
 //  //  //  //  //
 
