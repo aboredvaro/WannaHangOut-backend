@@ -378,7 +378,7 @@ export async function filterActivitiesBy1(db, req) {
 export async function filterActivitiesBy(db, req) {
 	var sql = sqlBodyActividad()
 	sql += fixFilterByLocation(req.query.location)
-	sql += fixFilterByPrice(req.query.price_min, req.query.price_max)
+	sql += fixFilterByPrice(utilities.isEmpty(req.query.free) ? true : req.query.free , utilities.isEmpty(req.query.paid) ? true : req.query.paid)
 	sql += fixFilterByDuration(req.query.min_duration_min, req.query.min_duracion_max)
 	sql += fixFilterBySeats(req.query.seats_min, req.query.seats_max)
 	sql += fixFilterByDate(req.query.dateAct_min, req.query.dateAct_max)
@@ -563,8 +563,17 @@ function fixUpperLimit(upp) {
 	return upper
 }
 
-function fixFilterByPrice(min, max) {
-	return fixMinMax(min, max, 'price')
+function fixFilterByPrice(free, paid) {
+	// free = true --> las actividades con precio = 0
+	// paid = true --> las actividades con precio > 0
+	if( free !== paid ) {
+		if ( free ) {
+			return 'AND ac.price = 0 '
+		} else {
+			return 'AND ac.price > 0 '
+		}
+	}
+	return ''
 }
 
 function fixFilterByDuration(min, max) {
