@@ -285,7 +285,7 @@ export async function getActivitiesUserSignUpTo(db, id_entity){
 		return 'Formato incorrecto de: "id_entity".'
 	} 
 	
-	var sql = sqlBodyQueryGetActivity() + 'AND ac.id_activity IN (SELECT id_activity FROM entityToActivity WHERE id_entity = ' + id_entity + ') '
+	var sql = sqlBodyActividad() + 'AND ac.id_activity IN (SELECT id_activity FROM entityToActivity WHERE id_entity = ' + id_entity + ') '
 	sql += 'ORDER BY dateAct ASC '
 	
 	return new Promise(resolve => {
