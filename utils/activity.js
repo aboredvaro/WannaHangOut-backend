@@ -565,7 +565,9 @@ function fixUpperLimit(upp) {
 
 function fixFilterByPrice(free, paid) {
 	// free = true --> las actividades con precio = 0
-	// paid = true --> las actividades con precio > 0
+	// paid = true --> las actividades con precio > 0.
+	free = JSON.parse(free)
+	paid = JSON.parse(paid)
 	if( free !== paid ) {
 		if ( free ) {
 			return 'AND ac.price = 0 '

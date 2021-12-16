@@ -102,6 +102,11 @@ app.get('/api/getEntityByID', (req, res) => {
 	})
 })
 
+/**
+ * @description			Dado un mail hasheado, comprueba si existe en la BD
+ * @param req.body.entityHash	sha256 del mail del usuario
+ * @returns				Devuelve la entidad si existe, o null si no existe
+ */
 app.get('/api/getEntityByHash', (req, res) => {
 	entity.getEntityByHash(db, req.query.entityHash).then(response => {
 		return res.send(response)
