@@ -38,7 +38,7 @@ export async function createNewReview(db, req) {
 	sql += points 
 	sql += '); '
 
-	log(sql)
+	//log(sql)
 	var idReviewCreate = new Promise(resolve => {
 		db.query(sql, (err, result) => {
 			if (err) {
@@ -102,7 +102,7 @@ export async function updateReview(db, req) {
 	sql += 'description = "' + req.body.description + '", '
 	sql += 'points = ' + points + ' '
 	sql += 'WHERE id_review = ' + id_review + '; '
-	log(sql)
+	//log(sql)
 	return new Promise(resolve => {
 		db.query(sql, (err) => {
 			if (err) {

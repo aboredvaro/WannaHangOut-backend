@@ -99,7 +99,7 @@ export async function queryInsertManyPhotos(db, oneId, table, nameColunmOne, pho
 		sqlRelation += '(' + oneId + ', ' + (await photoId + (i * 10)) + '), '
 	}
 	sqlRelation=sqlRelation.substring(0, sqlRelation.length - 2) + ';'
-	log(sqlRelation)
+	//log(sqlRelation)
 	return new Promise(resolve => {
 		db.query(sqlRelation, (err) => {
 			if (err) {

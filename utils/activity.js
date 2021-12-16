@@ -377,15 +377,15 @@ export async function filterActivitiesBy1(db, req) {
 
 export async function filterActivitiesBy(db, req) {
 	var sql = sqlBodyActividad()
-	sql += fixFilterByLocation(req.body.location)
-	sql += fixFilterByPrice(req.body.price_min, req.body.price_max)
-	sql += fixFilterByDuration(req.body.min_duration_min, req.body.min_duracion_max)
-	sql += fixFilterBySeats(req.body.seats_min, req.body.seats_max)
-	sql += fixFilterByDate(req.body.dateAct_min, req.body.dateAct_max)
-	sql += fixFilterByType(req.body.id_tags)
-	sql += fixFilterByEntintyCreator(req.body.id_entity_creator)
+	sql += fixFilterByLocation(req.query.location)
+	sql += fixFilterByPrice(utilities.isEmpty(req.query.free) ? true : req.query.free , utilities.isEmpty(req.query.paid) ? true : req.query.paid)
+	sql += fixFilterByDuration(req.query.min_duration_min, req.query.min_duracion_max)
+	sql += fixFilterBySeats(req.query.seats_min, req.query.seats_max)
+	sql += fixFilterByDate(req.query.dateAct_min, req.query.dateAct_max)
+	sql += fixFilterByType(req.query.id_tags)
+	sql += fixFilterByEntintyCreator(req.query.id_entity_creator)
 	sql += 'ORDER BY dateAct ASC '
-	sql += 'LIMIT ' + fixLowerLimit(req.body.lowerLimit) + ', ' + fixUpperLimit(req.body.upperLimit) + ';'
+	sql += 'LIMIT ' + fixLowerLimit(req.query.lowerLimit) + ', ' + fixUpperLimit(req.query.upperLimit) + ';'
 
 	//log(sql)
 	return new Promise(resolve => {
@@ -436,6 +436,7 @@ export async function checkIfUserInActivity(db, id_entity, id_activity){
 	var sql = 'SELECT EXISTS(SELECT * FROM entitytoactivity WHERE  '
 	sql += 'id_entity = ' + id_entity + ' '
 	sql += 'and id_activity = ' + id_activity +') as cond; '
+	//log(sql)
 	return new Promise(resolve => {
 		db.query(sql, (err, result) => {
 			if (err) {
@@ -563,8 +564,19 @@ function fixUpperLimit(upp) {
 	return upper
 }
 
-function fixFilterByPrice(min, max) {
-	return fixMinMax(min, max, 'price')
+function fixFilterByPrice(free, paid) {
+	// free = true --> las actividades con precio = 0
+	// paid = true --> las actividades con precio > 0.
+	free = JSON.parse(free)
+	paid = JSON.parse(paid)
+	if( free !== paid ) {
+		if ( free ) {
+			return 'AND ac.price = 0 '
+		} else {
+			return 'AND ac.price > 0 '
+		}
+	}
+	return ''
 }
 
 function fixFilterByDuration(min, max) {

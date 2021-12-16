@@ -27,7 +27,7 @@ export async function createNewAddress(db, req) {
 	sql += coordenadas.lng
 	sql += '); '
 
-	log(sql)
+	//log(sql)
 	return new Promise(resolve => {
 		db.query(sql, (err, result) => {
 			if (err) {
@@ -60,7 +60,7 @@ export async function updateAddress(db, req) {
 	}
 	*/
 	var id_province = Math.trunc(codPos/1000)
-	var coordenadas = await getGoogleCoordinatesByAddress(req.body.direction,codPos, req.body.location)
+	var coordenadas = await getGoogleCoordinatesByAddress(req.body.direction, codPos, req.body.location)
 
 	var sql = 'UPDATE address SET '
 	sql += 'id_province = ' + id_province + ', '
@@ -70,7 +70,7 @@ export async function updateAddress(db, req) {
 	sql += 'longitude = ' + coordenadas.lng + ', '
 	sql += 'latitude = ' + coordenadas.lat + ' '
 	sql += 'WHERE id_address = ' + id_address + '; '
-	log(sql)
+	//log(sql)
 	return new Promise(resolve => {
 		db.query(sql, (err) => {
 			if (err) {
@@ -137,3 +137,22 @@ async function getGoogleCoordinatesByAddress(direccion, codPostal, poblacion){
 	return taskId.location
 }
 
+async function getGoogleAddress(string){
+	var coordenadasGoogle=encodeURI('https://maps.googleapis.com/maps/api/place/textsearch/json?key=' + process.env.REACT_APP_APIKEY_GOOGLE + '&query=' + string)
+	var address = await fetch(coordenadasGoogle).then(response => response.json())
+
+	let coord = utilities.getJsonValue(address, 'geometry')
+	let direction = utilities.getJsonValue(address, 'name')
+	let provincia = string.split(', ').pop().split(' ')
+	let codPos = parseInt(provincia.shift())
+	provincia = provincia.join()
+	return codPos + ', "' + provincia + '", "' + direction + '", ' + coord.location.lat + ', ' + coord.location.lng
+}
+
+export async function getGoogleAddressByString(string){
+	let direction =[]
+	for(let path of string) {
+		direction.push(await getGoogleAddress(path))
+	}
+	return direction
+}

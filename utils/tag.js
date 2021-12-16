@@ -25,13 +25,13 @@ export async function getAllTags(db) {
 export async function getTagsByIdAndType(db, req) {
 	var id_object = utilities.getNumber(req.body.id)
 	var type = utilities.getNumber(req.body.type)
-/*
+	
 	if (id_object === -1){
 		return 'Formato incorrecto de: "id".'
 	} else if (type === -1){
 		return 'Formato incorrecto de: "type".'
 	}
-*/
+
 	var select = 'SELECT * '
 	var from = 'FROM tags t, '
 	var where = 'WHERE ta.id_tags = t.id_tags '

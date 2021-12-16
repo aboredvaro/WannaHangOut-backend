@@ -102,6 +102,11 @@ app.get('/api/getEntityByID', (req, res) => {
 	})
 })
 
+/**
+ * @description			Dado un mail hasheado, comprueba si existe en la BD
+ * @param req.body.entityHash	sha256 del mail del usuario
+ * @returns				Si la entidad existe, la devuelve como objeto, o -1 si no existe
+ */
 app.get('/api/getEntityByHash', (req, res) => {
 	entity.getEntityByHash(db, req.query.entityHash).then(response => {
 		return res.send(response)
@@ -137,7 +142,7 @@ app.put('/api/updateEntity', (req, res) => {
 
 app.post('/api/deleteEntityById', (req, res) => {
 	if (utilities.getNumber(req.body.id_entity) == -1) {
-		log(req.query.id_entity)
+		//log(req.query.id_entity)
 		return res.send('El id no tiene un formato correcto')
 	}
 	entity.deleteEntityById(db, req.body.id_entity).then(response => {
@@ -187,7 +192,7 @@ app.get('/api/getImageByIdActivity', (req, res) => {
 	})
 })
 
-app.post('/api/filterActivitiesBy', (req, res) => {
+app.get('/api/filterActivitiesBy', (req, res) => {
 	activity.filterActivitiesBy(db,req).then(response => {
 		res.send(response)
 	})
@@ -214,8 +219,14 @@ app.post('/api/deleteActivityById', (req, res) => {
 	})
 })
 
-app.post('/api/checkIfUserInActivity', (req, res) => {
-	activity.checkIfUserInActivity(db, req.body.id_entity, req.body.id_activity).then(response => {
+/**
+ * @description				Indica si una entidad está apuntada en la actividad
+ * @param req.query.id_entity		id_entity de la entidad
+ * @param req.query.id_activity	id_activity de la actividad
+ * @returns					Devuelve cond: 0 si no está o cond: 1 si si está
+ */
+app.get('/api/checkIfUserInActivity', (req, res) => {
+	activity.checkIfUserInActivity(db, req.query.id_entity, req.query.id_activity).then(response => {
 		res.send(response)
 	})
 })
@@ -242,11 +253,13 @@ app.get('/api/getActivitiesUserSignUpTo', (req, res) => {
 	})
 })
 
+/*
 app.get('/api/hola', (req, res) => {
 	activity.getActivityByID(db, req.query.id_entity).then(response => {
 		res.send(response)
 	})
 })
+*/
 
 //  //  //  //  //
 //
@@ -270,13 +283,25 @@ app.get('/api/getAllAddressOfActivities', (req, res) => {
 })
 
 app.post('/api/createNewAddress', (req, res) => {
-	address.createNewAddress(db,req).then(response => {
+	address.createNewAddress(db, req).then(response => {
 		res.send(response)
 	})
 })
 
 app.put('/api/updateAddress', (req, res) => {
-	address.updateAddress(db,req).then(response => {
+	address.updateAddress(db, req).then(response => {
+		res.send(response)
+	})
+})
+
+/**
+ * @description		Dada una cadena de string, consulta google y devuelve la dirección asociada
+ * @param req.body.path	ARRAY con las rutas en local de las imágenes que queremos subir
+ * @param req.body.type	String con el tipo de imagen ('shop', 'user', 'review' o 'activity')
+ * @returns			ARRAY con las url de las imágenes que se han insertado
+ */
+app.post('/api/getGoogleAddressByString', (req, res) => {
+	address.getGoogleAddressByString(req.body).then(response => {
 		res.send(response)
 	})
 })
@@ -288,7 +313,7 @@ app.put('/api/updateAddress', (req, res) => {
 //  //  //  //  //
 
 app.post('/api/createNewReview', (req, res) => {
-	log(req)
+	//log(req)
 	review.createNewReview(db,req).then(response => {
 		res.send(response)
 	})
@@ -383,6 +408,19 @@ app.get('/api/getImagesOfReview', (req, res) => {
 	})
 })
 
+/**
+ * @description		Inserta las imágenes en el servidor
+ * @param req.body.path	ARRAY con las rutas en local de las imágenes que queremos subir
+ * @param req.body.type	String con el tipo de imagen ('shop', 'user', 'review' o 'activity')
+ * @returns			ARRAY con las url de las imágenes que se han insertado
+ */
+app.post('/api/saveImagesInCloud', (req, res) => {
+	cloudinary.putImagesIntoCloudinary(req.body.path, req.body.type).then(response => {
+		return res.send(response)
+	})
+
+})
+
 //  //  //  //  //
 //
 //  API TAGS
@@ -408,6 +446,12 @@ app.post('/api/getTagsByIdAndType', (req, res) => {
 //
 //  //  //  //  //
 
+/**
+ * @description				Apunta a una entidad en una actividad
+ * @param req.body.id_entity {int}	id_entity de la entidad que quiere participar
+ * @param req.body.id_activity{int}id_activity de la actividad donde quiere inscribirse
+ * @returns					ARRAY con las url de las imágenes que se han insertado
+ */
 app.get('/api/setEntityToActivity', (req, res) => {
 	if (utilities.getNumber(req.query.id_entity) == -1) {
 		return res.send('El id_entity no tiene un formato correcto')
@@ -432,18 +476,9 @@ app.get('/api/deleteEntityToActivity', (req, res) => {
 	})
 })
 
-/*
-app.get('/api/theCloudinary', (req, res) => {
-	const path = ['./img/IMG_9698b.jpg','./img/Captura.JPG','./img/Captura2.JPG']
-	cloudinary.putImagesIntoCloudinary(path, 'avatar').then(response => {
-		return res.send(response)
-	})
-})
-*/
-
 //  //  //  //  //
 //
-//  START LISTENINGcloudinary
+//  START LISTENING
 //
 //  //  //  //  //
 
