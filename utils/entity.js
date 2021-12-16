@@ -242,7 +242,7 @@ export async function getEntityByHash(db, entityHash) {
 			if (err) {
 				console.log(err)
 			}
-			resolve(result && result[0])
+			resolve( !utilities.isEmpty(result[0]) ? result[0] : JSON.stringify(-1) )
 		})
 	})
 }
