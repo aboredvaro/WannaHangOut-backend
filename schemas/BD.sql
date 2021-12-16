@@ -3,12 +3,12 @@
 -- USE heroku_8710917fecf1cf0;
 
 -- BD Beta
-CREATE DATABASE IF NOT EXISTS heroku_314befdd836197e;
-USE heroku_314befdd836197e;
+-- CREATE DATABASE IF NOT EXISTS heroku_314befdd836197e;
+-- USE heroku_314befdd836197e;
 
 -- BD local
--- CREATE DATABASE IF NOT EXISTS PIN;
--- USE PIN;
+CREATE DATABASE IF NOT EXISTS PIN;
+USE PIN;
 
 -- Roles que pueden tener cada Entity
 CREATE TABLE rol (
@@ -92,7 +92,7 @@ CREATE TABLE entity (
     id_address INT NOT NULL DEFAULT 21,
     nick VARCHAR(20) UNIQUE NOT NULL DEFAULT "FeriaPIN2021",
     name VARCHAR(100) NOT NULL,
-    surname VARCHAR(120),
+    surname VARCHAR(250),
     description VARCHAR(500) NOT NULL DEFAULT "FeriaPIN2021",
     mail VARCHAR(120) NOT NULL,
     sha256 VARCHAR(64) NOT NULL,
