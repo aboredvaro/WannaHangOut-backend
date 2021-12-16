@@ -381,7 +381,7 @@ export async function filterActivitiesBy(db, req) {
 	sql += fixFilterByPrice(utilities.isEmpty(req.query.free) ? true : req.query.free , utilities.isEmpty(req.query.paid) ? true : req.query.paid)
 	sql += fixFilterByDuration(req.query.min_duration_min, req.query.min_duracion_max)
 	sql += fixFilterBySeats(req.query.seats_min, req.query.seats_max)
-	sql += fixFilterByDate(req.query.dateAct_min, req.query.dateAct_max)
+	sql += fixFilterByDate(utilities.isEmpty(req.query.dateAct_max) ? '' : req.query.dateAct_max)
 	sql += fixFilterByType(req.query.id_tags)
 	sql += fixFilterByEntintyCreator(req.query.id_entity_creator)
 	sql += 'ORDER BY dateAct ASC '
@@ -567,8 +567,8 @@ function fixUpperLimit(upp) {
 function fixFilterByPrice(free, paid) {
 	// free = true --> las actividades con precio = 0
 	// paid = true --> las actividades con precio > 0.
-	free = JSON.parse(free)
-	paid = JSON.parse(paid)
+	free = (free === 'true')
+	paid = (paid === 'true')
 	if( free !== paid ) {
 		if ( free ) {
 			return 'AND ac.price = 0 '
@@ -587,16 +587,16 @@ function fixFilterBySeats(min, max) {
 	return fixMinMax(min, max, 'seats')
 }
 
-function fixFilterByDate(min, max) {
-	if(utilities.isEmpty(min) || utilities.isEmpty(max) ){
+function fixFilterByDate(max) {
+	if(utilities.isEmpty(max) ){
 		return ''
 	}
 
-	var dtMin = new Date(min)
+	var dtMin = new Date()
 	var dtMax = new Date(max)
 
 	if (dtMax.valueOf() < dtMin.valueOf()) {
-		var dtAux = new Date(min)
+		var dtAux = dtMin
 		dtMin = dtMax
 		dtMax = dtAux
 	}

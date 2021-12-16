@@ -92,7 +92,7 @@ CREATE TABLE entity (
     id_address INT NOT NULL DEFAULT 21,
     nick VARCHAR(20) UNIQUE NOT NULL DEFAULT "FeriaPIN2021",
     name VARCHAR(100) NOT NULL,
-    surname VARCHAR(120),
+    surname VARCHAR(250),
     description VARCHAR(500) NOT NULL DEFAULT "FeriaPIN2021",
     mail VARCHAR(120) NOT NULL,
     sha256 VARCHAR(64) NOT NULL,
