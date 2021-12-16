@@ -436,6 +436,7 @@ export async function checkIfUserInActivity(db, id_entity, id_activity){
 	var sql = 'SELECT EXISTS(SELECT * FROM entitytoactivity WHERE  '
 	sql += 'id_entity = ' + id_entity + ' '
 	sql += 'and id_activity = ' + id_activity +') as cond; '
+	//log(sql)
 	return new Promise(resolve => {
 		db.query(sql, (err, result) => {
 			if (err) {

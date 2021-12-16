@@ -219,8 +219,14 @@ app.post('/api/deleteActivityById', (req, res) => {
 	})
 })
 
-app.post('/api/checkIfUserInActivity', (req, res) => {
-	activity.checkIfUserInActivity(db, req.body.id_entity, req.body.id_activity).then(response => {
+/**
+ * @description				Indica si una entidad está apuntada en la actividad
+ * @param req.query.id_entity		id_entity de la entidad
+ * @param req.query.id_activity	id_activity de la actividad
+ * @returns					Devuelve cond: 0 si no está o cond: 1 si si está
+ */
+app.get('/api/checkIfUserInActivity', (req, res) => {
+	activity.checkIfUserInActivity(db, req.query.id_entity, req.query.id_activity).then(response => {
 		res.send(response)
 	})
 })
@@ -440,6 +446,12 @@ app.post('/api/getTagsByIdAndType', (req, res) => {
 //
 //  //  //  //  //
 
+/**
+ * @description				Apunta a una entidad en una actividad
+ * @param req.body.id_entity {int}	id_entity de la entidad que quiere participar
+ * @param req.body.id_activity{int}id_activity de la actividad donde quiere inscribirse
+ * @returns					ARRAY con las url de las imágenes que se han insertado
+ */
 app.get('/api/setEntityToActivity', (req, res) => {
 	if (utilities.getNumber(req.query.id_entity) == -1) {
 		return res.send('El id_entity no tiene un formato correcto')
@@ -466,7 +478,7 @@ app.get('/api/deleteEntityToActivity', (req, res) => {
 
 //  //  //  //  //
 //
-//  START LISTENINGcloudinary
+//  START LISTENING
 //
 //  //  //  //  //
 
