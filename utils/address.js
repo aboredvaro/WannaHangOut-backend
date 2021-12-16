@@ -140,24 +140,18 @@ async function getGoogleCoordinatesByAddress(direccion, codPostal, poblacion){
 async function getGoogleAddress(string){
 	var coordenadasGoogle=encodeURI('https://maps.googleapis.com/maps/api/place/textsearch/json?key=' + process.env.REACT_APP_APIKEY_GOOGLE + '&query=' + string)
 	var address = await fetch(coordenadasGoogle).then(response => response.json())
-	//log(address)
-	//log(utilities.getJsonValue(address, 'name'))
+
 	let coord = utilities.getJsonValue(address, 'geometry')
-	//log(coord.location.lat)
-	//log(coord.location.lng)
-
-	let address1 = address.split(' ') // ['Bienvenidos', 'a', 'EDteam']
-
-	log(address1)
-
-	log('"' + utilities.getJsonValue(address, 'name') + '", ' + coord.location.lat + ', ' + coord.location.lng + '),')
-	return address
+	let direction = utilities.getJsonValue(address, 'name')
+	let provincia = string.split(', ').pop().split(' ')
+	let codPos = parseInt(provincia.shift())
+	provincia = provincia.join()
+	return codPos + ', "' + provincia + '", "' + direction + '", ' + coord.location.lat + ', ' + coord.location.lng
 }
 
 export async function getGoogleAddressByString(string){
 	let direction =[]
 	for(let path of string) {
-		log(path)
 		direction.push(await getGoogleAddress(path))
 	}
 	return direction

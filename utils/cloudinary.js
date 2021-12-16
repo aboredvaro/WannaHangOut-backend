@@ -12,12 +12,26 @@ import process from 'process'
 import cloudinary from 'cloudinary'
 
 /**
+ * @description          Dado un array de rutas en local de imágenes en jpg, las aloja en nuestra cuenta de Cloudinary en formato webp
+ * @param {*} images     Array de Rutas de imágenes para subir
+ * @param {*} type       Tipo de la imagen 'shop', 'user', 'review' o 'activity', todas las imágenes deben tener el mismo tipo
+ * @returns              Devuelve un array de string con las urls publicas de cada imagen que se ha almacenado.
+ */
+export async function putImagesIntoCloudinary(images, type) {
+	let urls =[]
+	for(let path of images) {
+		urls.push(await putImageIntoCloudinary(path, type))
+	}
+	return urls
+}
+
+/**
  * @description     Dada la ruta en local de imagen en jpg, la aloja en nuestra cuenta de Cloudinary en formato webp
  * @param {*} image Ruta de la imagen a subir
  * @param {*} type  Tipo de la imagen 'shop', 'user', 'review' o 'activity'
  * @returns         Devuelve un string con la url publica de la imagen que se ha almacenado.
  */
-export async function putImageIntoCloudinary(image, type) {
+async function putImageIntoCloudinary(image, type) {
 	cloudinary.v2.config({
 		cloud_name: `${process.env.CLOUDINARY_CLOUDNAME}`, 
 		api_key: `${process.env.CLOUDINARY_APIKEY}`, 
@@ -45,20 +59,6 @@ export async function putImageIntoCloudinary(image, type) {
 			}
 		)
 	})	
-}
-
-/**
- * @description          Dado un array de rutas en local de imágenes en jpg, las aloja en nuestra cuenta de Cloudinary en formato webp
- * @param {*} images     Array de Rutas de imágenes para subir
- * @param {*} type       Tipo de la imagen 'shop', 'user', 'review' o 'activity', todas las imágenes deben tener el mismo tipo
- * @returns              Devuelve un array de string con las urls publicas de cada imagen que se ha almacenado.
- */
-export async function putImagesIntoCloudinary(images, type) {
-	let urls =[]
-	for(let path of images) {
-		urls.push(await putImageIntoCloudinary(path, type))
-	}
-	return urls
 }
 
 /**
