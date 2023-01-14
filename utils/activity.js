@@ -382,7 +382,7 @@ export async function filterActivitiesBy(db, req) {
 	sql += fixFilterByDuration(req.query.min_duration_min, req.query.min_duracion_max)
 	sql += fixFilterBySeats(req.query.seats_min, req.query.seats_max)
 	sql += fixFilterByDate(utilities.isEmpty(req.query.dateAct_max) ? '' : req.query.dateAct_max)
-	sql += fixFilterByType(req.query.id_tags)
+	sql += fixFilterByType(req.query.tags_act)
 	sql += fixFilterByEntintyCreator(req.query.id_entity_creator)
 	sql += 'ORDER BY dateAct ASC '
 	sql += 'LIMIT ' + fixLowerLimit(req.query.lowerLimit) + ', ' + fixUpperLimit(req.query.upperLimit) + ';'
@@ -617,8 +617,10 @@ function fixFilterByLocation(location) {
 
 function fixFilterByType(id_tags) {
 	if (utilities.isEmpty(id_tags)) {
+		console.log('FUNKA')
 		return ''
 	}
+	console.log('FUNKA')
 	return 'AND ac.id_activity IN (SELECT t.id_activity FROM tags_act t WHERE t.id_tags IN (' + id_tags + ') GROUP BY t.id_activity) '
 }
 
